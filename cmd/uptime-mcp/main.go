@@ -17,6 +17,7 @@ func main() {
 
 	flag.StringVar(&cfg.Transport, "transport", "stdio", "Transport mode: stdio or http")
 	flag.StringVar(&cfg.ListenAddr, "listen", ":8080", "HTTP listen address (only used with -transport=http)")
+	flag.StringVar(&cfg.APIBaseURL, "api-url", "", "Uptime.com API base URL (default: https://uptime.com/api/v1/)")
 	flag.Parse()
 
 	if cfg.Transport != "stdio" && cfg.Transport != "http" {

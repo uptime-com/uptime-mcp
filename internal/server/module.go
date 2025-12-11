@@ -55,7 +55,7 @@ func runStdio(p RunParams) {
 
 	var session *app.Session
 	if token != "" {
-		client, err := createUptimeClient(token)
+		client, err := createUptimeClient(token, p.Config.APIBaseURL)
 		if err != nil {
 			logger.Printf("failed to create Uptime client: %v", err)
 		} else {
@@ -100,7 +100,7 @@ func runHTTP(p RunParams) {
 	)
 
 	var h http.Handler = handler
-	h = authMiddleware(h, logger)
+	h = authMiddleware(h, p.Config.APIBaseURL, logger)
 	h = accessLog(h, logger)
 
 	mux := http.NewServeMux()
@@ -127,16 +127,17 @@ func runHTTP(p RunParams) {
 }
 
 // createUptimeClient creates and validates an Uptime.com API client.
-func createUptimeClient(token string) (*api.Client, error) {
+func createUptimeClient(token, baseURL string) (*api.Client, error) {
 	config := &api.Config{
-		Token: token,
+		Token:   token,
+		BaseURL: baseURL,
 	}
 	return api.NewClient(config)
 }
 
 // authMiddleware validates the bearer token against Uptime.com API
 // and attaches the authenticated client to the request context.
-func authMiddleware(next http.Handler, logger *log.Logger) http.Handler {
+func authMiddleware(next http.Handler, baseURL string, logger *log.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var token string
 
@@ -159,7 +160,7 @@ func authMiddleware(next http.Handler, logger *log.Logger) http.Handler {
 		}
 
 		// Create Uptime client and validate token by making a simple API call
-		client, err := createUptimeClient(token)
+		client, err := createUptimeClient(token, baseURL)
 		if err != nil {
 			logger.Printf("failed to create client: %v", err)
 			http.Error(w, "invalid token", http.StatusUnauthorized)

@@ -7,4 +7,7 @@ type Config struct {
 
 	// HTTP server settings (only used when Transport == "http")
 	ListenAddr string
+
+	// Uptime.com API base URL (default: https://uptime.com/api/v1/)
+	APIBaseURL string
 }
