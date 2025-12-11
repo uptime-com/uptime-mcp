@@ -6,7 +6,6 @@ require (
 	github.com/modelcontextprotocol/go-sdk v0.2.0
 	github.com/uptime-com/uptime-client-go v1.3.0
 	go.uber.org/fx v1.24.0
-	golang.org/x/crypto v0.45.0
 )
 
 require (
@@ -15,5 +14,5 @@ require (
 	go.uber.org/dig v1.19.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
 )
