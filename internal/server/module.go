@@ -64,20 +64,20 @@ func runStdio(p RunParams) {
 	}
 
 	// Add middleware to inject session into context for all requests
-	p.Server.AddReceivingMiddleware(func(next mcp.MethodHandler[*mcp.ServerSession]) mcp.MethodHandler[*mcp.ServerSession] {
-		return func(ctx context.Context, ss *mcp.ServerSession, method string, params mcp.Params) (mcp.Result, error) {
+	p.Server.AddReceivingMiddleware(func(next mcp.MethodHandler) mcp.MethodHandler {
+		return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 			if session != nil {
 				ctx = app.ContextWithSession(ctx, session)
 			}
-			return next(ctx, ss, method, params)
+			return next(ctx, method, req)
 		}
 	})
 
 	p.Lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
-				transport := mcp.NewStdioTransport()
-				ss, err := p.Server.Connect(ctx, transport)
+				transport := &mcp.StdioTransport{}
+				ss, err := p.Server.Connect(ctx, transport, nil)
 				if err != nil {
 					logger.Printf("failed to connect: %v", err)
 					return

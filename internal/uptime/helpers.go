@@ -20,16 +20,8 @@ func getClient(ctx context.Context) (*api.Client, error) {
 }
 
 // textResult creates a successful text response.
-func textResult(text string) *mcp.CallToolResultFor[any] {
-	return &mcp.CallToolResultFor[any]{
+func textResult(text string) *mcp.CallToolResult {
+	return &mcp.CallToolResult{
 		Content: []mcp.Content{&mcp.TextContent{Text: text}},
-	}
-}
-
-// errorResult creates an error response.
-func errorResult(err error) *mcp.CallToolResultFor[any] {
-	return &mcp.CallToolResultFor[any]{
-		IsError: true,
-		Content: []mcp.Content{&mcp.TextContent{Text: err.Error()}},
 	}
 }

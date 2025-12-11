@@ -22,13 +22,12 @@ var listOutagesTool = &mcp.Tool{
 	Description: "List outages across all monitored checks with optional filtering",
 }
 
-func (p *Provider) handleListOutages(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[ListOutagesInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleListOutages(ctx context.Context, _ *mcp.CallToolRequest, in ListOutagesInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	opts := &api.OutageListOptions{
 		Search:                     in.Search,
 		CheckMonitoringServiceType: in.Type,
@@ -38,7 +37,7 @@ func (p *Provider) handleListOutages(ctx context.Context, _ *mcp.ServerSession, 
 
 	outages, _, err := client.Outages.List(ctx, opts)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to list outages: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to list outages: %w", err)
 	}
 
 	var sb strings.Builder
@@ -55,7 +54,7 @@ func (p *Provider) handleListOutages(ctx context.Context, _ *mcp.ServerSession, 
 		}
 	}
 
-	return textResult(sb.String()), nil
+	return textResult(sb.String()), nil, nil
 }
 
 // GetOutageInput defines parameters for getting a single outage.
@@ -68,19 +67,19 @@ var getOutageTool = &mcp.Tool{
 	Description: "Get details of a specific outage including all alerts",
 }
 
-func (p *Provider) handleGetOutage(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[GetOutageInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleGetOutage(ctx context.Context, _ *mcp.CallToolRequest, in GetOutageInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	if req.Arguments.ID == "" {
-		return errorResult(fmt.Errorf("id is required")), nil
+	if in.ID == "" {
+		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	outage, _, err := client.Outages.Get(ctx, req.Arguments.ID)
+	outage, _, err := client.Outages.Get(ctx, in.ID)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to get outage: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to get outage: %w", err)
 	}
 
 	var sb strings.Builder
@@ -110,5 +109,5 @@ func (p *Provider) handleGetOutage(ctx context.Context, _ *mcp.ServerSession, re
 		}
 	}
 
-	return textResult(sb.String()), nil
+	return textResult(sb.String()), nil, nil
 }

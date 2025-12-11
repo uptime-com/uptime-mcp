@@ -21,13 +21,12 @@ var listTagsTool = &mcp.Tool{
 	Description: "List all check tags with optional search filtering",
 }
 
-func (p *Provider) handleListTags(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[ListTagsInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleListTags(ctx context.Context, _ *mcp.CallToolRequest, in ListTagsInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	opts := &api.TagListOptions{
 		Search:   in.Search,
 		Page:     in.Page,
@@ -36,7 +35,7 @@ func (p *Provider) handleListTags(ctx context.Context, _ *mcp.ServerSession, req
 
 	tags, _, err := client.Tags.List(ctx, opts)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to list tags: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to list tags: %w", err)
 	}
 
 	var sb strings.Builder
@@ -45,7 +44,7 @@ func (p *Provider) handleListTags(ctx context.Context, _ *mcp.ServerSession, req
 		fmt.Fprintf(&sb, "- [%d] %s (color: #%s)\n", t.PK, t.Tag, t.ColorHex)
 	}
 
-	return textResult(sb.String()), nil
+	return textResult(sb.String()), nil, nil
 }
 
 // GetTagInput defines parameters for getting a single tag.
@@ -58,19 +57,19 @@ var getTagTool = &mcp.Tool{
 	Description: "Get details of a specific tag by ID",
 }
 
-func (p *Provider) handleGetTag(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[GetTagInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleGetTag(ctx context.Context, _ *mcp.CallToolRequest, in GetTagInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	if req.Arguments.ID == 0 {
-		return errorResult(fmt.Errorf("id is required")), nil
+	if in.ID == 0 {
+		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	tag, _, err := client.Tags.Get(ctx, req.Arguments.ID)
+	tag, _, err := client.Tags.Get(ctx, in.ID)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to get tag: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to get tag: %w", err)
 	}
 
 	var sb strings.Builder
@@ -78,7 +77,7 @@ func (p *Provider) handleGetTag(ctx context.Context, _ *mcp.ServerSession, req *
 	fmt.Fprintf(&sb, "Name: %s\n", tag.Tag)
 	fmt.Fprintf(&sb, "Color: #%s\n", tag.ColorHex)
 
-	return textResult(sb.String()), nil
+	return textResult(sb.String()), nil, nil
 }
 
 // CreateTagInput defines parameters for creating a new tag.
@@ -92,15 +91,14 @@ var createTagTool = &mcp.Tool{
 	Description: "Create a new check tag",
 }
 
-func (p *Provider) handleCreateTag(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreateTagInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in CreateTagInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" {
-		return errorResult(fmt.Errorf("name is required")), nil
+		return nil, nil, fmt.Errorf("name is required")
 	}
 
 	tag := &api.Tag{
@@ -110,10 +108,10 @@ func (p *Provider) handleCreateTag(ctx context.Context, _ *mcp.ServerSession, re
 
 	created, _, err := client.Tags.Create(ctx, tag)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create tag: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create tag: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created tag #%d: %s", created.PK, created.Tag)), nil
+	return textResult(fmt.Sprintf("Created tag #%d: %s", created.PK, created.Tag)), nil, nil
 }
 
 // UpdateTagInput defines parameters for updating an existing tag.
@@ -128,18 +126,17 @@ var updateTagTool = &mcp.Tool{
 	Description: "Update an existing check tag",
 }
 
-func (p *Provider) handleUpdateTag(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[UpdateTagInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleUpdateTag(ctx context.Context, _ *mcp.CallToolRequest, in UpdateTagInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.ID == 0 {
-		return errorResult(fmt.Errorf("id is required")), nil
+		return nil, nil, fmt.Errorf("id is required")
 	}
 	if in.Name == "" && in.Color == "" {
-		return errorResult(fmt.Errorf("at least one of name or color is required")), nil
+		return nil, nil, fmt.Errorf("at least one of name or color is required")
 	}
 
 	tag := &api.Tag{
@@ -150,10 +147,10 @@ func (p *Provider) handleUpdateTag(ctx context.Context, _ *mcp.ServerSession, re
 
 	updated, _, err := client.Tags.Update(ctx, tag)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to update tag: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to update tag: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Updated tag #%d: %s", updated.PK, updated.Tag)), nil
+	return textResult(fmt.Sprintf("Updated tag #%d: %s", updated.PK, updated.Tag)), nil, nil
 }
 
 // DeleteTagInput defines parameters for deleting a tag.
@@ -166,20 +163,20 @@ var deleteTagTool = &mcp.Tool{
 	Description: "Delete a check tag by ID",
 }
 
-func (p *Provider) handleDeleteTag(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[DeleteTagInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleDeleteTag(ctx context.Context, _ *mcp.CallToolRequest, in DeleteTagInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	if req.Arguments.ID == 0 {
-		return errorResult(fmt.Errorf("id is required")), nil
+	if in.ID == 0 {
+		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	_, err = client.Tags.Delete(ctx, req.Arguments.ID)
+	_, err = client.Tags.Delete(ctx, in.ID)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to delete tag: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to delete tag: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Successfully deleted tag #%d", req.Arguments.ID)), nil
+	return textResult(fmt.Sprintf("Successfully deleted tag #%d", in.ID)), nil, nil
 }

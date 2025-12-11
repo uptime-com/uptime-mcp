@@ -24,13 +24,12 @@ var listChecksTool = &mcp.Tool{
 	Description: "List monitoring checks with optional filtering by search term, tag, or check type",
 }
 
-func (p *Provider) handleListChecks(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[ListChecksInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleListChecks(ctx context.Context, _ *mcp.CallToolRequest, in ListChecksInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	opts := &api.CheckListOptions{
 		Search:                in.Search,
 		MonitoringServiceType: in.Type,
@@ -44,7 +43,7 @@ func (p *Provider) handleListChecks(ctx context.Context, _ *mcp.ServerSession, r
 
 	checks, _, err := client.Checks.List(ctx, opts)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to list checks: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to list checks: %w", err)
 	}
 
 	var sb strings.Builder
@@ -53,7 +52,7 @@ func (p *Provider) handleListChecks(ctx context.Context, _ *mcp.ServerSession, r
 		fmt.Fprintf(&sb, "- [%d] %s (%s) - %s\n", c.PK, c.Name, c.CheckType, c.Address)
 	}
 
-	return textResult(sb.String()), nil
+	return textResult(sb.String()), nil, nil
 }
 
 // GetCheckInput defines parameters for getting a single check.
@@ -66,19 +65,19 @@ var getCheckTool = &mcp.Tool{
 	Description: "Get details of a specific monitoring check by ID",
 }
 
-func (p *Provider) handleGetCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[GetCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleGetCheck(ctx context.Context, _ *mcp.CallToolRequest, in GetCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	if req.Arguments.ID == 0 {
-		return errorResult(fmt.Errorf("id is required")), nil
+	if in.ID == 0 {
+		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	check, _, err := client.Checks.Get(ctx, req.Arguments.ID)
+	check, _, err := client.Checks.Get(ctx, in.ID)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to get check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to get check: %w", err)
 	}
 
 	var sb strings.Builder
@@ -100,7 +99,7 @@ func (p *Provider) handleGetCheck(ctx context.Context, _ *mcp.ServerSession, req
 		fmt.Fprintf(&sb, "Notes: %s\n", check.Notes)
 	}
 
-	return textResult(sb.String()), nil
+	return textResult(sb.String()), nil, nil
 }
 
 // DeleteCheckInput defines parameters for deleting a check.
@@ -113,22 +112,22 @@ var deleteCheckTool = &mcp.Tool{
 	Description: "Delete a monitoring check by ID",
 }
 
-func (p *Provider) handleDeleteCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[DeleteCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleDeleteCheck(ctx context.Context, _ *mcp.CallToolRequest, in DeleteCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	if req.Arguments.ID == 0 {
-		return errorResult(fmt.Errorf("id is required")), nil
+	if in.ID == 0 {
+		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	_, err = client.Checks.Delete(ctx, req.Arguments.ID)
+	_, err = client.Checks.Delete(ctx, in.ID)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to delete check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to delete check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Successfully deleted check #%d", req.Arguments.ID)), nil
+	return textResult(fmt.Sprintf("Successfully deleted check #%d", in.ID)), nil, nil
 }
 
 // GetCheckStatsInput defines parameters for getting check statistics.
@@ -143,17 +142,16 @@ var getCheckStatsTool = &mcp.Tool{
 	Description: "Get statistics for a monitoring check including uptime percentage and outages",
 }
 
-func (p *Provider) handleGetCheckStats(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[GetCheckStatsInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleGetCheckStats(ctx context.Context, _ *mcp.CallToolRequest, in GetCheckStatsInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	if req.Arguments.ID == 0 {
-		return errorResult(fmt.Errorf("id is required")), nil
+	if in.ID == 0 {
+		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	in := req.Arguments
 	opts := &api.CheckStatsOptions{
 		StartDate: in.StartDate,
 		EndDate:   in.EndDate,
@@ -161,7 +159,7 @@ func (p *Provider) handleGetCheckStats(ctx context.Context, _ *mcp.ServerSession
 
 	stats, _, err := client.Checks.Stats(ctx, in.ID, opts)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to get check stats: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to get check stats: %w", err)
 	}
 
 	var sb strings.Builder
@@ -179,5 +177,5 @@ func (p *Provider) handleGetCheckStats(ctx context.Context, _ *mcp.ServerSession
 		}
 	}
 
-	return textResult(sb.String()), nil
+	return textResult(sb.String()), nil, nil
 }

@@ -35,15 +35,14 @@ var createHTTPCheckTool = &mcp.Tool{
 	Description: "Create a new HTTP/HTTPS monitoring check",
 }
 
-func (p *Provider) handleCreateHTTPCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreateHTTPCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreateHTTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in CreateHTTPCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" || in.Address == "" {
-		return errorResult(fmt.Errorf("name and address are required")), nil
+		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
 	check := &api.Check{
@@ -65,10 +64,10 @@ func (p *Provider) handleCreateHTTPCheck(ctx context.Context, _ *mcp.ServerSessi
 
 	created, _, err := client.Checks.Create(ctx, check)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create HTTP check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create HTTP check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created HTTP check #%d: %s", created.PK, created.Name)), nil
+	return textResult(fmt.Sprintf("Created HTTP check #%d: %s", created.PK, created.Name)), nil, nil
 }
 
 // CreateDNSCheckInput defines parameters for creating a DNS check.
@@ -84,15 +83,14 @@ var createDNSCheckTool = &mcp.Tool{
 	Description: "Create a new DNS monitoring check",
 }
 
-func (p *Provider) handleCreateDNSCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreateDNSCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreateDNSCheck(ctx context.Context, _ *mcp.CallToolRequest, in CreateDNSCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" || in.Address == "" {
-		return errorResult(fmt.Errorf("name and address are required")), nil
+		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
 	check := &api.Check{
@@ -111,10 +109,10 @@ func (p *Provider) handleCreateDNSCheck(ctx context.Context, _ *mcp.ServerSessio
 
 	created, _, err := client.Checks.Create(ctx, check)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create DNS check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create DNS check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created DNS check #%d: %s", created.PK, created.Name)), nil
+	return textResult(fmt.Sprintf("Created DNS check #%d: %s", created.PK, created.Name)), nil, nil
 }
 
 // CreateSSLCheckInput defines parameters for creating an SSL certificate check.
@@ -129,15 +127,14 @@ var createSSLCheckTool = &mcp.Tool{
 	Description: "Create a new SSL certificate monitoring check",
 }
 
-func (p *Provider) handleCreateSSLCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreateSSLCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreateSSLCheck(ctx context.Context, _ *mcp.CallToolRequest, in CreateSSLCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" || in.Address == "" {
-		return errorResult(fmt.Errorf("name and address are required")), nil
+		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
 	check := &api.Check{
@@ -155,10 +152,10 @@ func (p *Provider) handleCreateSSLCheck(ctx context.Context, _ *mcp.ServerSessio
 
 	created, _, err := client.Checks.Create(ctx, check)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create SSL check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create SSL check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created SSL check #%d: %s", created.PK, created.Name)), nil
+	return textResult(fmt.Sprintf("Created SSL check #%d: %s", created.PK, created.Name)), nil, nil
 }
 
 // CreateTCPCheckInput defines parameters for creating a TCP port check.
@@ -174,18 +171,17 @@ var createTCPCheckTool = &mcp.Tool{
 	Description: "Create a new TCP port connectivity check",
 }
 
-func (p *Provider) handleCreateTCPCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreateTCPCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreateTCPCheck(ctx context.Context, _ *mcp.CallToolRequest, in CreateTCPCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" || in.Address == "" {
-		return errorResult(fmt.Errorf("name and address are required")), nil
+		return nil, nil, fmt.Errorf("name and address are required")
 	}
 	if in.Port == 0 {
-		return errorResult(fmt.Errorf("port is required for TCP check")), nil
+		return nil, nil, fmt.Errorf("port is required for TCP check")
 	}
 
 	check := &api.Check{
@@ -204,10 +200,10 @@ func (p *Provider) handleCreateTCPCheck(ctx context.Context, _ *mcp.ServerSessio
 
 	created, _, err := client.Checks.Create(ctx, check)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create TCP check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create TCP check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created TCP check #%d: %s", created.PK, created.Name)), nil
+	return textResult(fmt.Sprintf("Created TCP check #%d: %s", created.PK, created.Name)), nil, nil
 }
 
 // CreateICMPCheckInput defines parameters for creating an ICMP/Ping check.
@@ -220,15 +216,14 @@ var createICMPCheckTool = &mcp.Tool{
 	Description: "Create a new ICMP/Ping monitoring check",
 }
 
-func (p *Provider) handleCreateICMPCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreateICMPCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreateICMPCheck(ctx context.Context, _ *mcp.CallToolRequest, in CreateICMPCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" || in.Address == "" {
-		return errorResult(fmt.Errorf("name and address are required")), nil
+		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
 	check := &api.Check{
@@ -244,10 +239,10 @@ func (p *Provider) handleCreateICMPCheck(ctx context.Context, _ *mcp.ServerSessi
 
 	created, _, err := client.Checks.Create(ctx, check)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create ICMP check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create ICMP check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created ICMP check #%d: %s", created.PK, created.Name)), nil
+	return textResult(fmt.Sprintf("Created ICMP check #%d: %s", created.PK, created.Name)), nil, nil
 }
 
 // CreateSMTPCheckInput defines parameters for creating an SMTP check.
@@ -264,15 +259,14 @@ var createSMTPCheckTool = &mcp.Tool{
 	Description: "Create a new SMTP email server monitoring check",
 }
 
-func (p *Provider) handleCreateSMTPCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreateSMTPCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreateSMTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in CreateSMTPCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" || in.Address == "" {
-		return errorResult(fmt.Errorf("name and address are required")), nil
+		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
 	check := &api.Check{
@@ -292,10 +286,10 @@ func (p *Provider) handleCreateSMTPCheck(ctx context.Context, _ *mcp.ServerSessi
 
 	created, _, err := client.Checks.Create(ctx, check)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create SMTP check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create SMTP check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created SMTP check #%d: %s", created.PK, created.Name)), nil
+	return textResult(fmt.Sprintf("Created SMTP check #%d: %s", created.PK, created.Name)), nil, nil
 }
 
 // CreateIMAPCheckInput defines parameters for creating an IMAP check.
@@ -312,15 +306,14 @@ var createIMAPCheckTool = &mcp.Tool{
 	Description: "Create a new IMAP email server monitoring check",
 }
 
-func (p *Provider) handleCreateIMAPCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreateIMAPCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreateIMAPCheck(ctx context.Context, _ *mcp.CallToolRequest, in CreateIMAPCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" || in.Address == "" {
-		return errorResult(fmt.Errorf("name and address are required")), nil
+		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
 	check := &api.Check{
@@ -340,10 +333,10 @@ func (p *Provider) handleCreateIMAPCheck(ctx context.Context, _ *mcp.ServerSessi
 
 	created, _, err := client.Checks.Create(ctx, check)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create IMAP check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create IMAP check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created IMAP check #%d: %s", created.PK, created.Name)), nil
+	return textResult(fmt.Sprintf("Created IMAP check #%d: %s", created.PK, created.Name)), nil, nil
 }
 
 // CreatePOPCheckInput defines parameters for creating a POP3 check.
@@ -360,15 +353,14 @@ var createPOPCheckTool = &mcp.Tool{
 	Description: "Create a new POP3 email server monitoring check",
 }
 
-func (p *Provider) handleCreatePOPCheck(ctx context.Context, _ *mcp.ServerSession, req *mcp.CallToolParamsFor[CreatePOPCheckInput]) (*mcp.CallToolResultFor[any], error) {
+func (p *Provider) handleCreatePOPCheck(ctx context.Context, _ *mcp.CallToolRequest, in CreatePOPCheckInput) (*mcp.CallToolResult, any, error) {
 	client, err := getClient(ctx)
 	if err != nil {
-		return errorResult(err), nil
+		return nil, nil, err
 	}
 
-	in := req.Arguments
 	if in.Name == "" || in.Address == "" {
-		return errorResult(fmt.Errorf("name and address are required")), nil
+		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
 	check := &api.Check{
@@ -388,8 +380,8 @@ func (p *Provider) handleCreatePOPCheck(ctx context.Context, _ *mcp.ServerSessio
 
 	created, _, err := client.Checks.Create(ctx, check)
 	if err != nil {
-		return errorResult(fmt.Errorf("failed to create POP check: %w", err)), nil
+		return nil, nil, fmt.Errorf("failed to create POP check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created POP check #%d: %s", created.PK, created.Name)), nil
+	return textResult(fmt.Sprintf("Created POP check #%d: %s", created.PK, created.Name)), nil, nil
 }
