@@ -3,7 +3,7 @@ provider "aws" {
   default_tags {
     tags = {
       "managed-by" = "terraform"
-      "project"    = "up2-checks"
+      "project"    = "uptime-mcp"
       "workspace"  = terraform.workspace
     }
   }

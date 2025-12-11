@@ -13,12 +13,10 @@ resource "kubernetes_namespace_v1" "this" {
 }
 
 module "fluxcd" {
-  source            = "git::ssh://git@github.com/uptime-com/uptfmods.git//fluxcd/repo?ref=v0.71"
-  namespace         = one(kubernetes_namespace_v1.this.metadata.*.name)
-  name              = "uptime-mcp"
-  github_repository = "uptime-mcp"
-  ref = {
-    tag = "main"
-  }
+  source             = "git::ssh://git@github.com/uptime-com/uptfmods.git//fluxcd/repo?ref=v0.71"
+  namespace          = one(kubernetes_namespace_v1.this.metadata.*.name)
+  name               = "uptime-mcp"
+  github_repository  = "uptime-mcp"
+  ref                = var.ref
   reconcile_interval = "5m"
 }

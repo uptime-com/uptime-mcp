@@ -4,7 +4,6 @@ ecr_repositories = [
   { name = "uptime-com/uptime-mcp/kustomize", mutability = "MUTABLE" },
   { name = "uptime-com/uptime-mcp/app/uptime-mcp", },
 ]
-
 ref = {
   tag = "main"
 }
