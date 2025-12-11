@@ -1,0 +1,28 @@
+name: semver
+run-name: 🏷️ Semantic Versioning
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - closed
+      - synchronize
+      - labeled
+      - unlabeled
+
+concurrency:
+  group: ${{ github.ref }}/${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  semver:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Semantic Versioning
+        uses: uptime-com/upflows/.github/actions/semver@v0.14
+        with:
+          github-token: ${{ secrets.UP_MACHINE_SEMVER_TOKEN }}

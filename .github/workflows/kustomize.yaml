@@ -1,0 +1,29 @@
+---
+name: kustomize
+run-name: 📦 Kustomize
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'deploy/kustomize/**'
+
+jobs:
+  kustomize:
+    strategy:
+      matrix:
+        target:
+          - overlay: upeks-dev
+            aws_region: ${{ vars.updev_aws_region }}
+            aws_assume_role_arn: ${{ vars.updev_aws_assume_role_arn }}
+            push: true
+    uses: uptime-com/upflows/.github/workflows/kustomize.yaml@v0.20
+    with:
+      aws_region: ${{ matrix.target.aws_region }}
+      aws_assume_role_arn: ${{ matrix.target.aws_assume_role_arn }}
+      overlay: deploy/kustomize/overlays/${{ matrix.target.overlay }}
+      version_file: deploy/kustomize/overlays/${{ matrix.target.overlay }}/VERSION
+      images: |-
+        app/uptime-mcp
+      push: ${{ matrix.target.push }}
