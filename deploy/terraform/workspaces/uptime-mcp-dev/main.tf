@@ -5,18 +5,11 @@ module "awsecr" {
   mutability = each.value.mutability
 }
 
-resource "kubernetes_namespace_v1" "this" {
-  metadata {
-    name = "uptime-mcp"
-  }
-  wait_for_default_service_account = true
-}
-
 module "fluxcd" {
   source             = "git::ssh://git@github.com/uptime-com/uptfmods.git//fluxcd/repo?ref=v0.71"
-  namespace          = one(kubernetes_namespace_v1.this.metadata.*.name)
+  github_repository  = "uptime-com/uptime-mcp"
+  namespace          = "uptime-mcp"
   name               = "uptime-mcp"
-  github_repository  = "uptime-mcp"
   ref                = var.ref
   reconcile_interval = "5m"
 }
