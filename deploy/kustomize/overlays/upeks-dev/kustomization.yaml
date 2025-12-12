@@ -7,11 +7,6 @@ resources:
   - ../../base
   - ./resources/ingress.yaml
 
-images:
-  - name: uptime-mcp
-    newName: ghcr.io/uptime-com/uptime-mcp
-    newTag: latest
-
 patches:
   - target:
       kind: Deployment
