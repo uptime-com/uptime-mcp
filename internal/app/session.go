@@ -12,6 +12,7 @@ var sessionKey sessionKeyType
 
 // Session holds per-request state including the authenticated Uptime client.
 type Session struct {
+	APIKey string
 	Client *uptime.Client
 }
 
