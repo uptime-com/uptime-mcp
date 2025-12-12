@@ -47,6 +47,18 @@ func TestExtractAPIKey(t *testing.T) {
 			wantKey:      "",
 			wantAuthGone: true,
 		},
+		{
+			name:         "bearer prefix only",
+			authHeader:   "Bearer ",
+			wantKey:      "",
+			wantAuthGone: true,
+		},
+		{
+			name:         "bearer with extra spaces preserved",
+			authHeader:   "Bearer  key-with-space",
+			wantKey:      " key-with-space",
+			wantAuthGone: true,
+		},
 	}
 
 	for _, tt := range tests {
