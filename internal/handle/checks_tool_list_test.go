@@ -15,6 +15,7 @@ import (
 
 // testContext creates a context with a mock client for testing.
 func testContext(t *testing.T, client upapi.API) context.Context {
+	t.Helper()
 	session := &app.Session{Client: client}
 	return app.ContextWithSession(context.Background(), session)
 }
