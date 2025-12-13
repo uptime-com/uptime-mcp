@@ -11,16 +11,15 @@ import (
 	"github.com/uptime-com/uptime-mcp/internal/uptime"
 )
 
-// mockClient provides a minimal uptime.Client for fx wiring tests.
-type mockClient struct{}
-
-func (m *mockClient) Checks() uptime.ChecksService   { return nil }
-func (m *mockClient) Tags() uptime.TagsService       { return nil }
-func (m *mockClient) Outages() uptime.OutagesService { return nil }
-
 // TestToolRegistration validates that all tools can be registered without panic.
 // This catches issues like invalid jsonschema tags before deployment.
 func TestToolRegistration(t *testing.T) {
+	// Set up client mock with service accessor expectations
+	client := newClientMock(t)
+	client.EXPECT().Checks().Return(newChecksServiceMock(t)).Maybe()
+	client.EXPECT().Tags().Return(newTagsServiceMock(t)).Maybe()
+	client.EXPECT().Outages().Return(newOutagesServiceMock(t)).Maybe()
+
 	app := fxtest.New(t,
 		fx.WithLogger(func() fxevent.Logger {
 			return fxevent.NopLogger
@@ -32,7 +31,7 @@ func TestToolRegistration(t *testing.T) {
 			}, nil)
 		}),
 		fx.Provide(func() uptime.Client {
-			return &mockClient{}
+			return client
 		}),
 		Module,
 	)
