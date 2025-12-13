@@ -51,6 +51,25 @@ func (h *checksHandler) handleCheckResource(ctx context.Context, req *mcp.ReadRe
 	if check.Port > 0 {
 		fmt.Fprintf(&sb, "Port: %d\n", check.Port)
 	}
+
+	// Operational status
+	if check.IsPaused {
+		fmt.Fprintf(&sb, "Status: Paused\n")
+	} else if check.IsUnderMaintenance {
+		fmt.Fprintf(&sb, "Status: Under Maintenance\n")
+	} else if check.StateIsUp {
+		fmt.Fprintf(&sb, "Status: Up\n")
+	} else {
+		fmt.Fprintf(&sb, "Status: Down\n")
+	}
+	if !check.StateChangedAt.IsZero() {
+		fmt.Fprintf(&sb, "State Changed: %s\n", check.StateChangedAt.Format("2006-01-02 15:04:05"))
+	}
+	if check.CachedResponseTime > 0 {
+		fmt.Fprintf(&sb, "Response Time: %.0fms\n", check.CachedResponseTime)
+	}
+
+	// Configuration
 	fmt.Fprintf(&sb, "Interval: %d seconds\n", check.Interval)
 	fmt.Fprintf(&sb, "Sensitivity: %d\n", check.Sensitivity)
 	if len(check.Locations) > 0 {
