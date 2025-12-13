@@ -1,3 +1,3 @@
 - op: add
   path: /spec/template/spec/containers/0/args/-
-  value: -api-url=http://uptime-app.uptime.svc.cluster.local/api/v1
+  value: -api-url=http://uptime-app.uptime.svc.cluster.local/api/v1/

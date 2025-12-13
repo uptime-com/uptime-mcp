@@ -81,6 +81,10 @@ func clientInitMiddleware(baseURL string) mcp.Middleware {
 // validateAPIKey checks if the API key is valid by making a HEAD request to the API root.
 // Returns nil if valid (200 or 405), error otherwise (401 for invalid key).
 func validateAPIKey(ctx context.Context, apiKey, baseURL string) error {
+	// Ensure trailing slash to prevent redirect issues
+	if baseURL != "" && !strings.HasSuffix(baseURL, "/") {
+		baseURL += "/"
+	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodHead, baseURL, nil)
 	if err != nil {
 		return err
@@ -134,6 +138,10 @@ func createUptimeClient(apiKey, baseURL string) (upapi.API, error) {
 		upapi.WithToken(apiKey),
 	}
 	if baseURL != "" {
+		// Ensure trailing slash to prevent url.ResolveReference issues
+		if !strings.HasSuffix(baseURL, "/") {
+			baseURL += "/"
+		}
 		opts = append(opts, upapi.WithBaseURL(baseURL))
 	}
 	return upapi.New(opts...)
