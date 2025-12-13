@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerDeleteCheckTool(srv *mcp.Server, h *checksHandler) {
@@ -15,7 +16,7 @@ func registerDeleteCheckTool(srv *mcp.Server, h *checksHandler) {
 }
 
 type deleteCheckInput struct {
-	ID int `json:"id"`
+	ID int64 `json:"id"`
 }
 
 func (c *checksHandler) HandleDeleteCheck(ctx context.Context, _ *mcp.CallToolRequest, in deleteCheckInput) (*mcp.CallToolResult, any, error) {
@@ -23,7 +24,7 @@ func (c *checksHandler) HandleDeleteCheck(ctx context.Context, _ *mcp.CallToolRe
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	_, err := c.service.Delete(ctx, in.ID)
+	err := c.service.Delete(ctx, upapi.PrimaryKey(in.ID))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to delete check: %w", err)
 	}

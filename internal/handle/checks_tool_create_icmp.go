@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerCreateICMPCheckTool(srv *mcp.Server, h *checksHandler) {
@@ -18,10 +18,10 @@ func registerCreateICMPCheckTool(srv *mcp.Server, h *checksHandler) {
 type createICMPCheckInput struct {
 	Name        string   `json:"name"`
 	Address     string   `json:"address"`
-	Interval    int      `json:"interval,omitempty"`
+	Interval    int64    `json:"interval,omitempty"`
 	Locations   []string `json:"locations,omitempty"`
 	Tags        []string `json:"tags,omitempty"`
-	Sensitivity int      `json:"sensitivity,omitempty"`
+	Sensitivity int64    `json:"sensitivity,omitempty"`
 	Notes       string   `json:"notes,omitempty"`
 }
 
@@ -30,8 +30,7 @@ func (c *checksHandler) HandleCreateICMPCheck(ctx context.Context, _ *mcp.CallTo
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
-	check := &api.Check{
-		CheckType:   "ICMP",
+	check := upapi.CheckICMP{
 		Name:        in.Name,
 		Address:     in.Address,
 		Interval:    in.Interval,
@@ -41,7 +40,7 @@ func (c *checksHandler) HandleCreateICMPCheck(ctx context.Context, _ *mcp.CallTo
 		Notes:       in.Notes,
 	}
 
-	created, _, err := c.service.Create(ctx, check)
+	created, err := c.service.CreateICMP(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create ICMP check: %w", err)
 	}

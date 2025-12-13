@@ -1,25 +1,33 @@
 package handle
 
-import "github.com/uptime-com/uptime-mcp/internal/uptime"
+import "github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 
+// These interfaces are used by mockery for code generation only.
+//
+//nolint:unused
 type (
-	// mockeryClient wraps uptime.Client for mock generation.
+	// mockeryClient wraps upapi.API for mock generation.
 	mockeryClient interface {
-		uptime.Client
+		upapi.API
 	}
 
-	// mockeryChecksService wraps uptime.ChecksService for mock generation.
+	// mockeryChecksService wraps upapi.ChecksEndpoint for mock generation.
 	mockeryChecksService interface {
-		uptime.ChecksService
+		upapi.ChecksEndpoint
 	}
 
-	// mockeryTagsService wraps uptime.TagsService for mock generation.
+	// mockeryTagsService wraps upapi.TagsEndpoint for mock generation.
 	mockeryTagsService interface {
-		uptime.TagsService
+		upapi.TagsEndpoint
 	}
 
-	// mockeryOutagesService wraps uptime.OutagesService for mock generation.
+	// mockeryOutagesService wraps upapi.OutagesEndpoint for mock generation.
 	mockeryOutagesService interface {
-		uptime.OutagesService
+		upapi.OutagesEndpoint
+	}
+
+	// mockeryContactsService wraps upapi.ContactsEndpoint for mock generation.
+	mockeryContactsService interface {
+		upapi.ContactsEndpoint
 	}
 )

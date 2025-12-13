@@ -4,11 +4,10 @@ import (
 	"testing"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/fx/fxtest"
-
-	"github.com/uptime-com/uptime-mcp/internal/uptime"
 )
 
 // TestToolRegistration validates that all tools can be registered without panic.
@@ -17,8 +16,9 @@ func TestToolRegistration(t *testing.T) {
 	// Set up client mock with service accessor expectations
 	client := newClientMock(t)
 	client.EXPECT().Checks().Return(newChecksServiceMock(t)).Maybe()
-	client.EXPECT().Tags().Return(newTagsServiceMock(t)).Maybe()
+	client.EXPECT().Contacts().Return(newContactsServiceMock(t)).Maybe()
 	client.EXPECT().Outages().Return(newOutagesServiceMock(t)).Maybe()
+	client.EXPECT().Tags().Return(newTagsServiceMock(t)).Maybe()
 
 	app := fxtest.New(t,
 		fx.WithLogger(func() fxevent.Logger {
@@ -30,7 +30,7 @@ func TestToolRegistration(t *testing.T) {
 				Version: "test",
 			}, nil)
 		}),
-		fx.Provide(func() uptime.Client {
+		fx.Provide(func() upapi.API {
 			return client
 		}),
 		Module,

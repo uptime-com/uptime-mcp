@@ -3,14 +3,14 @@ package handle
 import (
 	"go.uber.org/fx"
 
-	"github.com/uptime-com/uptime-mcp/internal/uptime"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 type tags struct {
-	service uptime.TagsService
+	service upapi.TagsEndpoint
 }
 
-func provideTags(c uptime.Client) *tags {
+func provideTags(c upapi.API) *tags {
 	return &tags{service: c.Tags()}
 }
 

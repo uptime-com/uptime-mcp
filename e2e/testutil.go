@@ -9,13 +9,12 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/stretchr/testify/require"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/fx/fxtest"
 
 	"github.com/uptime-com/uptime-mcp/internal/handle"
-	"github.com/uptime-com/uptime-mcp/internal/uptime"
 )
 
 // makeClientSession creates an MCP client session connected to the server via in-memory transport.
@@ -37,12 +36,14 @@ func makeClientSession(t *testing.T) *mcp.ClientSession {
 	serverTransport, clientTransport := mcp.NewInMemoryTransports()
 
 	// Create Uptime API client
-	apiClient, err := api.NewClient(&api.Config{
-		Token:   apiKey,
-		BaseURL: baseURL,
-	})
+	opts := []upapi.Option{
+		upapi.WithToken(apiKey),
+	}
+	if baseURL != "" {
+		opts = append(opts, upapi.WithBaseURL(baseURL))
+	}
+	uptimeClient, err := upapi.New(opts...)
 	require.NoError(t, err)
-	uptimeClient := uptime.NewClient(apiClient)
 
 	// Create MCP server
 	srv := mcp.NewServer(&mcp.Implementation{
@@ -56,7 +57,7 @@ func makeClientSession(t *testing.T) *mcp.ClientSession {
 			return fxevent.NopLogger
 		}),
 		fx.Supply(srv),
-		fx.Provide(func() uptime.Client { return uptimeClient }),
+		fx.Provide(func() upapi.API { return uptimeClient }),
 		handle.Module,
 	)
 	fxApp.RequireStart()

@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 
-	"github.com/uptime-com/uptime-mcp/internal/uptime"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 type sessionKeyType struct{}
@@ -13,7 +13,7 @@ var sessionKey sessionKeyType
 // Session holds per-request state including the authenticated Uptime client.
 type Session struct {
 	APIKey string
-	Client uptime.Client
+	Client upapi.API
 }
 
 // ContextWithSession returns a context with session attached.

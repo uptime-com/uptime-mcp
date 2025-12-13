@@ -3,14 +3,14 @@ package handle
 import (
 	"go.uber.org/fx"
 
-	"github.com/uptime-com/uptime-mcp/internal/uptime"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 type outages struct {
-	service uptime.OutagesService
+	service upapi.OutagesEndpoint
 }
 
-func provideOutages(c uptime.Client) *outages {
+func provideOutages(c upapi.API) *outages {
 	return &outages{service: c.Outages()}
 }
 

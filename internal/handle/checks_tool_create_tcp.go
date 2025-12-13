@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerCreateTCPCheckTool(srv *mcp.Server, h *checksHandler) {
@@ -18,12 +18,12 @@ func registerCreateTCPCheckTool(srv *mcp.Server, h *checksHandler) {
 type createTCPCheckInput struct {
 	Name         string   `json:"name"`
 	Address      string   `json:"address"`
-	Interval     int      `json:"interval,omitempty"`
+	Interval     int64    `json:"interval,omitempty"`
 	Locations    []string `json:"locations,omitempty"`
 	Tags         []string `json:"tags,omitempty"`
-	Sensitivity  int      `json:"sensitivity,omitempty"`
+	Sensitivity  int64    `json:"sensitivity,omitempty"`
 	Notes        string   `json:"notes,omitempty"`
-	Port         int      `json:"port"`
+	Port         int64    `json:"port"`
 	SendString   string   `json:"send_string,omitempty"`
 	ExpectString string   `json:"expect_string,omitempty"`
 }
@@ -36,8 +36,7 @@ func (c *checksHandler) HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToo
 		return nil, nil, fmt.Errorf("port is required for TCP check")
 	}
 
-	check := &api.Check{
-		CheckType:    "TCP",
+	check := upapi.CheckTCP{
 		Name:         in.Name,
 		Address:      in.Address,
 		Port:         in.Port,
@@ -50,7 +49,7 @@ func (c *checksHandler) HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToo
 		ExpectString: in.ExpectString,
 	}
 
-	created, _, err := c.service.Create(ctx, check)
+	created, err := c.service.CreateTCP(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create TCP check: %w", err)
 	}

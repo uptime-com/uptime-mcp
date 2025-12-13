@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerUpdateTagTool(srv *mcp.Server, h *tags) {
@@ -16,7 +16,7 @@ func registerUpdateTagTool(srv *mcp.Server, h *tags) {
 }
 
 type updateTagInput struct {
-	ID    int    `json:"id"`
+	ID    int64  `json:"id"`
 	Name  string `json:"name,omitempty"`
 	Color string `json:"color,omitempty"`
 }
@@ -29,13 +29,12 @@ func (t *tags) HandleUpdateTag(ctx context.Context, _ *mcp.CallToolRequest, in u
 		return nil, nil, fmt.Errorf("at least one of name or color is required")
 	}
 
-	tag := &api.Tag{
-		PK:       in.ID,
+	tag := upapi.Tag{
 		Tag:      in.Name,
 		ColorHex: in.Color,
 	}
 
-	updated, _, err := t.service.Update(ctx, tag)
+	updated, err := t.service.Update(ctx, upapi.PrimaryKey(in.ID), tag)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to update tag: %w", err)
 	}

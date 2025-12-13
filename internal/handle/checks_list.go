@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerListChecksTool(srv *mcp.Server, h *checksHandler) {
@@ -22,12 +22,12 @@ type listChecksInput struct {
 	Tag      string `json:"tag,omitempty"`
 	Type     string `json:"type,omitempty"`
 	IsPaused bool   `json:"is_paused,omitempty"`
-	Page     int    `json:"page,omitempty"`
-	PageSize int    `json:"page_size,omitempty"`
+	Page     int64  `json:"page,omitempty"`
+	PageSize int64  `json:"page_size,omitempty"`
 }
 
 func (c *checksHandler) HandleListChecks(ctx context.Context, _ *mcp.CallToolRequest, in listChecksInput) (*mcp.CallToolResult, any, error) {
-	opts := &api.CheckListOptions{
+	opts := upapi.CheckListOptions{
 		Search:                in.Search,
 		MonitoringServiceType: in.Type,
 		IsPaused:              in.IsPaused,
@@ -38,7 +38,7 @@ func (c *checksHandler) HandleListChecks(ctx context.Context, _ *mcp.CallToolReq
 		opts.Tag = []string{in.Tag}
 	}
 
-	checks, _, err := c.service.List(ctx, opts)
+	checks, err := c.service.List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list checks: %w", err)
 	}

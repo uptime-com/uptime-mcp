@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 const checkURIPrefix = "https://uptime.com/api/v1/checks/"
@@ -28,12 +29,12 @@ func (h *checksHandler) handleCheckResource(ctx context.Context, req *mcp.ReadRe
 		return nil, fmt.Errorf("invalid check URI: %s", uri)
 	}
 
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid check ID: %s", idStr)
 	}
 
-	check, _, err := h.service.Get(ctx, id)
+	check, err := h.service.Get(ctx, upapi.PrimaryKey(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get check: %w", err)
 	}

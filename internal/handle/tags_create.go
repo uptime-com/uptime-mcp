@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerCreateTagTool(srv *mcp.Server, h *tags) {
@@ -25,12 +25,12 @@ func (t *tags) HandleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in c
 		return nil, nil, fmt.Errorf("name is required")
 	}
 
-	tag := &api.Tag{
+	tag := upapi.Tag{
 		Tag:      in.Name,
 		ColorHex: in.Color,
 	}
 
-	created, _, err := t.service.Create(ctx, tag)
+	created, err := t.service.Create(ctx, tag)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create tag: %w", err)
 	}

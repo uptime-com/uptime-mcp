@@ -8,16 +8,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func TestHandleListChecks(t *testing.T) {
 	t.Run("returns formatted list of checks", func(t *testing.T) {
 		svc := newChecksServiceMock(t)
-		svc.EXPECT().List(mock.Anything, mock.Anything).Return([]*api.Check{
-			{PK: 1, Name: "Web Check", CheckType: "HTTP", Address: "https://example.com"},
-			{PK: 2, Name: "API Check", CheckType: "HTTP", Address: "https://api.example.com"},
-		}, nil, nil)
+		svc.EXPECT().List(mock.Anything, mock.Anything).Return([]upapi.Check{
+			{PK: 1, Name: "Web Check", MonitoringServiceType: "HTTP", Address: "https://example.com"},
+			{PK: 2, Name: "API Check", MonitoringServiceType: "HTTP", Address: "https://api.example.com"},
+		}, nil)
 
 		h := &checksHandler{service: svc}
 		result, _, err := h.HandleListChecks(context.Background(), nil, listChecksInput{})
@@ -32,13 +32,13 @@ func TestHandleListChecks(t *testing.T) {
 
 	t.Run("passes filter options to service", func(t *testing.T) {
 		svc := newChecksServiceMock(t)
-		svc.EXPECT().List(mock.Anything, &api.CheckListOptions{
+		svc.EXPECT().List(mock.Anything, upapi.CheckListOptions{
 			Search:                "prod",
 			Tag:                   []string{"critical"},
 			MonitoringServiceType: "HTTP",
 			Page:                  2,
 			PageSize:              10,
-		}).Return([]*api.Check{}, nil, nil)
+		}).Return([]upapi.Check{}, nil)
 
 		h := &checksHandler{service: svc}
 		_, _, err := h.HandleListChecks(context.Background(), nil, listChecksInput{
@@ -54,7 +54,7 @@ func TestHandleListChecks(t *testing.T) {
 
 	t.Run("returns error on service failure", func(t *testing.T) {
 		svc := newChecksServiceMock(t)
-		svc.EXPECT().List(mock.Anything, mock.Anything).Return(nil, nil, assert.AnError)
+		svc.EXPECT().List(mock.Anything, mock.Anything).Return(nil, assert.AnError)
 
 		h := &checksHandler{service: svc}
 		_, _, err := h.HandleListChecks(context.Background(), nil, listChecksInput{})

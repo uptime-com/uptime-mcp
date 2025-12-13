@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerDeleteTagTool(srv *mcp.Server, h *tags) {
@@ -15,7 +16,7 @@ func registerDeleteTagTool(srv *mcp.Server, h *tags) {
 }
 
 type deleteTagInput struct {
-	ID int `json:"id"`
+	ID int64 `json:"id"`
 }
 
 func (t *tags) HandleDeleteTag(ctx context.Context, _ *mcp.CallToolRequest, in deleteTagInput) (*mcp.CallToolResult, any, error) {
@@ -23,7 +24,7 @@ func (t *tags) HandleDeleteTag(ctx context.Context, _ *mcp.CallToolRequest, in d
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	_, err := t.service.Delete(ctx, in.ID)
+	err := t.service.Delete(ctx, upapi.PrimaryKey(in.ID))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to delete tag: %w", err)
 	}

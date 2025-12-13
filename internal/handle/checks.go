@@ -3,14 +3,14 @@ package handle
 import (
 	"go.uber.org/fx"
 
-	"github.com/uptime-com/uptime-mcp/internal/uptime"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 type checksHandler struct {
-	service uptime.ChecksService
+	service upapi.ChecksEndpoint
 }
 
-func provideChecksHandler(c uptime.Client) *checksHandler {
+func provideChecksHandler(c upapi.API) *checksHandler {
 	return &checksHandler{service: c.Checks()}
 }
 

@@ -6,11 +6,9 @@ package handle
 
 import (
 	"context"
-	"net/http"
 
 	mock "github.com/stretchr/testify/mock"
-	uptime0 "github.com/uptime-com/uptime-client-go"
-	"github.com/uptime-com/uptime-mcp/internal/uptime"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 // newClientMock creates a new instance of clientMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -40,20 +38,66 @@ func (_m *clientMock) EXPECT() *clientMock_Expecter {
 	return &clientMock_Expecter{mock: &_m.Mock}
 }
 
+// Alerts provides a mock function for the type clientMock
+func (_mock *clientMock) Alerts() upapi.AlertsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Alerts")
+	}
+
+	var r0 upapi.AlertsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.AlertsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.AlertsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_Alerts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Alerts'
+type clientMock_Alerts_Call struct {
+	*mock.Call
+}
+
+// Alerts is a helper method to define mock.On call
+func (_e *clientMock_Expecter) Alerts() *clientMock_Alerts_Call {
+	return &clientMock_Alerts_Call{Call: _e.mock.On("Alerts")}
+}
+
+func (_c *clientMock_Alerts_Call) Run(run func()) *clientMock_Alerts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_Alerts_Call) Return(alertsEndpoint upapi.AlertsEndpoint) *clientMock_Alerts_Call {
+	_c.Call.Return(alertsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_Alerts_Call) RunAndReturn(run func() upapi.AlertsEndpoint) *clientMock_Alerts_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Checks provides a mock function for the type clientMock
-func (_mock *clientMock) Checks() uptime.ChecksService {
+func (_mock *clientMock) Checks() upapi.ChecksEndpoint {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for Checks")
 	}
 
-	var r0 uptime.ChecksService
-	if returnFunc, ok := ret.Get(0).(func() uptime.ChecksService); ok {
+	var r0 upapi.ChecksEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.ChecksEndpoint); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(uptime.ChecksService)
+			r0 = ret.Get(0).(upapi.ChecksEndpoint)
 		}
 	}
 	return r0
@@ -76,30 +120,214 @@ func (_c *clientMock_Checks_Call) Run(run func()) *clientMock_Checks_Call {
 	return _c
 }
 
-func (_c *clientMock_Checks_Call) Return(checksService uptime.ChecksService) *clientMock_Checks_Call {
-	_c.Call.Return(checksService)
+func (_c *clientMock_Checks_Call) Return(checksEndpoint upapi.ChecksEndpoint) *clientMock_Checks_Call {
+	_c.Call.Return(checksEndpoint)
 	return _c
 }
 
-func (_c *clientMock_Checks_Call) RunAndReturn(run func() uptime.ChecksService) *clientMock_Checks_Call {
+func (_c *clientMock_Checks_Call) RunAndReturn(run func() upapi.ChecksEndpoint) *clientMock_Checks_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Contacts provides a mock function for the type clientMock
+func (_mock *clientMock) Contacts() upapi.ContactsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Contacts")
+	}
+
+	var r0 upapi.ContactsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.ContactsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.ContactsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_Contacts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Contacts'
+type clientMock_Contacts_Call struct {
+	*mock.Call
+}
+
+// Contacts is a helper method to define mock.On call
+func (_e *clientMock_Expecter) Contacts() *clientMock_Contacts_Call {
+	return &clientMock_Contacts_Call{Call: _e.mock.On("Contacts")}
+}
+
+func (_c *clientMock_Contacts_Call) Run(run func()) *clientMock_Contacts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_Contacts_Call) Return(contactsEndpoint upapi.ContactsEndpoint) *clientMock_Contacts_Call {
+	_c.Call.Return(contactsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_Contacts_Call) RunAndReturn(run func() upapi.ContactsEndpoint) *clientMock_Contacts_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Credentials provides a mock function for the type clientMock
+func (_mock *clientMock) Credentials() upapi.CredentialEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Credentials")
+	}
+
+	var r0 upapi.CredentialEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.CredentialEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.CredentialEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_Credentials_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Credentials'
+type clientMock_Credentials_Call struct {
+	*mock.Call
+}
+
+// Credentials is a helper method to define mock.On call
+func (_e *clientMock_Expecter) Credentials() *clientMock_Credentials_Call {
+	return &clientMock_Credentials_Call{Call: _e.mock.On("Credentials")}
+}
+
+func (_c *clientMock_Credentials_Call) Run(run func()) *clientMock_Credentials_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_Credentials_Call) Return(credentialEndpoint upapi.CredentialEndpoint) *clientMock_Credentials_Call {
+	_c.Call.Return(credentialEndpoint)
+	return _c
+}
+
+func (_c *clientMock_Credentials_Call) RunAndReturn(run func() upapi.CredentialEndpoint) *clientMock_Credentials_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Dashboards provides a mock function for the type clientMock
+func (_mock *clientMock) Dashboards() upapi.DashboardsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Dashboards")
+	}
+
+	var r0 upapi.DashboardsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.DashboardsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.DashboardsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_Dashboards_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Dashboards'
+type clientMock_Dashboards_Call struct {
+	*mock.Call
+}
+
+// Dashboards is a helper method to define mock.On call
+func (_e *clientMock_Expecter) Dashboards() *clientMock_Dashboards_Call {
+	return &clientMock_Dashboards_Call{Call: _e.mock.On("Dashboards")}
+}
+
+func (_c *clientMock_Dashboards_Call) Run(run func()) *clientMock_Dashboards_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_Dashboards_Call) Return(dashboardsEndpoint upapi.DashboardsEndpoint) *clientMock_Dashboards_Call {
+	_c.Call.Return(dashboardsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_Dashboards_Call) RunAndReturn(run func() upapi.DashboardsEndpoint) *clientMock_Dashboards_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Integrations provides a mock function for the type clientMock
+func (_mock *clientMock) Integrations() upapi.IntegrationsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Integrations")
+	}
+
+	var r0 upapi.IntegrationsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.IntegrationsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.IntegrationsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_Integrations_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Integrations'
+type clientMock_Integrations_Call struct {
+	*mock.Call
+}
+
+// Integrations is a helper method to define mock.On call
+func (_e *clientMock_Expecter) Integrations() *clientMock_Integrations_Call {
+	return &clientMock_Integrations_Call{Call: _e.mock.On("Integrations")}
+}
+
+func (_c *clientMock_Integrations_Call) Run(run func()) *clientMock_Integrations_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_Integrations_Call) Return(integrationsEndpoint upapi.IntegrationsEndpoint) *clientMock_Integrations_Call {
+	_c.Call.Return(integrationsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_Integrations_Call) RunAndReturn(run func() upapi.IntegrationsEndpoint) *clientMock_Integrations_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Outages provides a mock function for the type clientMock
-func (_mock *clientMock) Outages() uptime.OutagesService {
+func (_mock *clientMock) Outages() upapi.OutagesEndpoint {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for Outages")
 	}
 
-	var r0 uptime.OutagesService
-	if returnFunc, ok := ret.Get(0).(func() uptime.OutagesService); ok {
+	var r0 upapi.OutagesEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.OutagesEndpoint); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(uptime.OutagesService)
+			r0 = ret.Get(0).(upapi.OutagesEndpoint)
 		}
 	}
 	return r0
@@ -122,30 +350,352 @@ func (_c *clientMock_Outages_Call) Run(run func()) *clientMock_Outages_Call {
 	return _c
 }
 
-func (_c *clientMock_Outages_Call) Return(outagesService uptime.OutagesService) *clientMock_Outages_Call {
-	_c.Call.Return(outagesService)
+func (_c *clientMock_Outages_Call) Return(outagesEndpoint upapi.OutagesEndpoint) *clientMock_Outages_Call {
+	_c.Call.Return(outagesEndpoint)
 	return _c
 }
 
-func (_c *clientMock_Outages_Call) RunAndReturn(run func() uptime.OutagesService) *clientMock_Outages_Call {
+func (_c *clientMock_Outages_Call) RunAndReturn(run func() upapi.OutagesEndpoint) *clientMock_Outages_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ProbeServers provides a mock function for the type clientMock
+func (_mock *clientMock) ProbeServers() upapi.ProbeServersEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ProbeServers")
+	}
+
+	var r0 upapi.ProbeServersEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.ProbeServersEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.ProbeServersEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_ProbeServers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ProbeServers'
+type clientMock_ProbeServers_Call struct {
+	*mock.Call
+}
+
+// ProbeServers is a helper method to define mock.On call
+func (_e *clientMock_Expecter) ProbeServers() *clientMock_ProbeServers_Call {
+	return &clientMock_ProbeServers_Call{Call: _e.mock.On("ProbeServers")}
+}
+
+func (_c *clientMock_ProbeServers_Call) Run(run func()) *clientMock_ProbeServers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_ProbeServers_Call) Return(probeServersEndpoint upapi.ProbeServersEndpoint) *clientMock_ProbeServers_Call {
+	_c.Call.Return(probeServersEndpoint)
+	return _c
+}
+
+func (_c *clientMock_ProbeServers_Call) RunAndReturn(run func() upapi.ProbeServersEndpoint) *clientMock_ProbeServers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// PushNotifications provides a mock function for the type clientMock
+func (_mock *clientMock) PushNotifications() upapi.PushNotificationsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for PushNotifications")
+	}
+
+	var r0 upapi.PushNotificationsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.PushNotificationsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.PushNotificationsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_PushNotifications_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PushNotifications'
+type clientMock_PushNotifications_Call struct {
+	*mock.Call
+}
+
+// PushNotifications is a helper method to define mock.On call
+func (_e *clientMock_Expecter) PushNotifications() *clientMock_PushNotifications_Call {
+	return &clientMock_PushNotifications_Call{Call: _e.mock.On("PushNotifications")}
+}
+
+func (_c *clientMock_PushNotifications_Call) Run(run func()) *clientMock_PushNotifications_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_PushNotifications_Call) Return(pushNotificationsEndpoint upapi.PushNotificationsEndpoint) *clientMock_PushNotifications_Call {
+	_c.Call.Return(pushNotificationsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_PushNotifications_Call) RunAndReturn(run func() upapi.PushNotificationsEndpoint) *clientMock_PushNotifications_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SLAReports provides a mock function for the type clientMock
+func (_mock *clientMock) SLAReports() upapi.SLAReportsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for SLAReports")
+	}
+
+	var r0 upapi.SLAReportsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.SLAReportsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.SLAReportsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_SLAReports_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SLAReports'
+type clientMock_SLAReports_Call struct {
+	*mock.Call
+}
+
+// SLAReports is a helper method to define mock.On call
+func (_e *clientMock_Expecter) SLAReports() *clientMock_SLAReports_Call {
+	return &clientMock_SLAReports_Call{Call: _e.mock.On("SLAReports")}
+}
+
+func (_c *clientMock_SLAReports_Call) Run(run func()) *clientMock_SLAReports_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_SLAReports_Call) Return(sLAReportsEndpoint upapi.SLAReportsEndpoint) *clientMock_SLAReports_Call {
+	_c.Call.Return(sLAReportsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_SLAReports_Call) RunAndReturn(run func() upapi.SLAReportsEndpoint) *clientMock_SLAReports_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ScheduledReports provides a mock function for the type clientMock
+func (_mock *clientMock) ScheduledReports() upapi.ScheduledReportsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ScheduledReports")
+	}
+
+	var r0 upapi.ScheduledReportsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.ScheduledReportsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.ScheduledReportsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_ScheduledReports_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ScheduledReports'
+type clientMock_ScheduledReports_Call struct {
+	*mock.Call
+}
+
+// ScheduledReports is a helper method to define mock.On call
+func (_e *clientMock_Expecter) ScheduledReports() *clientMock_ScheduledReports_Call {
+	return &clientMock_ScheduledReports_Call{Call: _e.mock.On("ScheduledReports")}
+}
+
+func (_c *clientMock_ScheduledReports_Call) Run(run func()) *clientMock_ScheduledReports_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_ScheduledReports_Call) Return(scheduledReportsEndpoint upapi.ScheduledReportsEndpoint) *clientMock_ScheduledReports_Call {
+	_c.Call.Return(scheduledReportsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_ScheduledReports_Call) RunAndReturn(run func() upapi.ScheduledReportsEndpoint) *clientMock_ScheduledReports_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ServiceVariables provides a mock function for the type clientMock
+func (_mock *clientMock) ServiceVariables() upapi.ServiceVariablesEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ServiceVariables")
+	}
+
+	var r0 upapi.ServiceVariablesEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.ServiceVariablesEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.ServiceVariablesEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_ServiceVariables_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ServiceVariables'
+type clientMock_ServiceVariables_Call struct {
+	*mock.Call
+}
+
+// ServiceVariables is a helper method to define mock.On call
+func (_e *clientMock_Expecter) ServiceVariables() *clientMock_ServiceVariables_Call {
+	return &clientMock_ServiceVariables_Call{Call: _e.mock.On("ServiceVariables")}
+}
+
+func (_c *clientMock_ServiceVariables_Call) Run(run func()) *clientMock_ServiceVariables_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_ServiceVariables_Call) Return(serviceVariablesEndpoint upapi.ServiceVariablesEndpoint) *clientMock_ServiceVariables_Call {
+	_c.Call.Return(serviceVariablesEndpoint)
+	return _c
+}
+
+func (_c *clientMock_ServiceVariables_Call) RunAndReturn(run func() upapi.ServiceVariablesEndpoint) *clientMock_ServiceVariables_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// StatusPages provides a mock function for the type clientMock
+func (_mock *clientMock) StatusPages() upapi.StatusPagesEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for StatusPages")
+	}
+
+	var r0 upapi.StatusPagesEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.StatusPagesEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPagesEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_StatusPages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StatusPages'
+type clientMock_StatusPages_Call struct {
+	*mock.Call
+}
+
+// StatusPages is a helper method to define mock.On call
+func (_e *clientMock_Expecter) StatusPages() *clientMock_StatusPages_Call {
+	return &clientMock_StatusPages_Call{Call: _e.mock.On("StatusPages")}
+}
+
+func (_c *clientMock_StatusPages_Call) Run(run func()) *clientMock_StatusPages_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_StatusPages_Call) Return(statusPagesEndpoint upapi.StatusPagesEndpoint) *clientMock_StatusPages_Call {
+	_c.Call.Return(statusPagesEndpoint)
+	return _c
+}
+
+func (_c *clientMock_StatusPages_Call) RunAndReturn(run func() upapi.StatusPagesEndpoint) *clientMock_StatusPages_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Subaccounts provides a mock function for the type clientMock
+func (_mock *clientMock) Subaccounts() upapi.SubaccountsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Subaccounts")
+	}
+
+	var r0 upapi.SubaccountsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.SubaccountsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.SubaccountsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_Subaccounts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Subaccounts'
+type clientMock_Subaccounts_Call struct {
+	*mock.Call
+}
+
+// Subaccounts is a helper method to define mock.On call
+func (_e *clientMock_Expecter) Subaccounts() *clientMock_Subaccounts_Call {
+	return &clientMock_Subaccounts_Call{Call: _e.mock.On("Subaccounts")}
+}
+
+func (_c *clientMock_Subaccounts_Call) Run(run func()) *clientMock_Subaccounts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_Subaccounts_Call) Return(subaccountsEndpoint upapi.SubaccountsEndpoint) *clientMock_Subaccounts_Call {
+	_c.Call.Return(subaccountsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_Subaccounts_Call) RunAndReturn(run func() upapi.SubaccountsEndpoint) *clientMock_Subaccounts_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Tags provides a mock function for the type clientMock
-func (_mock *clientMock) Tags() uptime.TagsService {
+func (_mock *clientMock) Tags() upapi.TagsEndpoint {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for Tags")
 	}
 
-	var r0 uptime.TagsService
-	if returnFunc, ok := ret.Get(0).(func() uptime.TagsService); ok {
+	var r0 upapi.TagsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.TagsEndpoint); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(uptime.TagsService)
+			r0 = ret.Get(0).(upapi.TagsEndpoint)
 		}
 	}
 	return r0
@@ -168,12 +718,58 @@ func (_c *clientMock_Tags_Call) Run(run func()) *clientMock_Tags_Call {
 	return _c
 }
 
-func (_c *clientMock_Tags_Call) Return(tagsService uptime.TagsService) *clientMock_Tags_Call {
-	_c.Call.Return(tagsService)
+func (_c *clientMock_Tags_Call) Return(tagsEndpoint upapi.TagsEndpoint) *clientMock_Tags_Call {
+	_c.Call.Return(tagsEndpoint)
 	return _c
 }
 
-func (_c *clientMock_Tags_Call) RunAndReturn(run func() uptime.TagsService) *clientMock_Tags_Call {
+func (_c *clientMock_Tags_Call) RunAndReturn(run func() upapi.TagsEndpoint) *clientMock_Tags_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Users provides a mock function for the type clientMock
+func (_mock *clientMock) Users() upapi.UsersEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Users")
+	}
+
+	var r0 upapi.UsersEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.UsersEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.UsersEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_Users_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Users'
+type clientMock_Users_Call struct {
+	*mock.Call
+}
+
+// Users is a helper method to define mock.On call
+func (_e *clientMock_Expecter) Users() *clientMock_Users_Call {
+	return &clientMock_Users_Call{Call: _e.mock.On("Users")}
+}
+
+func (_c *clientMock_Users_Call) Run(run func()) *clientMock_Users_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_Users_Call) Return(usersEndpoint upapi.UsersEndpoint) *clientMock_Users_Call {
+	_c.Call.Return(usersEndpoint)
+	return _c
+}
+
+func (_c *clientMock_Users_Call) RunAndReturn(run func() upapi.UsersEndpoint) *clientMock_Users_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -205,63 +801,55 @@ func (_m *checksServiceMock) EXPECT() *checksServiceMock_Expecter {
 	return &checksServiceMock_Expecter{mock: &_m.Mock}
 }
 
-// Create provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) Create(ctx context.Context, check *uptime0.Check) (*uptime0.Check, *http.Response, error) {
-	ret := _mock.Called(ctx, check)
+// CreateAPI provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateAPI(context1 context.Context, checkAPI upapi.CheckAPI) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkAPI)
 
 	if len(ret) == 0 {
-		panic("no return value specified for Create")
+		panic("no return value specified for CreateAPI")
 	}
 
-	var r0 *uptime0.Check
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.Check) (*uptime0.Check, *http.Response, error)); ok {
-		return returnFunc(ctx, check)
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckAPI) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkAPI)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.Check) *uptime0.Check); ok {
-		r0 = returnFunc(ctx, check)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckAPI) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkAPI)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*uptime0.Check)
+			r0 = ret.Get(0).(*upapi.Check)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *uptime0.Check) *http.Response); ok {
-		r1 = returnFunc(ctx, check)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckAPI) error); ok {
+		r1 = returnFunc(context1, checkAPI)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, *uptime0.Check) error); ok {
-		r2 = returnFunc(ctx, check)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
-// checksServiceMock_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
-type checksServiceMock_Create_Call struct {
+// checksServiceMock_CreateAPI_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateAPI'
+type checksServiceMock_CreateAPI_Call struct {
 	*mock.Call
 }
 
-// Create is a helper method to define mock.On call
-//   - ctx context.Context
-//   - check *uptime0.Check
-func (_e *checksServiceMock_Expecter) Create(ctx interface{}, check interface{}) *checksServiceMock_Create_Call {
-	return &checksServiceMock_Create_Call{Call: _e.mock.On("Create", ctx, check)}
+// CreateAPI is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkAPI upapi.CheckAPI
+func (_e *checksServiceMock_Expecter) CreateAPI(context1 interface{}, checkAPI interface{}) *checksServiceMock_CreateAPI_Call {
+	return &checksServiceMock_CreateAPI_Call{Call: _e.mock.On("CreateAPI", context1, checkAPI)}
 }
 
-func (_c *checksServiceMock_Create_Call) Run(run func(ctx context.Context, check *uptime0.Check)) *checksServiceMock_Create_Call {
+func (_c *checksServiceMock_CreateAPI_Call) Run(run func(context1 context.Context, checkAPI upapi.CheckAPI)) *checksServiceMock_CreateAPI_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *uptime0.Check
+		var arg1 upapi.CheckAPI
 		if args[1] != nil {
-			arg1 = args[1].(*uptime0.Check)
+			arg1 = args[1].(upapi.CheckAPI)
 		}
 		run(
 			arg0,
@@ -271,42 +859,1527 @@ func (_c *checksServiceMock_Create_Call) Run(run func(ctx context.Context, check
 	return _c
 }
 
-func (_c *checksServiceMock_Create_Call) Return(check1 *uptime0.Check, response *http.Response, err error) *checksServiceMock_Create_Call {
-	_c.Call.Return(check1, response, err)
+func (_c *checksServiceMock_CreateAPI_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateAPI_Call {
+	_c.Call.Return(check, err)
 	return _c
 }
 
-func (_c *checksServiceMock_Create_Call) RunAndReturn(run func(ctx context.Context, check *uptime0.Check) (*uptime0.Check, *http.Response, error)) *checksServiceMock_Create_Call {
+func (_c *checksServiceMock_CreateAPI_Call) RunAndReturn(run func(context1 context.Context, checkAPI upapi.CheckAPI) (*upapi.Check, error)) *checksServiceMock_CreateAPI_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateBlacklist provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateBlacklist(context1 context.Context, checkBlacklist upapi.CheckBlacklist) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkBlacklist)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateBlacklist")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckBlacklist) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkBlacklist)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckBlacklist) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkBlacklist)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckBlacklist) error); ok {
+		r1 = returnFunc(context1, checkBlacklist)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateBlacklist_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateBlacklist'
+type checksServiceMock_CreateBlacklist_Call struct {
+	*mock.Call
+}
+
+// CreateBlacklist is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkBlacklist upapi.CheckBlacklist
+func (_e *checksServiceMock_Expecter) CreateBlacklist(context1 interface{}, checkBlacklist interface{}) *checksServiceMock_CreateBlacklist_Call {
+	return &checksServiceMock_CreateBlacklist_Call{Call: _e.mock.On("CreateBlacklist", context1, checkBlacklist)}
+}
+
+func (_c *checksServiceMock_CreateBlacklist_Call) Run(run func(context1 context.Context, checkBlacklist upapi.CheckBlacklist)) *checksServiceMock_CreateBlacklist_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckBlacklist
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckBlacklist)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateBlacklist_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateBlacklist_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateBlacklist_Call) RunAndReturn(run func(context1 context.Context, checkBlacklist upapi.CheckBlacklist) (*upapi.Check, error)) *checksServiceMock_CreateBlacklist_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateDNS provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateDNS(context1 context.Context, checkDNS upapi.CheckDNS) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkDNS)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateDNS")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckDNS) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkDNS)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckDNS) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkDNS)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckDNS) error); ok {
+		r1 = returnFunc(context1, checkDNS)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateDNS_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateDNS'
+type checksServiceMock_CreateDNS_Call struct {
+	*mock.Call
+}
+
+// CreateDNS is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkDNS upapi.CheckDNS
+func (_e *checksServiceMock_Expecter) CreateDNS(context1 interface{}, checkDNS interface{}) *checksServiceMock_CreateDNS_Call {
+	return &checksServiceMock_CreateDNS_Call{Call: _e.mock.On("CreateDNS", context1, checkDNS)}
+}
+
+func (_c *checksServiceMock_CreateDNS_Call) Run(run func(context1 context.Context, checkDNS upapi.CheckDNS)) *checksServiceMock_CreateDNS_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckDNS
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckDNS)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateDNS_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateDNS_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateDNS_Call) RunAndReturn(run func(context1 context.Context, checkDNS upapi.CheckDNS) (*upapi.Check, error)) *checksServiceMock_CreateDNS_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateGroup provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateGroup(context1 context.Context, checkGroup upapi.CheckGroup) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkGroup)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateGroup")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckGroup) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkGroup)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckGroup) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkGroup)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckGroup) error); ok {
+		r1 = returnFunc(context1, checkGroup)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateGroup_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateGroup'
+type checksServiceMock_CreateGroup_Call struct {
+	*mock.Call
+}
+
+// CreateGroup is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkGroup upapi.CheckGroup
+func (_e *checksServiceMock_Expecter) CreateGroup(context1 interface{}, checkGroup interface{}) *checksServiceMock_CreateGroup_Call {
+	return &checksServiceMock_CreateGroup_Call{Call: _e.mock.On("CreateGroup", context1, checkGroup)}
+}
+
+func (_c *checksServiceMock_CreateGroup_Call) Run(run func(context1 context.Context, checkGroup upapi.CheckGroup)) *checksServiceMock_CreateGroup_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckGroup
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckGroup)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateGroup_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateGroup_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateGroup_Call) RunAndReturn(run func(context1 context.Context, checkGroup upapi.CheckGroup) (*upapi.Check, error)) *checksServiceMock_CreateGroup_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateHTTP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateHTTP(context1 context.Context, checkHTTP upapi.CheckHTTP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkHTTP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateHTTP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckHTTP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkHTTP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckHTTP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkHTTP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckHTTP) error); ok {
+		r1 = returnFunc(context1, checkHTTP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateHTTP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateHTTP'
+type checksServiceMock_CreateHTTP_Call struct {
+	*mock.Call
+}
+
+// CreateHTTP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkHTTP upapi.CheckHTTP
+func (_e *checksServiceMock_Expecter) CreateHTTP(context1 interface{}, checkHTTP interface{}) *checksServiceMock_CreateHTTP_Call {
+	return &checksServiceMock_CreateHTTP_Call{Call: _e.mock.On("CreateHTTP", context1, checkHTTP)}
+}
+
+func (_c *checksServiceMock_CreateHTTP_Call) Run(run func(context1 context.Context, checkHTTP upapi.CheckHTTP)) *checksServiceMock_CreateHTTP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckHTTP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckHTTP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateHTTP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateHTTP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateHTTP_Call) RunAndReturn(run func(context1 context.Context, checkHTTP upapi.CheckHTTP) (*upapi.Check, error)) *checksServiceMock_CreateHTTP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateHeartbeat provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateHeartbeat(context1 context.Context, checkHeartbeat upapi.CheckHeartbeat) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkHeartbeat)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateHeartbeat")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckHeartbeat) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkHeartbeat)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckHeartbeat) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkHeartbeat)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckHeartbeat) error); ok {
+		r1 = returnFunc(context1, checkHeartbeat)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateHeartbeat_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateHeartbeat'
+type checksServiceMock_CreateHeartbeat_Call struct {
+	*mock.Call
+}
+
+// CreateHeartbeat is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkHeartbeat upapi.CheckHeartbeat
+func (_e *checksServiceMock_Expecter) CreateHeartbeat(context1 interface{}, checkHeartbeat interface{}) *checksServiceMock_CreateHeartbeat_Call {
+	return &checksServiceMock_CreateHeartbeat_Call{Call: _e.mock.On("CreateHeartbeat", context1, checkHeartbeat)}
+}
+
+func (_c *checksServiceMock_CreateHeartbeat_Call) Run(run func(context1 context.Context, checkHeartbeat upapi.CheckHeartbeat)) *checksServiceMock_CreateHeartbeat_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckHeartbeat
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckHeartbeat)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateHeartbeat_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateHeartbeat_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateHeartbeat_Call) RunAndReturn(run func(context1 context.Context, checkHeartbeat upapi.CheckHeartbeat) (*upapi.Check, error)) *checksServiceMock_CreateHeartbeat_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateICMP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateICMP(context1 context.Context, checkICMP upapi.CheckICMP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkICMP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateICMP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckICMP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkICMP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckICMP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkICMP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckICMP) error); ok {
+		r1 = returnFunc(context1, checkICMP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateICMP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateICMP'
+type checksServiceMock_CreateICMP_Call struct {
+	*mock.Call
+}
+
+// CreateICMP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkICMP upapi.CheckICMP
+func (_e *checksServiceMock_Expecter) CreateICMP(context1 interface{}, checkICMP interface{}) *checksServiceMock_CreateICMP_Call {
+	return &checksServiceMock_CreateICMP_Call{Call: _e.mock.On("CreateICMP", context1, checkICMP)}
+}
+
+func (_c *checksServiceMock_CreateICMP_Call) Run(run func(context1 context.Context, checkICMP upapi.CheckICMP)) *checksServiceMock_CreateICMP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckICMP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckICMP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateICMP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateICMP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateICMP_Call) RunAndReturn(run func(context1 context.Context, checkICMP upapi.CheckICMP) (*upapi.Check, error)) *checksServiceMock_CreateICMP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateIMAP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateIMAP(context1 context.Context, checkIMAP upapi.CheckIMAP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkIMAP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateIMAP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckIMAP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkIMAP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckIMAP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkIMAP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckIMAP) error); ok {
+		r1 = returnFunc(context1, checkIMAP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateIMAP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateIMAP'
+type checksServiceMock_CreateIMAP_Call struct {
+	*mock.Call
+}
+
+// CreateIMAP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkIMAP upapi.CheckIMAP
+func (_e *checksServiceMock_Expecter) CreateIMAP(context1 interface{}, checkIMAP interface{}) *checksServiceMock_CreateIMAP_Call {
+	return &checksServiceMock_CreateIMAP_Call{Call: _e.mock.On("CreateIMAP", context1, checkIMAP)}
+}
+
+func (_c *checksServiceMock_CreateIMAP_Call) Run(run func(context1 context.Context, checkIMAP upapi.CheckIMAP)) *checksServiceMock_CreateIMAP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckIMAP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckIMAP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateIMAP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateIMAP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateIMAP_Call) RunAndReturn(run func(context1 context.Context, checkIMAP upapi.CheckIMAP) (*upapi.Check, error)) *checksServiceMock_CreateIMAP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateMalware provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateMalware(context1 context.Context, checkMalware upapi.CheckMalware) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkMalware)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateMalware")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckMalware) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkMalware)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckMalware) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkMalware)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckMalware) error); ok {
+		r1 = returnFunc(context1, checkMalware)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateMalware_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateMalware'
+type checksServiceMock_CreateMalware_Call struct {
+	*mock.Call
+}
+
+// CreateMalware is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkMalware upapi.CheckMalware
+func (_e *checksServiceMock_Expecter) CreateMalware(context1 interface{}, checkMalware interface{}) *checksServiceMock_CreateMalware_Call {
+	return &checksServiceMock_CreateMalware_Call{Call: _e.mock.On("CreateMalware", context1, checkMalware)}
+}
+
+func (_c *checksServiceMock_CreateMalware_Call) Run(run func(context1 context.Context, checkMalware upapi.CheckMalware)) *checksServiceMock_CreateMalware_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckMalware
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckMalware)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateMalware_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateMalware_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateMalware_Call) RunAndReturn(run func(context1 context.Context, checkMalware upapi.CheckMalware) (*upapi.Check, error)) *checksServiceMock_CreateMalware_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateNTP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateNTP(context1 context.Context, checkNTP upapi.CheckNTP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkNTP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateNTP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckNTP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkNTP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckNTP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkNTP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckNTP) error); ok {
+		r1 = returnFunc(context1, checkNTP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateNTP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateNTP'
+type checksServiceMock_CreateNTP_Call struct {
+	*mock.Call
+}
+
+// CreateNTP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkNTP upapi.CheckNTP
+func (_e *checksServiceMock_Expecter) CreateNTP(context1 interface{}, checkNTP interface{}) *checksServiceMock_CreateNTP_Call {
+	return &checksServiceMock_CreateNTP_Call{Call: _e.mock.On("CreateNTP", context1, checkNTP)}
+}
+
+func (_c *checksServiceMock_CreateNTP_Call) Run(run func(context1 context.Context, checkNTP upapi.CheckNTP)) *checksServiceMock_CreateNTP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckNTP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckNTP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateNTP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateNTP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateNTP_Call) RunAndReturn(run func(context1 context.Context, checkNTP upapi.CheckNTP) (*upapi.Check, error)) *checksServiceMock_CreateNTP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreatePOP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreatePOP(context1 context.Context, checkPOP upapi.CheckPOP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkPOP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreatePOP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckPOP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkPOP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckPOP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkPOP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckPOP) error); ok {
+		r1 = returnFunc(context1, checkPOP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreatePOP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreatePOP'
+type checksServiceMock_CreatePOP_Call struct {
+	*mock.Call
+}
+
+// CreatePOP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkPOP upapi.CheckPOP
+func (_e *checksServiceMock_Expecter) CreatePOP(context1 interface{}, checkPOP interface{}) *checksServiceMock_CreatePOP_Call {
+	return &checksServiceMock_CreatePOP_Call{Call: _e.mock.On("CreatePOP", context1, checkPOP)}
+}
+
+func (_c *checksServiceMock_CreatePOP_Call) Run(run func(context1 context.Context, checkPOP upapi.CheckPOP)) *checksServiceMock_CreatePOP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckPOP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckPOP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreatePOP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreatePOP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreatePOP_Call) RunAndReturn(run func(context1 context.Context, checkPOP upapi.CheckPOP) (*upapi.Check, error)) *checksServiceMock_CreatePOP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreatePageSpeed provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreatePageSpeed(context1 context.Context, checkPageSpeed upapi.CheckPageSpeed) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkPageSpeed)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreatePageSpeed")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckPageSpeed) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkPageSpeed)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckPageSpeed) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkPageSpeed)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckPageSpeed) error); ok {
+		r1 = returnFunc(context1, checkPageSpeed)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreatePageSpeed_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreatePageSpeed'
+type checksServiceMock_CreatePageSpeed_Call struct {
+	*mock.Call
+}
+
+// CreatePageSpeed is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkPageSpeed upapi.CheckPageSpeed
+func (_e *checksServiceMock_Expecter) CreatePageSpeed(context1 interface{}, checkPageSpeed interface{}) *checksServiceMock_CreatePageSpeed_Call {
+	return &checksServiceMock_CreatePageSpeed_Call{Call: _e.mock.On("CreatePageSpeed", context1, checkPageSpeed)}
+}
+
+func (_c *checksServiceMock_CreatePageSpeed_Call) Run(run func(context1 context.Context, checkPageSpeed upapi.CheckPageSpeed)) *checksServiceMock_CreatePageSpeed_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckPageSpeed
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckPageSpeed)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreatePageSpeed_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreatePageSpeed_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreatePageSpeed_Call) RunAndReturn(run func(context1 context.Context, checkPageSpeed upapi.CheckPageSpeed) (*upapi.Check, error)) *checksServiceMock_CreatePageSpeed_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateRDAP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateRDAP(context1 context.Context, checkRDAP upapi.CheckRDAP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkRDAP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateRDAP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckRDAP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkRDAP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckRDAP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkRDAP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckRDAP) error); ok {
+		r1 = returnFunc(context1, checkRDAP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateRDAP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateRDAP'
+type checksServiceMock_CreateRDAP_Call struct {
+	*mock.Call
+}
+
+// CreateRDAP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkRDAP upapi.CheckRDAP
+func (_e *checksServiceMock_Expecter) CreateRDAP(context1 interface{}, checkRDAP interface{}) *checksServiceMock_CreateRDAP_Call {
+	return &checksServiceMock_CreateRDAP_Call{Call: _e.mock.On("CreateRDAP", context1, checkRDAP)}
+}
+
+func (_c *checksServiceMock_CreateRDAP_Call) Run(run func(context1 context.Context, checkRDAP upapi.CheckRDAP)) *checksServiceMock_CreateRDAP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckRDAP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckRDAP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateRDAP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateRDAP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateRDAP_Call) RunAndReturn(run func(context1 context.Context, checkRDAP upapi.CheckRDAP) (*upapi.Check, error)) *checksServiceMock_CreateRDAP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateRUM provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateRUM(context1 context.Context, checkRUM upapi.CheckRUM) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkRUM)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateRUM")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckRUM) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkRUM)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckRUM) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkRUM)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckRUM) error); ok {
+		r1 = returnFunc(context1, checkRUM)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateRUM_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateRUM'
+type checksServiceMock_CreateRUM_Call struct {
+	*mock.Call
+}
+
+// CreateRUM is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkRUM upapi.CheckRUM
+func (_e *checksServiceMock_Expecter) CreateRUM(context1 interface{}, checkRUM interface{}) *checksServiceMock_CreateRUM_Call {
+	return &checksServiceMock_CreateRUM_Call{Call: _e.mock.On("CreateRUM", context1, checkRUM)}
+}
+
+func (_c *checksServiceMock_CreateRUM_Call) Run(run func(context1 context.Context, checkRUM upapi.CheckRUM)) *checksServiceMock_CreateRUM_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckRUM
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckRUM)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateRUM_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateRUM_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateRUM_Call) RunAndReturn(run func(context1 context.Context, checkRUM upapi.CheckRUM) (*upapi.Check, error)) *checksServiceMock_CreateRUM_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateRUM2 provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateRUM2(context1 context.Context, checkRUM2 upapi.CheckRUM2) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkRUM2)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateRUM2")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckRUM2) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkRUM2)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckRUM2) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkRUM2)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckRUM2) error); ok {
+		r1 = returnFunc(context1, checkRUM2)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateRUM2_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateRUM2'
+type checksServiceMock_CreateRUM2_Call struct {
+	*mock.Call
+}
+
+// CreateRUM2 is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkRUM2 upapi.CheckRUM2
+func (_e *checksServiceMock_Expecter) CreateRUM2(context1 interface{}, checkRUM2 interface{}) *checksServiceMock_CreateRUM2_Call {
+	return &checksServiceMock_CreateRUM2_Call{Call: _e.mock.On("CreateRUM2", context1, checkRUM2)}
+}
+
+func (_c *checksServiceMock_CreateRUM2_Call) Run(run func(context1 context.Context, checkRUM2 upapi.CheckRUM2)) *checksServiceMock_CreateRUM2_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckRUM2
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckRUM2)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateRUM2_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateRUM2_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateRUM2_Call) RunAndReturn(run func(context1 context.Context, checkRUM2 upapi.CheckRUM2) (*upapi.Check, error)) *checksServiceMock_CreateRUM2_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateSMTP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateSMTP(context1 context.Context, checkSMTP upapi.CheckSMTP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkSMTP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateSMTP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckSMTP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkSMTP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckSMTP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkSMTP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckSMTP) error); ok {
+		r1 = returnFunc(context1, checkSMTP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateSMTP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateSMTP'
+type checksServiceMock_CreateSMTP_Call struct {
+	*mock.Call
+}
+
+// CreateSMTP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkSMTP upapi.CheckSMTP
+func (_e *checksServiceMock_Expecter) CreateSMTP(context1 interface{}, checkSMTP interface{}) *checksServiceMock_CreateSMTP_Call {
+	return &checksServiceMock_CreateSMTP_Call{Call: _e.mock.On("CreateSMTP", context1, checkSMTP)}
+}
+
+func (_c *checksServiceMock_CreateSMTP_Call) Run(run func(context1 context.Context, checkSMTP upapi.CheckSMTP)) *checksServiceMock_CreateSMTP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckSMTP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckSMTP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateSMTP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateSMTP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateSMTP_Call) RunAndReturn(run func(context1 context.Context, checkSMTP upapi.CheckSMTP) (*upapi.Check, error)) *checksServiceMock_CreateSMTP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateSSH provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateSSH(context1 context.Context, checkSSH upapi.CheckSSH) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkSSH)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateSSH")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckSSH) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkSSH)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckSSH) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkSSH)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckSSH) error); ok {
+		r1 = returnFunc(context1, checkSSH)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateSSH_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateSSH'
+type checksServiceMock_CreateSSH_Call struct {
+	*mock.Call
+}
+
+// CreateSSH is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkSSH upapi.CheckSSH
+func (_e *checksServiceMock_Expecter) CreateSSH(context1 interface{}, checkSSH interface{}) *checksServiceMock_CreateSSH_Call {
+	return &checksServiceMock_CreateSSH_Call{Call: _e.mock.On("CreateSSH", context1, checkSSH)}
+}
+
+func (_c *checksServiceMock_CreateSSH_Call) Run(run func(context1 context.Context, checkSSH upapi.CheckSSH)) *checksServiceMock_CreateSSH_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckSSH
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckSSH)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateSSH_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateSSH_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateSSH_Call) RunAndReturn(run func(context1 context.Context, checkSSH upapi.CheckSSH) (*upapi.Check, error)) *checksServiceMock_CreateSSH_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateSSLCert provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateSSLCert(context1 context.Context, checkSSLCert upapi.CheckSSLCert) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkSSLCert)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateSSLCert")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckSSLCert) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkSSLCert)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckSSLCert) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkSSLCert)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckSSLCert) error); ok {
+		r1 = returnFunc(context1, checkSSLCert)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateSSLCert_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateSSLCert'
+type checksServiceMock_CreateSSLCert_Call struct {
+	*mock.Call
+}
+
+// CreateSSLCert is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkSSLCert upapi.CheckSSLCert
+func (_e *checksServiceMock_Expecter) CreateSSLCert(context1 interface{}, checkSSLCert interface{}) *checksServiceMock_CreateSSLCert_Call {
+	return &checksServiceMock_CreateSSLCert_Call{Call: _e.mock.On("CreateSSLCert", context1, checkSSLCert)}
+}
+
+func (_c *checksServiceMock_CreateSSLCert_Call) Run(run func(context1 context.Context, checkSSLCert upapi.CheckSSLCert)) *checksServiceMock_CreateSSLCert_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckSSLCert
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckSSLCert)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateSSLCert_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateSSLCert_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateSSLCert_Call) RunAndReturn(run func(context1 context.Context, checkSSLCert upapi.CheckSSLCert) (*upapi.Check, error)) *checksServiceMock_CreateSSLCert_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateTCP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateTCP(context1 context.Context, checkTCP upapi.CheckTCP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkTCP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateTCP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckTCP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkTCP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckTCP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkTCP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckTCP) error); ok {
+		r1 = returnFunc(context1, checkTCP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateTCP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateTCP'
+type checksServiceMock_CreateTCP_Call struct {
+	*mock.Call
+}
+
+// CreateTCP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkTCP upapi.CheckTCP
+func (_e *checksServiceMock_Expecter) CreateTCP(context1 interface{}, checkTCP interface{}) *checksServiceMock_CreateTCP_Call {
+	return &checksServiceMock_CreateTCP_Call{Call: _e.mock.On("CreateTCP", context1, checkTCP)}
+}
+
+func (_c *checksServiceMock_CreateTCP_Call) Run(run func(context1 context.Context, checkTCP upapi.CheckTCP)) *checksServiceMock_CreateTCP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckTCP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckTCP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateTCP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateTCP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateTCP_Call) RunAndReturn(run func(context1 context.Context, checkTCP upapi.CheckTCP) (*upapi.Check, error)) *checksServiceMock_CreateTCP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateTransaction provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateTransaction(context1 context.Context, checkTransaction upapi.CheckTransaction) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkTransaction)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateTransaction")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckTransaction) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkTransaction)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckTransaction) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkTransaction)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckTransaction) error); ok {
+		r1 = returnFunc(context1, checkTransaction)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateTransaction_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateTransaction'
+type checksServiceMock_CreateTransaction_Call struct {
+	*mock.Call
+}
+
+// CreateTransaction is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkTransaction upapi.CheckTransaction
+func (_e *checksServiceMock_Expecter) CreateTransaction(context1 interface{}, checkTransaction interface{}) *checksServiceMock_CreateTransaction_Call {
+	return &checksServiceMock_CreateTransaction_Call{Call: _e.mock.On("CreateTransaction", context1, checkTransaction)}
+}
+
+func (_c *checksServiceMock_CreateTransaction_Call) Run(run func(context1 context.Context, checkTransaction upapi.CheckTransaction)) *checksServiceMock_CreateTransaction_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckTransaction
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckTransaction)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateTransaction_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateTransaction_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateTransaction_Call) RunAndReturn(run func(context1 context.Context, checkTransaction upapi.CheckTransaction) (*upapi.Check, error)) *checksServiceMock_CreateTransaction_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateUDP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateUDP(context1 context.Context, checkUDP upapi.CheckUDP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkUDP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateUDP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckUDP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkUDP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckUDP) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkUDP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckUDP) error); ok {
+		r1 = returnFunc(context1, checkUDP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateUDP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateUDP'
+type checksServiceMock_CreateUDP_Call struct {
+	*mock.Call
+}
+
+// CreateUDP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkUDP upapi.CheckUDP
+func (_e *checksServiceMock_Expecter) CreateUDP(context1 interface{}, checkUDP interface{}) *checksServiceMock_CreateUDP_Call {
+	return &checksServiceMock_CreateUDP_Call{Call: _e.mock.On("CreateUDP", context1, checkUDP)}
+}
+
+func (_c *checksServiceMock_CreateUDP_Call) Run(run func(context1 context.Context, checkUDP upapi.CheckUDP)) *checksServiceMock_CreateUDP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckUDP
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckUDP)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateUDP_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateUDP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateUDP_Call) RunAndReturn(run func(context1 context.Context, checkUDP upapi.CheckUDP) (*upapi.Check, error)) *checksServiceMock_CreateUDP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateWHOIS provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateWHOIS(context1 context.Context, checkWHOIS upapi.CheckWHOIS) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkWHOIS)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateWHOIS")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckWHOIS) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkWHOIS)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckWHOIS) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkWHOIS)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckWHOIS) error); ok {
+		r1 = returnFunc(context1, checkWHOIS)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateWHOIS_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateWHOIS'
+type checksServiceMock_CreateWHOIS_Call struct {
+	*mock.Call
+}
+
+// CreateWHOIS is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkWHOIS upapi.CheckWHOIS
+func (_e *checksServiceMock_Expecter) CreateWHOIS(context1 interface{}, checkWHOIS interface{}) *checksServiceMock_CreateWHOIS_Call {
+	return &checksServiceMock_CreateWHOIS_Call{Call: _e.mock.On("CreateWHOIS", context1, checkWHOIS)}
+}
+
+func (_c *checksServiceMock_CreateWHOIS_Call) Run(run func(context1 context.Context, checkWHOIS upapi.CheckWHOIS)) *checksServiceMock_CreateWHOIS_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckWHOIS
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckWHOIS)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateWHOIS_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateWHOIS_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateWHOIS_Call) RunAndReturn(run func(context1 context.Context, checkWHOIS upapi.CheckWHOIS) (*upapi.Check, error)) *checksServiceMock_CreateWHOIS_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateWebhook provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateWebhook(context1 context.Context, checkWebhook upapi.CheckWebhook) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkWebhook)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateWebhook")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckWebhook) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkWebhook)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckWebhook) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkWebhook)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckWebhook) error); ok {
+		r1 = returnFunc(context1, checkWebhook)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateWebhook'
+type checksServiceMock_CreateWebhook_Call struct {
+	*mock.Call
+}
+
+// CreateWebhook is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkWebhook upapi.CheckWebhook
+func (_e *checksServiceMock_Expecter) CreateWebhook(context1 interface{}, checkWebhook interface{}) *checksServiceMock_CreateWebhook_Call {
+	return &checksServiceMock_CreateWebhook_Call{Call: _e.mock.On("CreateWebhook", context1, checkWebhook)}
+}
+
+func (_c *checksServiceMock_CreateWebhook_Call) Run(run func(context1 context.Context, checkWebhook upapi.CheckWebhook)) *checksServiceMock_CreateWebhook_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckWebhook
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckWebhook)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateWebhook_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateWebhook_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateWebhook_Call) RunAndReturn(run func(context1 context.Context, checkWebhook upapi.CheckWebhook) (*upapi.Check, error)) *checksServiceMock_CreateWebhook_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Delete provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) Delete(ctx context.Context, pk int) (*http.Response, error) {
-	ret := _mock.Called(ctx, pk)
+func (_mock *checksServiceMock) Delete(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) error {
+	ret := _mock.Called(context1, primaryKeyable)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
 	}
 
-	var r0 *http.Response
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int) (*http.Response, error)); ok {
-		return returnFunc(ctx, pk)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int) *http.Response); ok {
-		r0 = returnFunc(ctx, pk)
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r0 = returnFunc(context1, primaryKeyable)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*http.Response)
-		}
+		r0 = ret.Error(0)
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, int) error); ok {
-		r1 = returnFunc(ctx, pk)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
+	return r0
 }
 
 // checksServiceMock_Delete_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Delete'
@@ -315,21 +2388,21 @@ type checksServiceMock_Delete_Call struct {
 }
 
 // Delete is a helper method to define mock.On call
-//   - ctx context.Context
-//   - pk int
-func (_e *checksServiceMock_Expecter) Delete(ctx interface{}, pk interface{}) *checksServiceMock_Delete_Call {
-	return &checksServiceMock_Delete_Call{Call: _e.mock.On("Delete", ctx, pk)}
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *checksServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *checksServiceMock_Delete_Call {
+	return &checksServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
 }
 
-func (_c *checksServiceMock_Delete_Call) Run(run func(ctx context.Context, pk int)) *checksServiceMock_Delete_Call {
+func (_c *checksServiceMock_Delete_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *checksServiceMock_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 int
+		var arg1 upapi.PrimaryKeyable
 		if args[1] != nil {
-			arg1 = args[1].(int)
+			arg1 = args[1].(upapi.PrimaryKeyable)
 		}
 		run(
 			arg0,
@@ -339,50 +2412,42 @@ func (_c *checksServiceMock_Delete_Call) Run(run func(ctx context.Context, pk in
 	return _c
 }
 
-func (_c *checksServiceMock_Delete_Call) Return(response *http.Response, err error) *checksServiceMock_Delete_Call {
-	_c.Call.Return(response, err)
+func (_c *checksServiceMock_Delete_Call) Return(err error) *checksServiceMock_Delete_Call {
+	_c.Call.Return(err)
 	return _c
 }
 
-func (_c *checksServiceMock_Delete_Call) RunAndReturn(run func(ctx context.Context, pk int) (*http.Response, error)) *checksServiceMock_Delete_Call {
+func (_c *checksServiceMock_Delete_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) error) *checksServiceMock_Delete_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Get provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) Get(ctx context.Context, pk int) (*uptime0.Check, *http.Response, error) {
-	ret := _mock.Called(ctx, pk)
+func (_mock *checksServiceMock) Get(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
 	}
 
-	var r0 *uptime0.Check
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int) (*uptime0.Check, *http.Response, error)); ok {
-		return returnFunc(ctx, pk)
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int) *uptime0.Check); ok {
-		r0 = returnFunc(ctx, pk)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*uptime0.Check)
+			r0 = ret.Get(0).(*upapi.Check)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, int) *http.Response); ok {
-		r1 = returnFunc(ctx, pk)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r1 = returnFunc(context1, primaryKeyable)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, int) error); ok {
-		r2 = returnFunc(ctx, pk)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // checksServiceMock_Get_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Get'
@@ -391,21 +2456,21 @@ type checksServiceMock_Get_Call struct {
 }
 
 // Get is a helper method to define mock.On call
-//   - ctx context.Context
-//   - pk int
-func (_e *checksServiceMock_Expecter) Get(ctx interface{}, pk interface{}) *checksServiceMock_Get_Call {
-	return &checksServiceMock_Get_Call{Call: _e.mock.On("Get", ctx, pk)}
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *checksServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *checksServiceMock_Get_Call {
+	return &checksServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
-func (_c *checksServiceMock_Get_Call) Run(run func(ctx context.Context, pk int)) *checksServiceMock_Get_Call {
+func (_c *checksServiceMock_Get_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *checksServiceMock_Get_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 int
+		var arg1 upapi.PrimaryKeyable
 		if args[1] != nil {
-			arg1 = args[1].(int)
+			arg1 = args[1].(upapi.PrimaryKeyable)
 		}
 		run(
 			arg0,
@@ -415,50 +2480,110 @@ func (_c *checksServiceMock_Get_Call) Run(run func(ctx context.Context, pk int))
 	return _c
 }
 
-func (_c *checksServiceMock_Get_Call) Return(check *uptime0.Check, response *http.Response, err error) *checksServiceMock_Get_Call {
-	_c.Call.Return(check, response, err)
+func (_c *checksServiceMock_Get_Call) Return(check *upapi.Check, err error) *checksServiceMock_Get_Call {
+	_c.Call.Return(check, err)
 	return _c
 }
 
-func (_c *checksServiceMock_Get_Call) RunAndReturn(run func(ctx context.Context, pk int) (*uptime0.Check, *http.Response, error)) *checksServiceMock_Get_Call {
+func (_c *checksServiceMock_Get_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.Check, error)) *checksServiceMock_Get_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetEscalations provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) GetEscalations(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.CheckEscalations, error) {
+	ret := _mock.Called(context1, primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetEscalations")
+	}
+
+	var r0 *upapi.CheckEscalations
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) (*upapi.CheckEscalations, error)); ok {
+		return returnFunc(context1, primaryKeyable)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) *upapi.CheckEscalations); ok {
+		r0 = returnFunc(context1, primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.CheckEscalations)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r1 = returnFunc(context1, primaryKeyable)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_GetEscalations_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetEscalations'
+type checksServiceMock_GetEscalations_Call struct {
+	*mock.Call
+}
+
+// GetEscalations is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *checksServiceMock_Expecter) GetEscalations(context1 interface{}, primaryKeyable interface{}) *checksServiceMock_GetEscalations_Call {
+	return &checksServiceMock_GetEscalations_Call{Call: _e.mock.On("GetEscalations", context1, primaryKeyable)}
+}
+
+func (_c *checksServiceMock_GetEscalations_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *checksServiceMock_GetEscalations_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_GetEscalations_Call) Return(checkEscalations *upapi.CheckEscalations, err error) *checksServiceMock_GetEscalations_Call {
+	_c.Call.Return(checkEscalations, err)
+	return _c
+}
+
+func (_c *checksServiceMock_GetEscalations_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.CheckEscalations, error)) *checksServiceMock_GetEscalations_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // List provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) List(ctx context.Context, opt *uptime0.CheckListOptions) ([]*uptime0.Check, *http.Response, error) {
-	ret := _mock.Called(ctx, opt)
+func (_mock *checksServiceMock) List(context1 context.Context, checkListOptions upapi.CheckListOptions) ([]upapi.Check, error) {
+	ret := _mock.Called(context1, checkListOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []*uptime0.Check
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.CheckListOptions) ([]*uptime0.Check, *http.Response, error)); ok {
-		return returnFunc(ctx, opt)
+	var r0 []upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckListOptions) ([]upapi.Check, error)); ok {
+		return returnFunc(context1, checkListOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.CheckListOptions) []*uptime0.Check); ok {
-		r0 = returnFunc(ctx, opt)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckListOptions) []upapi.Check); ok {
+		r0 = returnFunc(context1, checkListOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*uptime0.Check)
+			r0 = ret.Get(0).([]upapi.Check)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *uptime0.CheckListOptions) *http.Response); ok {
-		r1 = returnFunc(ctx, opt)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckListOptions) error); ok {
+		r1 = returnFunc(context1, checkListOptions)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, *uptime0.CheckListOptions) error); ok {
-		r2 = returnFunc(ctx, opt)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // checksServiceMock_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
@@ -467,21 +2592,21 @@ type checksServiceMock_List_Call struct {
 }
 
 // List is a helper method to define mock.On call
-//   - ctx context.Context
-//   - opt *uptime0.CheckListOptions
-func (_e *checksServiceMock_Expecter) List(ctx interface{}, opt interface{}) *checksServiceMock_List_Call {
-	return &checksServiceMock_List_Call{Call: _e.mock.On("List", ctx, opt)}
+//   - context1 context.Context
+//   - checkListOptions upapi.CheckListOptions
+func (_e *checksServiceMock_Expecter) List(context1 interface{}, checkListOptions interface{}) *checksServiceMock_List_Call {
+	return &checksServiceMock_List_Call{Call: _e.mock.On("List", context1, checkListOptions)}
 }
 
-func (_c *checksServiceMock_List_Call) Run(run func(ctx context.Context, opt *uptime0.CheckListOptions)) *checksServiceMock_List_Call {
+func (_c *checksServiceMock_List_Call) Run(run func(context1 context.Context, checkListOptions upapi.CheckListOptions)) *checksServiceMock_List_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *uptime0.CheckListOptions
+		var arg1 upapi.CheckListOptions
 		if args[1] != nil {
-			arg1 = args[1].(*uptime0.CheckListOptions)
+			arg1 = args[1].(upapi.CheckListOptions)
 		}
 		run(
 			arg0,
@@ -491,50 +2616,42 @@ func (_c *checksServiceMock_List_Call) Run(run func(ctx context.Context, opt *up
 	return _c
 }
 
-func (_c *checksServiceMock_List_Call) Return(checks []*uptime0.Check, response *http.Response, err error) *checksServiceMock_List_Call {
-	_c.Call.Return(checks, response, err)
+func (_c *checksServiceMock_List_Call) Return(checks []upapi.Check, err error) *checksServiceMock_List_Call {
+	_c.Call.Return(checks, err)
 	return _c
 }
 
-func (_c *checksServiceMock_List_Call) RunAndReturn(run func(ctx context.Context, opt *uptime0.CheckListOptions) ([]*uptime0.Check, *http.Response, error)) *checksServiceMock_List_Call {
+func (_c *checksServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, checkListOptions upapi.CheckListOptions) ([]upapi.Check, error)) *checksServiceMock_List_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Stats provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) Stats(ctx context.Context, pk int, opt *uptime0.CheckStatsOptions) (*uptime0.CheckStatsResponse, *http.Response, error) {
-	ret := _mock.Called(ctx, pk, opt)
+func (_mock *checksServiceMock) Stats(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkStatsOptions upapi.CheckStatsOptions) ([]upapi.CheckStats, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkStatsOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Stats")
 	}
 
-	var r0 *uptime0.CheckStatsResponse
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int, *uptime0.CheckStatsOptions) (*uptime0.CheckStatsResponse, *http.Response, error)); ok {
-		return returnFunc(ctx, pk, opt)
+	var r0 []upapi.CheckStats
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckStatsOptions) ([]upapi.CheckStats, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkStatsOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int, *uptime0.CheckStatsOptions) *uptime0.CheckStatsResponse); ok {
-		r0 = returnFunc(ctx, pk, opt)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckStatsOptions) []upapi.CheckStats); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkStatsOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*uptime0.CheckStatsResponse)
+			r0 = ret.Get(0).([]upapi.CheckStats)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, int, *uptime0.CheckStatsOptions) *http.Response); ok {
-		r1 = returnFunc(ctx, pk, opt)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckStatsOptions) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkStatsOptions)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, int, *uptime0.CheckStatsOptions) error); ok {
-		r2 = returnFunc(ctx, pk, opt)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // checksServiceMock_Stats_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Stats'
@@ -543,26 +2660,26 @@ type checksServiceMock_Stats_Call struct {
 }
 
 // Stats is a helper method to define mock.On call
-//   - ctx context.Context
-//   - pk int
-//   - opt *uptime0.CheckStatsOptions
-func (_e *checksServiceMock_Expecter) Stats(ctx interface{}, pk interface{}, opt interface{}) *checksServiceMock_Stats_Call {
-	return &checksServiceMock_Stats_Call{Call: _e.mock.On("Stats", ctx, pk, opt)}
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkStatsOptions upapi.CheckStatsOptions
+func (_e *checksServiceMock_Expecter) Stats(context1 interface{}, primaryKeyable interface{}, checkStatsOptions interface{}) *checksServiceMock_Stats_Call {
+	return &checksServiceMock_Stats_Call{Call: _e.mock.On("Stats", context1, primaryKeyable, checkStatsOptions)}
 }
 
-func (_c *checksServiceMock_Stats_Call) Run(run func(ctx context.Context, pk int, opt *uptime0.CheckStatsOptions)) *checksServiceMock_Stats_Call {
+func (_c *checksServiceMock_Stats_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkStatsOptions upapi.CheckStatsOptions)) *checksServiceMock_Stats_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 int
+		var arg1 upapi.PrimaryKeyable
 		if args[1] != nil {
-			arg1 = args[1].(int)
+			arg1 = args[1].(upapi.PrimaryKeyable)
 		}
-		var arg2 *uptime0.CheckStatsOptions
+		var arg2 upapi.CheckStatsOptions
 		if args[2] != nil {
-			arg2 = args[2].(*uptime0.CheckStatsOptions)
+			arg2 = args[2].(upapi.CheckStatsOptions)
 		}
 		run(
 			arg0,
@@ -573,88 +2690,1862 @@ func (_c *checksServiceMock_Stats_Call) Run(run func(ctx context.Context, pk int
 	return _c
 }
 
-func (_c *checksServiceMock_Stats_Call) Return(checkStatsResponse *uptime0.CheckStatsResponse, response *http.Response, err error) *checksServiceMock_Stats_Call {
-	_c.Call.Return(checkStatsResponse, response, err)
+func (_c *checksServiceMock_Stats_Call) Return(checkStatss []upapi.CheckStats, err error) *checksServiceMock_Stats_Call {
+	_c.Call.Return(checkStatss, err)
 	return _c
 }
 
-func (_c *checksServiceMock_Stats_Call) RunAndReturn(run func(ctx context.Context, pk int, opt *uptime0.CheckStatsOptions) (*uptime0.CheckStatsResponse, *http.Response, error)) *checksServiceMock_Stats_Call {
+func (_c *checksServiceMock_Stats_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkStatsOptions upapi.CheckStatsOptions) ([]upapi.CheckStats, error)) *checksServiceMock_Stats_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// Update provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) Update(ctx context.Context, check *uptime0.Check) (*uptime0.Check, *http.Response, error) {
-	ret := _mock.Called(ctx, check)
+// UpdateAPI provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateAPI(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkAPI upapi.CheckAPI) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkAPI)
 
 	if len(ret) == 0 {
-		panic("no return value specified for Update")
+		panic("no return value specified for UpdateAPI")
 	}
 
-	var r0 *uptime0.Check
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.Check) (*uptime0.Check, *http.Response, error)); ok {
-		return returnFunc(ctx, check)
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckAPI) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkAPI)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.Check) *uptime0.Check); ok {
-		r0 = returnFunc(ctx, check)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckAPI) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkAPI)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*uptime0.Check)
+			r0 = ret.Get(0).(*upapi.Check)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *uptime0.Check) *http.Response); ok {
-		r1 = returnFunc(ctx, check)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckAPI) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkAPI)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, *uptime0.Check) error); ok {
-		r2 = returnFunc(ctx, check)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
-// checksServiceMock_Update_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Update'
-type checksServiceMock_Update_Call struct {
+// checksServiceMock_UpdateAPI_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateAPI'
+type checksServiceMock_UpdateAPI_Call struct {
 	*mock.Call
 }
 
-// Update is a helper method to define mock.On call
-//   - ctx context.Context
-//   - check *uptime0.Check
-func (_e *checksServiceMock_Expecter) Update(ctx interface{}, check interface{}) *checksServiceMock_Update_Call {
-	return &checksServiceMock_Update_Call{Call: _e.mock.On("Update", ctx, check)}
+// UpdateAPI is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkAPI upapi.CheckAPI
+func (_e *checksServiceMock_Expecter) UpdateAPI(context1 interface{}, primaryKeyable interface{}, checkAPI interface{}) *checksServiceMock_UpdateAPI_Call {
+	return &checksServiceMock_UpdateAPI_Call{Call: _e.mock.On("UpdateAPI", context1, primaryKeyable, checkAPI)}
 }
 
-func (_c *checksServiceMock_Update_Call) Run(run func(ctx context.Context, check *uptime0.Check)) *checksServiceMock_Update_Call {
+func (_c *checksServiceMock_UpdateAPI_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkAPI upapi.CheckAPI)) *checksServiceMock_UpdateAPI_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *uptime0.Check
+		var arg1 upapi.PrimaryKeyable
 		if args[1] != nil {
-			arg1 = args[1].(*uptime0.Check)
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckAPI
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckAPI)
 		}
 		run(
 			arg0,
 			arg1,
+			arg2,
 		)
 	})
 	return _c
 }
 
-func (_c *checksServiceMock_Update_Call) Return(check1 *uptime0.Check, response *http.Response, err error) *checksServiceMock_Update_Call {
-	_c.Call.Return(check1, response, err)
+func (_c *checksServiceMock_UpdateAPI_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateAPI_Call {
+	_c.Call.Return(check, err)
 	return _c
 }
 
-func (_c *checksServiceMock_Update_Call) RunAndReturn(run func(ctx context.Context, check *uptime0.Check) (*uptime0.Check, *http.Response, error)) *checksServiceMock_Update_Call {
+func (_c *checksServiceMock_UpdateAPI_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkAPI upapi.CheckAPI) (*upapi.Check, error)) *checksServiceMock_UpdateAPI_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateBlacklist provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateBlacklist(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkBlacklist upapi.CheckBlacklist) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkBlacklist)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateBlacklist")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckBlacklist) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkBlacklist)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckBlacklist) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkBlacklist)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckBlacklist) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkBlacklist)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateBlacklist_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateBlacklist'
+type checksServiceMock_UpdateBlacklist_Call struct {
+	*mock.Call
+}
+
+// UpdateBlacklist is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkBlacklist upapi.CheckBlacklist
+func (_e *checksServiceMock_Expecter) UpdateBlacklist(context1 interface{}, primaryKeyable interface{}, checkBlacklist interface{}) *checksServiceMock_UpdateBlacklist_Call {
+	return &checksServiceMock_UpdateBlacklist_Call{Call: _e.mock.On("UpdateBlacklist", context1, primaryKeyable, checkBlacklist)}
+}
+
+func (_c *checksServiceMock_UpdateBlacklist_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkBlacklist upapi.CheckBlacklist)) *checksServiceMock_UpdateBlacklist_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckBlacklist
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckBlacklist)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateBlacklist_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateBlacklist_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateBlacklist_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkBlacklist upapi.CheckBlacklist) (*upapi.Check, error)) *checksServiceMock_UpdateBlacklist_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateDNS provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateDNS(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkDNS upapi.CheckDNS) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkDNS)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateDNS")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckDNS) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkDNS)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckDNS) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkDNS)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckDNS) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkDNS)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateDNS_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateDNS'
+type checksServiceMock_UpdateDNS_Call struct {
+	*mock.Call
+}
+
+// UpdateDNS is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkDNS upapi.CheckDNS
+func (_e *checksServiceMock_Expecter) UpdateDNS(context1 interface{}, primaryKeyable interface{}, checkDNS interface{}) *checksServiceMock_UpdateDNS_Call {
+	return &checksServiceMock_UpdateDNS_Call{Call: _e.mock.On("UpdateDNS", context1, primaryKeyable, checkDNS)}
+}
+
+func (_c *checksServiceMock_UpdateDNS_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkDNS upapi.CheckDNS)) *checksServiceMock_UpdateDNS_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckDNS
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckDNS)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateDNS_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateDNS_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateDNS_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkDNS upapi.CheckDNS) (*upapi.Check, error)) *checksServiceMock_UpdateDNS_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateEscalations provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateEscalations(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkEscalations upapi.CheckEscalations) (*upapi.CheckEscalations, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkEscalations)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateEscalations")
+	}
+
+	var r0 *upapi.CheckEscalations
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckEscalations) (*upapi.CheckEscalations, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkEscalations)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckEscalations) *upapi.CheckEscalations); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkEscalations)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.CheckEscalations)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckEscalations) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkEscalations)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateEscalations_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateEscalations'
+type checksServiceMock_UpdateEscalations_Call struct {
+	*mock.Call
+}
+
+// UpdateEscalations is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkEscalations upapi.CheckEscalations
+func (_e *checksServiceMock_Expecter) UpdateEscalations(context1 interface{}, primaryKeyable interface{}, checkEscalations interface{}) *checksServiceMock_UpdateEscalations_Call {
+	return &checksServiceMock_UpdateEscalations_Call{Call: _e.mock.On("UpdateEscalations", context1, primaryKeyable, checkEscalations)}
+}
+
+func (_c *checksServiceMock_UpdateEscalations_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkEscalations upapi.CheckEscalations)) *checksServiceMock_UpdateEscalations_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckEscalations
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckEscalations)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateEscalations_Call) Return(checkEscalations1 *upapi.CheckEscalations, err error) *checksServiceMock_UpdateEscalations_Call {
+	_c.Call.Return(checkEscalations1, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateEscalations_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkEscalations upapi.CheckEscalations) (*upapi.CheckEscalations, error)) *checksServiceMock_UpdateEscalations_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateGroup provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateGroup(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkGroup upapi.CheckGroup) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkGroup)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateGroup")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckGroup) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkGroup)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckGroup) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkGroup)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckGroup) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkGroup)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateGroup_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateGroup'
+type checksServiceMock_UpdateGroup_Call struct {
+	*mock.Call
+}
+
+// UpdateGroup is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkGroup upapi.CheckGroup
+func (_e *checksServiceMock_Expecter) UpdateGroup(context1 interface{}, primaryKeyable interface{}, checkGroup interface{}) *checksServiceMock_UpdateGroup_Call {
+	return &checksServiceMock_UpdateGroup_Call{Call: _e.mock.On("UpdateGroup", context1, primaryKeyable, checkGroup)}
+}
+
+func (_c *checksServiceMock_UpdateGroup_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkGroup upapi.CheckGroup)) *checksServiceMock_UpdateGroup_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckGroup
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckGroup)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateGroup_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateGroup_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateGroup_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkGroup upapi.CheckGroup) (*upapi.Check, error)) *checksServiceMock_UpdateGroup_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateHTTP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateHTTP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkHTTP upapi.CheckHTTP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkHTTP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateHTTP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckHTTP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkHTTP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckHTTP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkHTTP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckHTTP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkHTTP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateHTTP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateHTTP'
+type checksServiceMock_UpdateHTTP_Call struct {
+	*mock.Call
+}
+
+// UpdateHTTP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkHTTP upapi.CheckHTTP
+func (_e *checksServiceMock_Expecter) UpdateHTTP(context1 interface{}, primaryKeyable interface{}, checkHTTP interface{}) *checksServiceMock_UpdateHTTP_Call {
+	return &checksServiceMock_UpdateHTTP_Call{Call: _e.mock.On("UpdateHTTP", context1, primaryKeyable, checkHTTP)}
+}
+
+func (_c *checksServiceMock_UpdateHTTP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkHTTP upapi.CheckHTTP)) *checksServiceMock_UpdateHTTP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckHTTP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckHTTP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateHTTP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateHTTP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateHTTP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkHTTP upapi.CheckHTTP) (*upapi.Check, error)) *checksServiceMock_UpdateHTTP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateHeartbeat provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateHeartbeat(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkHeartbeat upapi.CheckHeartbeat) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkHeartbeat)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateHeartbeat")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckHeartbeat) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkHeartbeat)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckHeartbeat) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkHeartbeat)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckHeartbeat) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkHeartbeat)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateHeartbeat_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateHeartbeat'
+type checksServiceMock_UpdateHeartbeat_Call struct {
+	*mock.Call
+}
+
+// UpdateHeartbeat is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkHeartbeat upapi.CheckHeartbeat
+func (_e *checksServiceMock_Expecter) UpdateHeartbeat(context1 interface{}, primaryKeyable interface{}, checkHeartbeat interface{}) *checksServiceMock_UpdateHeartbeat_Call {
+	return &checksServiceMock_UpdateHeartbeat_Call{Call: _e.mock.On("UpdateHeartbeat", context1, primaryKeyable, checkHeartbeat)}
+}
+
+func (_c *checksServiceMock_UpdateHeartbeat_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkHeartbeat upapi.CheckHeartbeat)) *checksServiceMock_UpdateHeartbeat_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckHeartbeat
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckHeartbeat)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateHeartbeat_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateHeartbeat_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateHeartbeat_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkHeartbeat upapi.CheckHeartbeat) (*upapi.Check, error)) *checksServiceMock_UpdateHeartbeat_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateICMP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateICMP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkICMP upapi.CheckICMP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkICMP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateICMP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckICMP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkICMP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckICMP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkICMP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckICMP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkICMP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateICMP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateICMP'
+type checksServiceMock_UpdateICMP_Call struct {
+	*mock.Call
+}
+
+// UpdateICMP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkICMP upapi.CheckICMP
+func (_e *checksServiceMock_Expecter) UpdateICMP(context1 interface{}, primaryKeyable interface{}, checkICMP interface{}) *checksServiceMock_UpdateICMP_Call {
+	return &checksServiceMock_UpdateICMP_Call{Call: _e.mock.On("UpdateICMP", context1, primaryKeyable, checkICMP)}
+}
+
+func (_c *checksServiceMock_UpdateICMP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkICMP upapi.CheckICMP)) *checksServiceMock_UpdateICMP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckICMP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckICMP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateICMP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateICMP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateICMP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkICMP upapi.CheckICMP) (*upapi.Check, error)) *checksServiceMock_UpdateICMP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateIMAP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateIMAP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkIMAP upapi.CheckIMAP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkIMAP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateIMAP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckIMAP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkIMAP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckIMAP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkIMAP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckIMAP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkIMAP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateIMAP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateIMAP'
+type checksServiceMock_UpdateIMAP_Call struct {
+	*mock.Call
+}
+
+// UpdateIMAP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkIMAP upapi.CheckIMAP
+func (_e *checksServiceMock_Expecter) UpdateIMAP(context1 interface{}, primaryKeyable interface{}, checkIMAP interface{}) *checksServiceMock_UpdateIMAP_Call {
+	return &checksServiceMock_UpdateIMAP_Call{Call: _e.mock.On("UpdateIMAP", context1, primaryKeyable, checkIMAP)}
+}
+
+func (_c *checksServiceMock_UpdateIMAP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkIMAP upapi.CheckIMAP)) *checksServiceMock_UpdateIMAP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckIMAP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckIMAP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateIMAP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateIMAP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateIMAP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkIMAP upapi.CheckIMAP) (*upapi.Check, error)) *checksServiceMock_UpdateIMAP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateMaintenance provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateMaintenance(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMaintenance upapi.CheckMaintenance) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkMaintenance)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateMaintenance")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMaintenance) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkMaintenance)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMaintenance) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkMaintenance)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMaintenance) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkMaintenance)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateMaintenance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateMaintenance'
+type checksServiceMock_UpdateMaintenance_Call struct {
+	*mock.Call
+}
+
+// UpdateMaintenance is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkMaintenance upapi.CheckMaintenance
+func (_e *checksServiceMock_Expecter) UpdateMaintenance(context1 interface{}, primaryKeyable interface{}, checkMaintenance interface{}) *checksServiceMock_UpdateMaintenance_Call {
+	return &checksServiceMock_UpdateMaintenance_Call{Call: _e.mock.On("UpdateMaintenance", context1, primaryKeyable, checkMaintenance)}
+}
+
+func (_c *checksServiceMock_UpdateMaintenance_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMaintenance upapi.CheckMaintenance)) *checksServiceMock_UpdateMaintenance_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckMaintenance
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckMaintenance)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateMaintenance_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateMaintenance_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateMaintenance_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMaintenance upapi.CheckMaintenance) (*upapi.Check, error)) *checksServiceMock_UpdateMaintenance_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateMalware provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateMalware(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMalware upapi.CheckMalware) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkMalware)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateMalware")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMalware) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkMalware)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMalware) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkMalware)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMalware) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkMalware)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateMalware_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateMalware'
+type checksServiceMock_UpdateMalware_Call struct {
+	*mock.Call
+}
+
+// UpdateMalware is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkMalware upapi.CheckMalware
+func (_e *checksServiceMock_Expecter) UpdateMalware(context1 interface{}, primaryKeyable interface{}, checkMalware interface{}) *checksServiceMock_UpdateMalware_Call {
+	return &checksServiceMock_UpdateMalware_Call{Call: _e.mock.On("UpdateMalware", context1, primaryKeyable, checkMalware)}
+}
+
+func (_c *checksServiceMock_UpdateMalware_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMalware upapi.CheckMalware)) *checksServiceMock_UpdateMalware_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckMalware
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckMalware)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateMalware_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateMalware_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateMalware_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMalware upapi.CheckMalware) (*upapi.Check, error)) *checksServiceMock_UpdateMalware_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateNTP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateNTP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkNTP upapi.CheckNTP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkNTP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateNTP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckNTP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkNTP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckNTP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkNTP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckNTP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkNTP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateNTP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateNTP'
+type checksServiceMock_UpdateNTP_Call struct {
+	*mock.Call
+}
+
+// UpdateNTP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkNTP upapi.CheckNTP
+func (_e *checksServiceMock_Expecter) UpdateNTP(context1 interface{}, primaryKeyable interface{}, checkNTP interface{}) *checksServiceMock_UpdateNTP_Call {
+	return &checksServiceMock_UpdateNTP_Call{Call: _e.mock.On("UpdateNTP", context1, primaryKeyable, checkNTP)}
+}
+
+func (_c *checksServiceMock_UpdateNTP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkNTP upapi.CheckNTP)) *checksServiceMock_UpdateNTP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckNTP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckNTP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateNTP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateNTP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateNTP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkNTP upapi.CheckNTP) (*upapi.Check, error)) *checksServiceMock_UpdateNTP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdatePOP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdatePOP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkPOP upapi.CheckPOP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkPOP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdatePOP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckPOP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkPOP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckPOP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkPOP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckPOP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkPOP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdatePOP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdatePOP'
+type checksServiceMock_UpdatePOP_Call struct {
+	*mock.Call
+}
+
+// UpdatePOP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkPOP upapi.CheckPOP
+func (_e *checksServiceMock_Expecter) UpdatePOP(context1 interface{}, primaryKeyable interface{}, checkPOP interface{}) *checksServiceMock_UpdatePOP_Call {
+	return &checksServiceMock_UpdatePOP_Call{Call: _e.mock.On("UpdatePOP", context1, primaryKeyable, checkPOP)}
+}
+
+func (_c *checksServiceMock_UpdatePOP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkPOP upapi.CheckPOP)) *checksServiceMock_UpdatePOP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckPOP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckPOP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdatePOP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdatePOP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdatePOP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkPOP upapi.CheckPOP) (*upapi.Check, error)) *checksServiceMock_UpdatePOP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdatePageSpeed provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdatePageSpeed(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkPageSpeed upapi.CheckPageSpeed) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkPageSpeed)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdatePageSpeed")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckPageSpeed) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkPageSpeed)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckPageSpeed) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkPageSpeed)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckPageSpeed) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkPageSpeed)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdatePageSpeed_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdatePageSpeed'
+type checksServiceMock_UpdatePageSpeed_Call struct {
+	*mock.Call
+}
+
+// UpdatePageSpeed is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkPageSpeed upapi.CheckPageSpeed
+func (_e *checksServiceMock_Expecter) UpdatePageSpeed(context1 interface{}, primaryKeyable interface{}, checkPageSpeed interface{}) *checksServiceMock_UpdatePageSpeed_Call {
+	return &checksServiceMock_UpdatePageSpeed_Call{Call: _e.mock.On("UpdatePageSpeed", context1, primaryKeyable, checkPageSpeed)}
+}
+
+func (_c *checksServiceMock_UpdatePageSpeed_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkPageSpeed upapi.CheckPageSpeed)) *checksServiceMock_UpdatePageSpeed_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckPageSpeed
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckPageSpeed)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdatePageSpeed_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdatePageSpeed_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdatePageSpeed_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkPageSpeed upapi.CheckPageSpeed) (*upapi.Check, error)) *checksServiceMock_UpdatePageSpeed_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateRDAP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateRDAP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRDAP upapi.CheckRDAP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkRDAP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateRDAP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRDAP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkRDAP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRDAP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkRDAP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRDAP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkRDAP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateRDAP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateRDAP'
+type checksServiceMock_UpdateRDAP_Call struct {
+	*mock.Call
+}
+
+// UpdateRDAP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkRDAP upapi.CheckRDAP
+func (_e *checksServiceMock_Expecter) UpdateRDAP(context1 interface{}, primaryKeyable interface{}, checkRDAP interface{}) *checksServiceMock_UpdateRDAP_Call {
+	return &checksServiceMock_UpdateRDAP_Call{Call: _e.mock.On("UpdateRDAP", context1, primaryKeyable, checkRDAP)}
+}
+
+func (_c *checksServiceMock_UpdateRDAP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRDAP upapi.CheckRDAP)) *checksServiceMock_UpdateRDAP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckRDAP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckRDAP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateRDAP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateRDAP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateRDAP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRDAP upapi.CheckRDAP) (*upapi.Check, error)) *checksServiceMock_UpdateRDAP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateRUM provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateRUM(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRUM upapi.CheckRUM) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkRUM)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateRUM")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRUM) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkRUM)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRUM) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkRUM)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRUM) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkRUM)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateRUM_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateRUM'
+type checksServiceMock_UpdateRUM_Call struct {
+	*mock.Call
+}
+
+// UpdateRUM is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkRUM upapi.CheckRUM
+func (_e *checksServiceMock_Expecter) UpdateRUM(context1 interface{}, primaryKeyable interface{}, checkRUM interface{}) *checksServiceMock_UpdateRUM_Call {
+	return &checksServiceMock_UpdateRUM_Call{Call: _e.mock.On("UpdateRUM", context1, primaryKeyable, checkRUM)}
+}
+
+func (_c *checksServiceMock_UpdateRUM_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRUM upapi.CheckRUM)) *checksServiceMock_UpdateRUM_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckRUM
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckRUM)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateRUM_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateRUM_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateRUM_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRUM upapi.CheckRUM) (*upapi.Check, error)) *checksServiceMock_UpdateRUM_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateRUM2 provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateRUM2(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRUM2 upapi.CheckRUM2) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkRUM2)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateRUM2")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRUM2) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkRUM2)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRUM2) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkRUM2)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckRUM2) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkRUM2)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateRUM2_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateRUM2'
+type checksServiceMock_UpdateRUM2_Call struct {
+	*mock.Call
+}
+
+// UpdateRUM2 is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkRUM2 upapi.CheckRUM2
+func (_e *checksServiceMock_Expecter) UpdateRUM2(context1 interface{}, primaryKeyable interface{}, checkRUM2 interface{}) *checksServiceMock_UpdateRUM2_Call {
+	return &checksServiceMock_UpdateRUM2_Call{Call: _e.mock.On("UpdateRUM2", context1, primaryKeyable, checkRUM2)}
+}
+
+func (_c *checksServiceMock_UpdateRUM2_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRUM2 upapi.CheckRUM2)) *checksServiceMock_UpdateRUM2_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckRUM2
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckRUM2)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateRUM2_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateRUM2_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateRUM2_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkRUM2 upapi.CheckRUM2) (*upapi.Check, error)) *checksServiceMock_UpdateRUM2_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateSMTP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateSMTP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSMTP upapi.CheckSMTP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkSMTP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateSMTP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSMTP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkSMTP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSMTP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkSMTP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSMTP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkSMTP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateSMTP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateSMTP'
+type checksServiceMock_UpdateSMTP_Call struct {
+	*mock.Call
+}
+
+// UpdateSMTP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkSMTP upapi.CheckSMTP
+func (_e *checksServiceMock_Expecter) UpdateSMTP(context1 interface{}, primaryKeyable interface{}, checkSMTP interface{}) *checksServiceMock_UpdateSMTP_Call {
+	return &checksServiceMock_UpdateSMTP_Call{Call: _e.mock.On("UpdateSMTP", context1, primaryKeyable, checkSMTP)}
+}
+
+func (_c *checksServiceMock_UpdateSMTP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSMTP upapi.CheckSMTP)) *checksServiceMock_UpdateSMTP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckSMTP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckSMTP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateSMTP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateSMTP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateSMTP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSMTP upapi.CheckSMTP) (*upapi.Check, error)) *checksServiceMock_UpdateSMTP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateSSH provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateSSH(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSSH upapi.CheckSSH) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkSSH)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateSSH")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSSH) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkSSH)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSSH) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkSSH)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSSH) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkSSH)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateSSH_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateSSH'
+type checksServiceMock_UpdateSSH_Call struct {
+	*mock.Call
+}
+
+// UpdateSSH is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkSSH upapi.CheckSSH
+func (_e *checksServiceMock_Expecter) UpdateSSH(context1 interface{}, primaryKeyable interface{}, checkSSH interface{}) *checksServiceMock_UpdateSSH_Call {
+	return &checksServiceMock_UpdateSSH_Call{Call: _e.mock.On("UpdateSSH", context1, primaryKeyable, checkSSH)}
+}
+
+func (_c *checksServiceMock_UpdateSSH_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSSH upapi.CheckSSH)) *checksServiceMock_UpdateSSH_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckSSH
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckSSH)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateSSH_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateSSH_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateSSH_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSSH upapi.CheckSSH) (*upapi.Check, error)) *checksServiceMock_UpdateSSH_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateSSLCert provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateSSLCert(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSSLCert upapi.CheckSSLCert) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkSSLCert)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateSSLCert")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSSLCert) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkSSLCert)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSSLCert) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkSSLCert)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckSSLCert) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkSSLCert)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateSSLCert_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateSSLCert'
+type checksServiceMock_UpdateSSLCert_Call struct {
+	*mock.Call
+}
+
+// UpdateSSLCert is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkSSLCert upapi.CheckSSLCert
+func (_e *checksServiceMock_Expecter) UpdateSSLCert(context1 interface{}, primaryKeyable interface{}, checkSSLCert interface{}) *checksServiceMock_UpdateSSLCert_Call {
+	return &checksServiceMock_UpdateSSLCert_Call{Call: _e.mock.On("UpdateSSLCert", context1, primaryKeyable, checkSSLCert)}
+}
+
+func (_c *checksServiceMock_UpdateSSLCert_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSSLCert upapi.CheckSSLCert)) *checksServiceMock_UpdateSSLCert_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckSSLCert
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckSSLCert)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateSSLCert_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateSSLCert_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateSSLCert_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkSSLCert upapi.CheckSSLCert) (*upapi.Check, error)) *checksServiceMock_UpdateSSLCert_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateTCP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateTCP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkTCP upapi.CheckTCP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkTCP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateTCP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckTCP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkTCP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckTCP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkTCP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckTCP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkTCP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateTCP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateTCP'
+type checksServiceMock_UpdateTCP_Call struct {
+	*mock.Call
+}
+
+// UpdateTCP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkTCP upapi.CheckTCP
+func (_e *checksServiceMock_Expecter) UpdateTCP(context1 interface{}, primaryKeyable interface{}, checkTCP interface{}) *checksServiceMock_UpdateTCP_Call {
+	return &checksServiceMock_UpdateTCP_Call{Call: _e.mock.On("UpdateTCP", context1, primaryKeyable, checkTCP)}
+}
+
+func (_c *checksServiceMock_UpdateTCP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkTCP upapi.CheckTCP)) *checksServiceMock_UpdateTCP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckTCP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckTCP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateTCP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateTCP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateTCP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkTCP upapi.CheckTCP) (*upapi.Check, error)) *checksServiceMock_UpdateTCP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateTransaction provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateTransaction(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkTransaction upapi.CheckTransaction) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkTransaction)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateTransaction")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckTransaction) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkTransaction)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckTransaction) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkTransaction)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckTransaction) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkTransaction)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateTransaction_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateTransaction'
+type checksServiceMock_UpdateTransaction_Call struct {
+	*mock.Call
+}
+
+// UpdateTransaction is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkTransaction upapi.CheckTransaction
+func (_e *checksServiceMock_Expecter) UpdateTransaction(context1 interface{}, primaryKeyable interface{}, checkTransaction interface{}) *checksServiceMock_UpdateTransaction_Call {
+	return &checksServiceMock_UpdateTransaction_Call{Call: _e.mock.On("UpdateTransaction", context1, primaryKeyable, checkTransaction)}
+}
+
+func (_c *checksServiceMock_UpdateTransaction_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkTransaction upapi.CheckTransaction)) *checksServiceMock_UpdateTransaction_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckTransaction
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckTransaction)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateTransaction_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateTransaction_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateTransaction_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkTransaction upapi.CheckTransaction) (*upapi.Check, error)) *checksServiceMock_UpdateTransaction_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateUDP provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateUDP(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkUDP upapi.CheckUDP) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkUDP)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateUDP")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckUDP) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkUDP)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckUDP) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkUDP)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckUDP) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkUDP)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateUDP_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateUDP'
+type checksServiceMock_UpdateUDP_Call struct {
+	*mock.Call
+}
+
+// UpdateUDP is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkUDP upapi.CheckUDP
+func (_e *checksServiceMock_Expecter) UpdateUDP(context1 interface{}, primaryKeyable interface{}, checkUDP interface{}) *checksServiceMock_UpdateUDP_Call {
+	return &checksServiceMock_UpdateUDP_Call{Call: _e.mock.On("UpdateUDP", context1, primaryKeyable, checkUDP)}
+}
+
+func (_c *checksServiceMock_UpdateUDP_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkUDP upapi.CheckUDP)) *checksServiceMock_UpdateUDP_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckUDP
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckUDP)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateUDP_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateUDP_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateUDP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkUDP upapi.CheckUDP) (*upapi.Check, error)) *checksServiceMock_UpdateUDP_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateWHOIS provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateWHOIS(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkWHOIS upapi.CheckWHOIS) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkWHOIS)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateWHOIS")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckWHOIS) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkWHOIS)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckWHOIS) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkWHOIS)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckWHOIS) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkWHOIS)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateWHOIS_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateWHOIS'
+type checksServiceMock_UpdateWHOIS_Call struct {
+	*mock.Call
+}
+
+// UpdateWHOIS is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkWHOIS upapi.CheckWHOIS
+func (_e *checksServiceMock_Expecter) UpdateWHOIS(context1 interface{}, primaryKeyable interface{}, checkWHOIS interface{}) *checksServiceMock_UpdateWHOIS_Call {
+	return &checksServiceMock_UpdateWHOIS_Call{Call: _e.mock.On("UpdateWHOIS", context1, primaryKeyable, checkWHOIS)}
+}
+
+func (_c *checksServiceMock_UpdateWHOIS_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkWHOIS upapi.CheckWHOIS)) *checksServiceMock_UpdateWHOIS_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckWHOIS
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckWHOIS)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateWHOIS_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateWHOIS_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateWHOIS_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkWHOIS upapi.CheckWHOIS) (*upapi.Check, error)) *checksServiceMock_UpdateWHOIS_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateWebhook provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateWebhook(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkWebhook upapi.CheckWebhook) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkWebhook)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateWebhook")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckWebhook) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkWebhook)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckWebhook) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkWebhook)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckWebhook) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkWebhook)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateWebhook'
+type checksServiceMock_UpdateWebhook_Call struct {
+	*mock.Call
+}
+
+// UpdateWebhook is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkWebhook upapi.CheckWebhook
+func (_e *checksServiceMock_Expecter) UpdateWebhook(context1 interface{}, primaryKeyable interface{}, checkWebhook interface{}) *checksServiceMock_UpdateWebhook_Call {
+	return &checksServiceMock_UpdateWebhook_Call{Call: _e.mock.On("UpdateWebhook", context1, primaryKeyable, checkWebhook)}
+}
+
+func (_c *checksServiceMock_UpdateWebhook_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkWebhook upapi.CheckWebhook)) *checksServiceMock_UpdateWebhook_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckWebhook
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckWebhook)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateWebhook_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateWebhook_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateWebhook_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkWebhook upapi.CheckWebhook) (*upapi.Check, error)) *checksServiceMock_UpdateWebhook_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -687,39 +4578,31 @@ func (_m *tagsServiceMock) EXPECT() *tagsServiceMock_Expecter {
 }
 
 // Create provides a mock function for the type tagsServiceMock
-func (_mock *tagsServiceMock) Create(ctx context.Context, tag *uptime0.Tag) (*uptime0.Tag, *http.Response, error) {
-	ret := _mock.Called(ctx, tag)
+func (_mock *tagsServiceMock) Create(context1 context.Context, tag upapi.Tag) (*upapi.Tag, error) {
+	ret := _mock.Called(context1, tag)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
-	var r0 *uptime0.Tag
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.Tag) (*uptime0.Tag, *http.Response, error)); ok {
-		return returnFunc(ctx, tag)
+	var r0 *upapi.Tag
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.Tag) (*upapi.Tag, error)); ok {
+		return returnFunc(context1, tag)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.Tag) *uptime0.Tag); ok {
-		r0 = returnFunc(ctx, tag)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.Tag) *upapi.Tag); ok {
+		r0 = returnFunc(context1, tag)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*uptime0.Tag)
+			r0 = ret.Get(0).(*upapi.Tag)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *uptime0.Tag) *http.Response); ok {
-		r1 = returnFunc(ctx, tag)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.Tag) error); ok {
+		r1 = returnFunc(context1, tag)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, *uptime0.Tag) error); ok {
-		r2 = returnFunc(ctx, tag)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // tagsServiceMock_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
@@ -728,21 +4611,21 @@ type tagsServiceMock_Create_Call struct {
 }
 
 // Create is a helper method to define mock.On call
-//   - ctx context.Context
-//   - tag *uptime0.Tag
-func (_e *tagsServiceMock_Expecter) Create(ctx interface{}, tag interface{}) *tagsServiceMock_Create_Call {
-	return &tagsServiceMock_Create_Call{Call: _e.mock.On("Create", ctx, tag)}
+//   - context1 context.Context
+//   - tag upapi.Tag
+func (_e *tagsServiceMock_Expecter) Create(context1 interface{}, tag interface{}) *tagsServiceMock_Create_Call {
+	return &tagsServiceMock_Create_Call{Call: _e.mock.On("Create", context1, tag)}
 }
 
-func (_c *tagsServiceMock_Create_Call) Run(run func(ctx context.Context, tag *uptime0.Tag)) *tagsServiceMock_Create_Call {
+func (_c *tagsServiceMock_Create_Call) Run(run func(context1 context.Context, tag upapi.Tag)) *tagsServiceMock_Create_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *uptime0.Tag
+		var arg1 upapi.Tag
 		if args[1] != nil {
-			arg1 = args[1].(*uptime0.Tag)
+			arg1 = args[1].(upapi.Tag)
 		}
 		run(
 			arg0,
@@ -752,42 +4635,31 @@ func (_c *tagsServiceMock_Create_Call) Run(run func(ctx context.Context, tag *up
 	return _c
 }
 
-func (_c *tagsServiceMock_Create_Call) Return(tag1 *uptime0.Tag, response *http.Response, err error) *tagsServiceMock_Create_Call {
-	_c.Call.Return(tag1, response, err)
+func (_c *tagsServiceMock_Create_Call) Return(tag1 *upapi.Tag, err error) *tagsServiceMock_Create_Call {
+	_c.Call.Return(tag1, err)
 	return _c
 }
 
-func (_c *tagsServiceMock_Create_Call) RunAndReturn(run func(ctx context.Context, tag *uptime0.Tag) (*uptime0.Tag, *http.Response, error)) *tagsServiceMock_Create_Call {
+func (_c *tagsServiceMock_Create_Call) RunAndReturn(run func(context1 context.Context, tag upapi.Tag) (*upapi.Tag, error)) *tagsServiceMock_Create_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Delete provides a mock function for the type tagsServiceMock
-func (_mock *tagsServiceMock) Delete(ctx context.Context, pk int) (*http.Response, error) {
-	ret := _mock.Called(ctx, pk)
+func (_mock *tagsServiceMock) Delete(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) error {
+	ret := _mock.Called(context1, primaryKeyable)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
 	}
 
-	var r0 *http.Response
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int) (*http.Response, error)); ok {
-		return returnFunc(ctx, pk)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int) *http.Response); ok {
-		r0 = returnFunc(ctx, pk)
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r0 = returnFunc(context1, primaryKeyable)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*http.Response)
-		}
+		r0 = ret.Error(0)
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, int) error); ok {
-		r1 = returnFunc(ctx, pk)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
+	return r0
 }
 
 // tagsServiceMock_Delete_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Delete'
@@ -796,21 +4668,21 @@ type tagsServiceMock_Delete_Call struct {
 }
 
 // Delete is a helper method to define mock.On call
-//   - ctx context.Context
-//   - pk int
-func (_e *tagsServiceMock_Expecter) Delete(ctx interface{}, pk interface{}) *tagsServiceMock_Delete_Call {
-	return &tagsServiceMock_Delete_Call{Call: _e.mock.On("Delete", ctx, pk)}
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *tagsServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *tagsServiceMock_Delete_Call {
+	return &tagsServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
 }
 
-func (_c *tagsServiceMock_Delete_Call) Run(run func(ctx context.Context, pk int)) *tagsServiceMock_Delete_Call {
+func (_c *tagsServiceMock_Delete_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *tagsServiceMock_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 int
+		var arg1 upapi.PrimaryKeyable
 		if args[1] != nil {
-			arg1 = args[1].(int)
+			arg1 = args[1].(upapi.PrimaryKeyable)
 		}
 		run(
 			arg0,
@@ -820,50 +4692,42 @@ func (_c *tagsServiceMock_Delete_Call) Run(run func(ctx context.Context, pk int)
 	return _c
 }
 
-func (_c *tagsServiceMock_Delete_Call) Return(response *http.Response, err error) *tagsServiceMock_Delete_Call {
-	_c.Call.Return(response, err)
+func (_c *tagsServiceMock_Delete_Call) Return(err error) *tagsServiceMock_Delete_Call {
+	_c.Call.Return(err)
 	return _c
 }
 
-func (_c *tagsServiceMock_Delete_Call) RunAndReturn(run func(ctx context.Context, pk int) (*http.Response, error)) *tagsServiceMock_Delete_Call {
+func (_c *tagsServiceMock_Delete_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) error) *tagsServiceMock_Delete_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Get provides a mock function for the type tagsServiceMock
-func (_mock *tagsServiceMock) Get(ctx context.Context, pk int) (*uptime0.Tag, *http.Response, error) {
-	ret := _mock.Called(ctx, pk)
+func (_mock *tagsServiceMock) Get(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.Tag, error) {
+	ret := _mock.Called(context1, primaryKeyable)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
 	}
 
-	var r0 *uptime0.Tag
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int) (*uptime0.Tag, *http.Response, error)); ok {
-		return returnFunc(ctx, pk)
+	var r0 *upapi.Tag
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) (*upapi.Tag, error)); ok {
+		return returnFunc(context1, primaryKeyable)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int) *uptime0.Tag); ok {
-		r0 = returnFunc(ctx, pk)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) *upapi.Tag); ok {
+		r0 = returnFunc(context1, primaryKeyable)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*uptime0.Tag)
+			r0 = ret.Get(0).(*upapi.Tag)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, int) *http.Response); ok {
-		r1 = returnFunc(ctx, pk)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r1 = returnFunc(context1, primaryKeyable)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, int) error); ok {
-		r2 = returnFunc(ctx, pk)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // tagsServiceMock_Get_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Get'
@@ -872,21 +4736,21 @@ type tagsServiceMock_Get_Call struct {
 }
 
 // Get is a helper method to define mock.On call
-//   - ctx context.Context
-//   - pk int
-func (_e *tagsServiceMock_Expecter) Get(ctx interface{}, pk interface{}) *tagsServiceMock_Get_Call {
-	return &tagsServiceMock_Get_Call{Call: _e.mock.On("Get", ctx, pk)}
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *tagsServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *tagsServiceMock_Get_Call {
+	return &tagsServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
-func (_c *tagsServiceMock_Get_Call) Run(run func(ctx context.Context, pk int)) *tagsServiceMock_Get_Call {
+func (_c *tagsServiceMock_Get_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *tagsServiceMock_Get_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 int
+		var arg1 upapi.PrimaryKeyable
 		if args[1] != nil {
-			arg1 = args[1].(int)
+			arg1 = args[1].(upapi.PrimaryKeyable)
 		}
 		run(
 			arg0,
@@ -896,50 +4760,42 @@ func (_c *tagsServiceMock_Get_Call) Run(run func(ctx context.Context, pk int)) *
 	return _c
 }
 
-func (_c *tagsServiceMock_Get_Call) Return(tag *uptime0.Tag, response *http.Response, err error) *tagsServiceMock_Get_Call {
-	_c.Call.Return(tag, response, err)
+func (_c *tagsServiceMock_Get_Call) Return(tag *upapi.Tag, err error) *tagsServiceMock_Get_Call {
+	_c.Call.Return(tag, err)
 	return _c
 }
 
-func (_c *tagsServiceMock_Get_Call) RunAndReturn(run func(ctx context.Context, pk int) (*uptime0.Tag, *http.Response, error)) *tagsServiceMock_Get_Call {
+func (_c *tagsServiceMock_Get_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.Tag, error)) *tagsServiceMock_Get_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // List provides a mock function for the type tagsServiceMock
-func (_mock *tagsServiceMock) List(ctx context.Context, opt *uptime0.TagListOptions) ([]*uptime0.Tag, *http.Response, error) {
-	ret := _mock.Called(ctx, opt)
+func (_mock *tagsServiceMock) List(context1 context.Context, tagListOptions upapi.TagListOptions) ([]upapi.Tag, error) {
+	ret := _mock.Called(context1, tagListOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []*uptime0.Tag
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.TagListOptions) ([]*uptime0.Tag, *http.Response, error)); ok {
-		return returnFunc(ctx, opt)
+	var r0 []upapi.Tag
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.TagListOptions) ([]upapi.Tag, error)); ok {
+		return returnFunc(context1, tagListOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.TagListOptions) []*uptime0.Tag); ok {
-		r0 = returnFunc(ctx, opt)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.TagListOptions) []upapi.Tag); ok {
+		r0 = returnFunc(context1, tagListOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*uptime0.Tag)
+			r0 = ret.Get(0).([]upapi.Tag)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *uptime0.TagListOptions) *http.Response); ok {
-		r1 = returnFunc(ctx, opt)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.TagListOptions) error); ok {
+		r1 = returnFunc(context1, tagListOptions)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, *uptime0.TagListOptions) error); ok {
-		r2 = returnFunc(ctx, opt)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // tagsServiceMock_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
@@ -948,21 +4804,21 @@ type tagsServiceMock_List_Call struct {
 }
 
 // List is a helper method to define mock.On call
-//   - ctx context.Context
-//   - opt *uptime0.TagListOptions
-func (_e *tagsServiceMock_Expecter) List(ctx interface{}, opt interface{}) *tagsServiceMock_List_Call {
-	return &tagsServiceMock_List_Call{Call: _e.mock.On("List", ctx, opt)}
+//   - context1 context.Context
+//   - tagListOptions upapi.TagListOptions
+func (_e *tagsServiceMock_Expecter) List(context1 interface{}, tagListOptions interface{}) *tagsServiceMock_List_Call {
+	return &tagsServiceMock_List_Call{Call: _e.mock.On("List", context1, tagListOptions)}
 }
 
-func (_c *tagsServiceMock_List_Call) Run(run func(ctx context.Context, opt *uptime0.TagListOptions)) *tagsServiceMock_List_Call {
+func (_c *tagsServiceMock_List_Call) Run(run func(context1 context.Context, tagListOptions upapi.TagListOptions)) *tagsServiceMock_List_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *uptime0.TagListOptions
+		var arg1 upapi.TagListOptions
 		if args[1] != nil {
-			arg1 = args[1].(*uptime0.TagListOptions)
+			arg1 = args[1].(upapi.TagListOptions)
 		}
 		run(
 			arg0,
@@ -972,50 +4828,42 @@ func (_c *tagsServiceMock_List_Call) Run(run func(ctx context.Context, opt *upti
 	return _c
 }
 
-func (_c *tagsServiceMock_List_Call) Return(tags []*uptime0.Tag, response *http.Response, err error) *tagsServiceMock_List_Call {
-	_c.Call.Return(tags, response, err)
+func (_c *tagsServiceMock_List_Call) Return(tags []upapi.Tag, err error) *tagsServiceMock_List_Call {
+	_c.Call.Return(tags, err)
 	return _c
 }
 
-func (_c *tagsServiceMock_List_Call) RunAndReturn(run func(ctx context.Context, opt *uptime0.TagListOptions) ([]*uptime0.Tag, *http.Response, error)) *tagsServiceMock_List_Call {
+func (_c *tagsServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, tagListOptions upapi.TagListOptions) ([]upapi.Tag, error)) *tagsServiceMock_List_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Update provides a mock function for the type tagsServiceMock
-func (_mock *tagsServiceMock) Update(ctx context.Context, tag *uptime0.Tag) (*uptime0.Tag, *http.Response, error) {
-	ret := _mock.Called(ctx, tag)
+func (_mock *tagsServiceMock) Update(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, tag upapi.Tag) (*upapi.Tag, error) {
+	ret := _mock.Called(context1, primaryKeyable, tag)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
 	}
 
-	var r0 *uptime0.Tag
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.Tag) (*uptime0.Tag, *http.Response, error)); ok {
-		return returnFunc(ctx, tag)
+	var r0 *upapi.Tag
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.Tag) (*upapi.Tag, error)); ok {
+		return returnFunc(context1, primaryKeyable, tag)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.Tag) *uptime0.Tag); ok {
-		r0 = returnFunc(ctx, tag)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.Tag) *upapi.Tag); ok {
+		r0 = returnFunc(context1, primaryKeyable, tag)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*uptime0.Tag)
+			r0 = ret.Get(0).(*upapi.Tag)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *uptime0.Tag) *http.Response); ok {
-		r1 = returnFunc(ctx, tag)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.Tag) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, tag)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, *uptime0.Tag) error); ok {
-		r2 = returnFunc(ctx, tag)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // tagsServiceMock_Update_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Update'
@@ -1024,36 +4872,42 @@ type tagsServiceMock_Update_Call struct {
 }
 
 // Update is a helper method to define mock.On call
-//   - ctx context.Context
-//   - tag *uptime0.Tag
-func (_e *tagsServiceMock_Expecter) Update(ctx interface{}, tag interface{}) *tagsServiceMock_Update_Call {
-	return &tagsServiceMock_Update_Call{Call: _e.mock.On("Update", ctx, tag)}
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - tag upapi.Tag
+func (_e *tagsServiceMock_Expecter) Update(context1 interface{}, primaryKeyable interface{}, tag interface{}) *tagsServiceMock_Update_Call {
+	return &tagsServiceMock_Update_Call{Call: _e.mock.On("Update", context1, primaryKeyable, tag)}
 }
 
-func (_c *tagsServiceMock_Update_Call) Run(run func(ctx context.Context, tag *uptime0.Tag)) *tagsServiceMock_Update_Call {
+func (_c *tagsServiceMock_Update_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, tag upapi.Tag)) *tagsServiceMock_Update_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *uptime0.Tag
+		var arg1 upapi.PrimaryKeyable
 		if args[1] != nil {
-			arg1 = args[1].(*uptime0.Tag)
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.Tag
+		if args[2] != nil {
+			arg2 = args[2].(upapi.Tag)
 		}
 		run(
 			arg0,
 			arg1,
+			arg2,
 		)
 	})
 	return _c
 }
 
-func (_c *tagsServiceMock_Update_Call) Return(tag1 *uptime0.Tag, response *http.Response, err error) *tagsServiceMock_Update_Call {
-	_c.Call.Return(tag1, response, err)
+func (_c *tagsServiceMock_Update_Call) Return(tag1 *upapi.Tag, err error) *tagsServiceMock_Update_Call {
+	_c.Call.Return(tag1, err)
 	return _c
 }
 
-func (_c *tagsServiceMock_Update_Call) RunAndReturn(run func(ctx context.Context, tag *uptime0.Tag) (*uptime0.Tag, *http.Response, error)) *tagsServiceMock_Update_Call {
+func (_c *tagsServiceMock_Update_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, tag upapi.Tag) (*upapi.Tag, error)) *tagsServiceMock_Update_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1086,39 +4940,31 @@ func (_m *outagesServiceMock) EXPECT() *outagesServiceMock_Expecter {
 }
 
 // Get provides a mock function for the type outagesServiceMock
-func (_mock *outagesServiceMock) Get(ctx context.Context, pk string) (*uptime0.Outage, *http.Response, error) {
-	ret := _mock.Called(ctx, pk)
+func (_mock *outagesServiceMock) Get(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.Outage, error) {
+	ret := _mock.Called(context1, primaryKeyable)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
 	}
 
-	var r0 *uptime0.Outage
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (*uptime0.Outage, *http.Response, error)); ok {
-		return returnFunc(ctx, pk)
+	var r0 *upapi.Outage
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) (*upapi.Outage, error)); ok {
+		return returnFunc(context1, primaryKeyable)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) *uptime0.Outage); ok {
-		r0 = returnFunc(ctx, pk)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) *upapi.Outage); ok {
+		r0 = returnFunc(context1, primaryKeyable)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*uptime0.Outage)
+			r0 = ret.Get(0).(*upapi.Outage)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, string) *http.Response); ok {
-		r1 = returnFunc(ctx, pk)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r1 = returnFunc(context1, primaryKeyable)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, string) error); ok {
-		r2 = returnFunc(ctx, pk)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // outagesServiceMock_Get_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Get'
@@ -1127,21 +4973,21 @@ type outagesServiceMock_Get_Call struct {
 }
 
 // Get is a helper method to define mock.On call
-//   - ctx context.Context
-//   - pk string
-func (_e *outagesServiceMock_Expecter) Get(ctx interface{}, pk interface{}) *outagesServiceMock_Get_Call {
-	return &outagesServiceMock_Get_Call{Call: _e.mock.On("Get", ctx, pk)}
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *outagesServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *outagesServiceMock_Get_Call {
+	return &outagesServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
-func (_c *outagesServiceMock_Get_Call) Run(run func(ctx context.Context, pk string)) *outagesServiceMock_Get_Call {
+func (_c *outagesServiceMock_Get_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *outagesServiceMock_Get_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 string
+		var arg1 upapi.PrimaryKeyable
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].(upapi.PrimaryKeyable)
 		}
 		run(
 			arg0,
@@ -1151,50 +4997,42 @@ func (_c *outagesServiceMock_Get_Call) Run(run func(ctx context.Context, pk stri
 	return _c
 }
 
-func (_c *outagesServiceMock_Get_Call) Return(outage *uptime0.Outage, response *http.Response, err error) *outagesServiceMock_Get_Call {
-	_c.Call.Return(outage, response, err)
+func (_c *outagesServiceMock_Get_Call) Return(outage *upapi.Outage, err error) *outagesServiceMock_Get_Call {
+	_c.Call.Return(outage, err)
 	return _c
 }
 
-func (_c *outagesServiceMock_Get_Call) RunAndReturn(run func(ctx context.Context, pk string) (*uptime0.Outage, *http.Response, error)) *outagesServiceMock_Get_Call {
+func (_c *outagesServiceMock_Get_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.Outage, error)) *outagesServiceMock_Get_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // List provides a mock function for the type outagesServiceMock
-func (_mock *outagesServiceMock) List(ctx context.Context, opt *uptime0.OutageListOptions) ([]*uptime0.Outage, *http.Response, error) {
-	ret := _mock.Called(ctx, opt)
+func (_mock *outagesServiceMock) List(context1 context.Context, outageListOptions upapi.OutageListOptions) ([]upapi.Outage, error) {
+	ret := _mock.Called(context1, outageListOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []*uptime0.Outage
-	var r1 *http.Response
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.OutageListOptions) ([]*uptime0.Outage, *http.Response, error)); ok {
-		return returnFunc(ctx, opt)
+	var r0 []upapi.Outage
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.OutageListOptions) ([]upapi.Outage, error)); ok {
+		return returnFunc(context1, outageListOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *uptime0.OutageListOptions) []*uptime0.Outage); ok {
-		r0 = returnFunc(ctx, opt)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.OutageListOptions) []upapi.Outage); ok {
+		r0 = returnFunc(context1, outageListOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*uptime0.Outage)
+			r0 = ret.Get(0).([]upapi.Outage)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *uptime0.OutageListOptions) *http.Response); ok {
-		r1 = returnFunc(ctx, opt)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.OutageListOptions) error); ok {
+		r1 = returnFunc(context1, outageListOptions)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
+		r1 = ret.Error(1)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, *uptime0.OutageListOptions) error); ok {
-		r2 = returnFunc(ctx, opt)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
+	return r0, r1
 }
 
 // outagesServiceMock_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
@@ -1203,21 +5041,21 @@ type outagesServiceMock_List_Call struct {
 }
 
 // List is a helper method to define mock.On call
-//   - ctx context.Context
-//   - opt *uptime0.OutageListOptions
-func (_e *outagesServiceMock_Expecter) List(ctx interface{}, opt interface{}) *outagesServiceMock_List_Call {
-	return &outagesServiceMock_List_Call{Call: _e.mock.On("List", ctx, opt)}
+//   - context1 context.Context
+//   - outageListOptions upapi.OutageListOptions
+func (_e *outagesServiceMock_Expecter) List(context1 interface{}, outageListOptions interface{}) *outagesServiceMock_List_Call {
+	return &outagesServiceMock_List_Call{Call: _e.mock.On("List", context1, outageListOptions)}
 }
 
-func (_c *outagesServiceMock_List_Call) Run(run func(ctx context.Context, opt *uptime0.OutageListOptions)) *outagesServiceMock_List_Call {
+func (_c *outagesServiceMock_List_Call) Run(run func(context1 context.Context, outageListOptions upapi.OutageListOptions)) *outagesServiceMock_List_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *uptime0.OutageListOptions
+		var arg1 upapi.OutageListOptions
 		if args[1] != nil {
-			arg1 = args[1].(*uptime0.OutageListOptions)
+			arg1 = args[1].(upapi.OutageListOptions)
 		}
 		run(
 			arg0,
@@ -1227,12 +5065,374 @@ func (_c *outagesServiceMock_List_Call) Run(run func(ctx context.Context, opt *u
 	return _c
 }
 
-func (_c *outagesServiceMock_List_Call) Return(outages []*uptime0.Outage, response *http.Response, err error) *outagesServiceMock_List_Call {
-	_c.Call.Return(outages, response, err)
+func (_c *outagesServiceMock_List_Call) Return(outages []upapi.Outage, err error) *outagesServiceMock_List_Call {
+	_c.Call.Return(outages, err)
 	return _c
 }
 
-func (_c *outagesServiceMock_List_Call) RunAndReturn(run func(ctx context.Context, opt *uptime0.OutageListOptions) ([]*uptime0.Outage, *http.Response, error)) *outagesServiceMock_List_Call {
+func (_c *outagesServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, outageListOptions upapi.OutageListOptions) ([]upapi.Outage, error)) *outagesServiceMock_List_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// newContactsServiceMock creates a new instance of contactsServiceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func newContactsServiceMock(t interface {
+	mock.TestingT
+	Cleanup(func())
+}) *contactsServiceMock {
+	mock := &contactsServiceMock{}
+	mock.Mock.Test(t)
+
+	t.Cleanup(func() { mock.AssertExpectations(t) })
+
+	return mock
+}
+
+// contactsServiceMock is an autogenerated mock type for the mockeryContactsService type
+type contactsServiceMock struct {
+	mock.Mock
+}
+
+type contactsServiceMock_Expecter struct {
+	mock *mock.Mock
+}
+
+func (_m *contactsServiceMock) EXPECT() *contactsServiceMock_Expecter {
+	return &contactsServiceMock_Expecter{mock: &_m.Mock}
+}
+
+// Create provides a mock function for the type contactsServiceMock
+func (_mock *contactsServiceMock) Create(context1 context.Context, contact upapi.Contact) (*upapi.Contact, error) {
+	ret := _mock.Called(context1, contact)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Create")
+	}
+
+	var r0 *upapi.Contact
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.Contact) (*upapi.Contact, error)); ok {
+		return returnFunc(context1, contact)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.Contact) *upapi.Contact); ok {
+		r0 = returnFunc(context1, contact)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Contact)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.Contact) error); ok {
+		r1 = returnFunc(context1, contact)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// contactsServiceMock_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
+type contactsServiceMock_Create_Call struct {
+	*mock.Call
+}
+
+// Create is a helper method to define mock.On call
+//   - context1 context.Context
+//   - contact upapi.Contact
+func (_e *contactsServiceMock_Expecter) Create(context1 interface{}, contact interface{}) *contactsServiceMock_Create_Call {
+	return &contactsServiceMock_Create_Call{Call: _e.mock.On("Create", context1, contact)}
+}
+
+func (_c *contactsServiceMock_Create_Call) Run(run func(context1 context.Context, contact upapi.Contact)) *contactsServiceMock_Create_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.Contact
+		if args[1] != nil {
+			arg1 = args[1].(upapi.Contact)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *contactsServiceMock_Create_Call) Return(contact1 *upapi.Contact, err error) *contactsServiceMock_Create_Call {
+	_c.Call.Return(contact1, err)
+	return _c
+}
+
+func (_c *contactsServiceMock_Create_Call) RunAndReturn(run func(context1 context.Context, contact upapi.Contact) (*upapi.Contact, error)) *contactsServiceMock_Create_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Delete provides a mock function for the type contactsServiceMock
+func (_mock *contactsServiceMock) Delete(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) error {
+	ret := _mock.Called(context1, primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Delete")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r0 = returnFunc(context1, primaryKeyable)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// contactsServiceMock_Delete_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Delete'
+type contactsServiceMock_Delete_Call struct {
+	*mock.Call
+}
+
+// Delete is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *contactsServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *contactsServiceMock_Delete_Call {
+	return &contactsServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
+}
+
+func (_c *contactsServiceMock_Delete_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *contactsServiceMock_Delete_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *contactsServiceMock_Delete_Call) Return(err error) *contactsServiceMock_Delete_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *contactsServiceMock_Delete_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) error) *contactsServiceMock_Delete_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Get provides a mock function for the type contactsServiceMock
+func (_mock *contactsServiceMock) Get(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.Contact, error) {
+	ret := _mock.Called(context1, primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Get")
+	}
+
+	var r0 *upapi.Contact
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) (*upapi.Contact, error)); ok {
+		return returnFunc(context1, primaryKeyable)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) *upapi.Contact); ok {
+		r0 = returnFunc(context1, primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Contact)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r1 = returnFunc(context1, primaryKeyable)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// contactsServiceMock_Get_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Get'
+type contactsServiceMock_Get_Call struct {
+	*mock.Call
+}
+
+// Get is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *contactsServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *contactsServiceMock_Get_Call {
+	return &contactsServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
+}
+
+func (_c *contactsServiceMock_Get_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *contactsServiceMock_Get_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *contactsServiceMock_Get_Call) Return(contact *upapi.Contact, err error) *contactsServiceMock_Get_Call {
+	_c.Call.Return(contact, err)
+	return _c
+}
+
+func (_c *contactsServiceMock_Get_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.Contact, error)) *contactsServiceMock_Get_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// List provides a mock function for the type contactsServiceMock
+func (_mock *contactsServiceMock) List(context1 context.Context, contactListOptions upapi.ContactListOptions) ([]upapi.Contact, error) {
+	ret := _mock.Called(context1, contactListOptions)
+
+	if len(ret) == 0 {
+		panic("no return value specified for List")
+	}
+
+	var r0 []upapi.Contact
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.ContactListOptions) ([]upapi.Contact, error)); ok {
+		return returnFunc(context1, contactListOptions)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.ContactListOptions) []upapi.Contact); ok {
+		r0 = returnFunc(context1, contactListOptions)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]upapi.Contact)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.ContactListOptions) error); ok {
+		r1 = returnFunc(context1, contactListOptions)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// contactsServiceMock_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
+type contactsServiceMock_List_Call struct {
+	*mock.Call
+}
+
+// List is a helper method to define mock.On call
+//   - context1 context.Context
+//   - contactListOptions upapi.ContactListOptions
+func (_e *contactsServiceMock_Expecter) List(context1 interface{}, contactListOptions interface{}) *contactsServiceMock_List_Call {
+	return &contactsServiceMock_List_Call{Call: _e.mock.On("List", context1, contactListOptions)}
+}
+
+func (_c *contactsServiceMock_List_Call) Run(run func(context1 context.Context, contactListOptions upapi.ContactListOptions)) *contactsServiceMock_List_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.ContactListOptions
+		if args[1] != nil {
+			arg1 = args[1].(upapi.ContactListOptions)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *contactsServiceMock_List_Call) Return(contacts []upapi.Contact, err error) *contactsServiceMock_List_Call {
+	_c.Call.Return(contacts, err)
+	return _c
+}
+
+func (_c *contactsServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, contactListOptions upapi.ContactListOptions) ([]upapi.Contact, error)) *contactsServiceMock_List_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Update provides a mock function for the type contactsServiceMock
+func (_mock *contactsServiceMock) Update(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, contact upapi.Contact) (*upapi.Contact, error) {
+	ret := _mock.Called(context1, primaryKeyable, contact)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Update")
+	}
+
+	var r0 *upapi.Contact
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.Contact) (*upapi.Contact, error)); ok {
+		return returnFunc(context1, primaryKeyable, contact)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.Contact) *upapi.Contact); ok {
+		r0 = returnFunc(context1, primaryKeyable, contact)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Contact)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.Contact) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, contact)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// contactsServiceMock_Update_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Update'
+type contactsServiceMock_Update_Call struct {
+	*mock.Call
+}
+
+// Update is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - contact upapi.Contact
+func (_e *contactsServiceMock_Expecter) Update(context1 interface{}, primaryKeyable interface{}, contact interface{}) *contactsServiceMock_Update_Call {
+	return &contactsServiceMock_Update_Call{Call: _e.mock.On("Update", context1, primaryKeyable, contact)}
+}
+
+func (_c *contactsServiceMock_Update_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, contact upapi.Contact)) *contactsServiceMock_Update_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.Contact
+		if args[2] != nil {
+			arg2 = args[2].(upapi.Contact)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *contactsServiceMock_Update_Call) Return(contact1 *upapi.Contact, err error) *contactsServiceMock_Update_Call {
+	_c.Call.Return(contact1, err)
+	return _c
+}
+
+func (_c *contactsServiceMock_Update_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, contact upapi.Contact) (*upapi.Contact, error)) *contactsServiceMock_Update_Call {
 	_c.Call.Return(run)
 	return _c
 }

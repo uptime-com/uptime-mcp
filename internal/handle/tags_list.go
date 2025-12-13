@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerListTagsTool(srv *mcp.Server, h *tags) {
@@ -18,18 +18,18 @@ func registerListTagsTool(srv *mcp.Server, h *tags) {
 
 type listTagsInput struct {
 	Search   string `json:"search,omitempty"`
-	Page     int    `json:"page,omitempty"`
-	PageSize int    `json:"page_size,omitempty"`
+	Page     int64  `json:"page,omitempty"`
+	PageSize int64  `json:"page_size,omitempty"`
 }
 
 func (t *tags) HandleListTags(ctx context.Context, _ *mcp.CallToolRequest, in listTagsInput) (*mcp.CallToolResult, any, error) {
-	opts := &api.TagListOptions{
+	opts := upapi.TagListOptions{
 		Search:   in.Search,
 		Page:     in.Page,
 		PageSize: in.PageSize,
 	}
 
-	tagList, _, err := t.service.List(ctx, opts)
+	tagList, err := t.service.List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list tags: %w", err)
 	}

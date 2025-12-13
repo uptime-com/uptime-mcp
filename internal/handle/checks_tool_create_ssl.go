@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerCreateSSLCheckTool(srv *mcp.Server, h *checksHandler) {
@@ -16,15 +16,14 @@ func registerCreateSSLCheckTool(srv *mcp.Server, h *checksHandler) {
 }
 
 type createSSLCheckInput struct {
-	Name        string   `json:"name"`
-	Address     string   `json:"address"`
-	Interval    int      `json:"interval,omitempty"`
-	Locations   []string `json:"locations,omitempty"`
-	Tags        []string `json:"tags,omitempty"`
-	Sensitivity int      `json:"sensitivity,omitempty"`
-	Notes       string   `json:"notes,omitempty"`
-	Port        int      `json:"port,omitempty"`
-	Protocol    string   `json:"protocol,omitempty"`
+	Name      string   `json:"name"`
+	Address   string   `json:"address"`
+	Locations []string `json:"locations,omitempty"`
+	Tags      []string `json:"tags,omitempty"`
+	Notes     string   `json:"notes,omitempty"`
+	Port      int64    `json:"port,omitempty"`
+	Protocol  string   `json:"protocol,omitempty"`
+	Threshold int64    `json:"threshold,omitempty"`
 }
 
 func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSSLCheckInput) (*mcp.CallToolResult, any, error) {
@@ -32,20 +31,18 @@ func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToo
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
-	check := &api.Check{
-		CheckType:   "SSL",
-		Name:        in.Name,
-		Address:     in.Address,
-		Port:        in.Port,
-		Interval:    in.Interval,
-		Locations:   in.Locations,
-		Tags:        in.Tags,
-		Sensitivity: in.Sensitivity,
-		Notes:       in.Notes,
-		Protocol:    in.Protocol,
+	check := upapi.CheckSSLCert{
+		Name:      in.Name,
+		Address:   in.Address,
+		Port:      in.Port,
+		Locations: in.Locations,
+		Tags:      in.Tags,
+		Notes:     in.Notes,
+		Protocol:  in.Protocol,
+		Threshold: in.Threshold,
 	}
 
-	created, _, err := c.service.Create(ctx, check)
+	created, err := c.service.CreateSSLCert(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create SSL check: %w", err)
 	}

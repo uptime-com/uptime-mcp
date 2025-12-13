@@ -3,9 +3,11 @@ package handle
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 const outageURIPrefix = "https://uptime.com/api/v1/outages/"
@@ -22,12 +24,17 @@ func registerOutageResource(srv *mcp.Server, h *outages) {
 func (o *outages) handleOutageResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
 	uri := req.Params.URI
 
-	id := strings.TrimPrefix(uri, outageURIPrefix)
-	if id == uri || id == "" {
+	idStr := strings.TrimPrefix(uri, outageURIPrefix)
+	if idStr == uri || idStr == "" {
 		return nil, fmt.Errorf("invalid outage URI: %s", uri)
 	}
 
-	outage, _, err := o.service.Get(ctx, id)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("invalid outage ID: %s", idStr)
+	}
+
+	outage, err := o.service.Get(ctx, upapi.PrimaryKey(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get outage: %w", err)
 	}
@@ -36,7 +43,7 @@ func (o *outages) handleOutageResource(ctx context.Context, req *mcp.ReadResourc
 	fmt.Fprintf(&sb, "Outage #%d\n", outage.PK)
 	fmt.Fprintf(&sb, "Check: %s (#%d)\n", outage.CheckName, outage.CheckPK)
 	fmt.Fprintf(&sb, "Type: %s\n", outage.CheckMonitoringServiceType)
-	fmt.Fprintf(&sb, "Address: %s\n", outage.CheckAddresss)
+	fmt.Fprintf(&sb, "Address: %s\n", outage.CheckAddress)
 	fmt.Fprintf(&sb, "Created: %s\n", outage.CreatedAt.Format("2006-01-02 15:04:05"))
 
 	if outage.StateIsUp {

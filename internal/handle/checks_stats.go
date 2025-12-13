@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	api "github.com/uptime-com/uptime-client-go"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 func registerGetCheckStatsTool(srv *mcp.Server, h *checksHandler) {
@@ -17,7 +17,7 @@ func registerGetCheckStatsTool(srv *mcp.Server, h *checksHandler) {
 }
 
 type getCheckStatsInput struct {
-	ID        int    `json:"id"`
+	ID        int64  `json:"id"`
 	StartDate string `json:"start_date,omitempty"`
 	EndDate   string `json:"end_date,omitempty"`
 }
@@ -27,27 +27,36 @@ func (c *checksHandler) HandleGetCheckStats(ctx context.Context, _ *mcp.CallTool
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	opts := &api.CheckStatsOptions{
+	opts := upapi.CheckStatsOptions{
 		StartDate: in.StartDate,
 		EndDate:   in.EndDate,
 	}
 
-	stats, _, err := c.service.Stats(ctx, in.ID, opts)
+	stats, err := c.service.Stats(ctx, upapi.PrimaryKey(in.ID), opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get check stats: %w", err)
 	}
 
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "Statistics for check #%d\n", in.ID)
-	fmt.Fprintf(&sb, "Period: %s to %s\n\n", stats.StartDate, stats.EndDate)
+	if in.StartDate != "" && in.EndDate != "" {
+		fmt.Fprintf(&sb, "Period: %s to %s\n\n", in.StartDate, in.EndDate)
+	}
+
+	// Calculate totals from statistics
+	var totalOutages, totalDowntime int64
+	for _, s := range stats {
+		totalOutages += s.Outages
+		totalDowntime += s.DowntimeSecs
+	}
 
 	fmt.Fprintf(&sb, "Totals:\n")
-	fmt.Fprintf(&sb, "  Outages: %d\n", stats.Totals.Outages)
-	fmt.Fprintf(&sb, "  Downtime: %d seconds\n\n", stats.Totals.DowntimeSecs)
+	fmt.Fprintf(&sb, "  Outages: %d\n", totalOutages)
+	fmt.Fprintf(&sb, "  Downtime: %d seconds\n\n", totalDowntime)
 
-	if len(stats.Statistics) > 0 {
+	if len(stats) > 0 {
 		fmt.Fprintf(&sb, "Daily breakdown:\n")
-		for _, s := range stats.Statistics {
+		for _, s := range stats {
 			fmt.Fprintf(&sb, "  %s: %d outages, %d sec downtime\n", s.Date, s.Outages, s.DowntimeSecs)
 		}
 	}

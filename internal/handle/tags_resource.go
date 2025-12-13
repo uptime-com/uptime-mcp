@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
 const tagURIPrefix = "https://uptime.com/api/v1/check-tags/"
@@ -28,12 +29,12 @@ func (t *tags) handleTagResource(ctx context.Context, req *mcp.ReadResourceReque
 		return nil, fmt.Errorf("invalid tag URI: %s", uri)
 	}
 
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid tag ID: %s", idStr)
 	}
 
-	tag, _, err := t.service.Get(ctx, id)
+	tag, err := t.service.Get(ctx, upapi.PrimaryKey(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get tag: %w", err)
 	}
