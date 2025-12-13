@@ -17,5 +17,5 @@ func provideOutages(c uptime.Client) *outages {
 var outagesModule = fx.Module("tool.outages",
 	fx.Provide(provideOutages),
 	fx.Invoke(registerListOutagesTool),
-	fx.Invoke(registerGetOutageTool),
+	fx.Invoke(registerOutageResource),
 )

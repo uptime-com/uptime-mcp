@@ -8,25 +8,28 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-func registerGetOutageTool(srv *mcp.Server, h *outages) {
-	mcp.AddTool(srv, &mcp.Tool{
-		Name:        "get_outage",
-		Description: "Get details of a specific outage including all alerts",
-	}, h.HandleGetOutage)
+const outageURIPrefix = "https://uptime.com/api/v1/outages/"
+
+func registerOutageResource(srv *mcp.Server, h *outages) {
+	srv.AddResourceTemplate(&mcp.ResourceTemplate{
+		URITemplate: outageURIPrefix + "{id}",
+		Name:        "outage",
+		Description: "Uptime.com outage details",
+		MIMEType:    "text/plain",
+	}, h.handleOutageResource)
 }
 
-type getOutageInput struct {
-	ID string `json:"id"`
-}
+func (o *outages) handleOutageResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+	uri := req.Params.URI
 
-func (o *outages) HandleGetOutage(ctx context.Context, _ *mcp.CallToolRequest, in getOutageInput) (*mcp.CallToolResult, any, error) {
-	if in.ID == "" {
-		return nil, nil, fmt.Errorf("id is required")
+	id := strings.TrimPrefix(uri, outageURIPrefix)
+	if id == uri || id == "" {
+		return nil, fmt.Errorf("invalid outage URI: %s", uri)
 	}
 
-	outage, _, err := o.service.Get(ctx, in.ID)
+	outage, _, err := o.service.Get(ctx, id)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to get outage: %w", err)
+		return nil, fmt.Errorf("failed to get outage: %w", err)
 	}
 
 	var sb strings.Builder
@@ -56,5 +59,11 @@ func (o *outages) HandleGetOutage(ctx context.Context, _ *mcp.CallToolRequest, i
 		}
 	}
 
-	return textResult(sb.String()), nil, nil
+	return &mcp.ReadResourceResult{
+		Contents: []*mcp.ResourceContents{{
+			URI:      uri,
+			MIMEType: "text/plain",
+			Text:     sb.String(),
+		}},
+	}, nil
 }

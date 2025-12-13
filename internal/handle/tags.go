@@ -17,7 +17,7 @@ func provideTags(c uptime.Client) *tags {
 var tagsModule = fx.Module("tool.tags",
 	fx.Provide(provideTags),
 	fx.Invoke(registerListTagsTool),
-	fx.Invoke(registerGetTagTool),
+	fx.Invoke(registerTagResource),
 	fx.Invoke(registerCreateTagTool),
 	fx.Invoke(registerUpdateTagTool),
 	fx.Invoke(registerDeleteTagTool),
