@@ -1,17 +1,7 @@
-.PHONY: help test test-unit test-acc
+.PHONY: test e2e
 
-help:
-	@echo "Usage: make [target]"
-	@echo ""
-	@echo "Targets:"
-	@echo "  test       Run all tests (unit + acceptance)"
-	@echo "  test-unit  Run unit tests"
-	@echo "  test-acc   Run acceptance tests (requires UPTIME_API_KEY)"
-
-test: test-unit test-acc
-
-test-unit:
+test:
 	go test ./...
 
-test-acc:
-	go test -tags=acc -run 'TestAcc' -v ./...
+e2e:
+	go test -tags=e2e -v ./e2e/...

@@ -1,0 +1,83 @@
+//go:build e2e
+
+package e2e
+
+import (
+	"context"
+	"os"
+	"testing"
+
+	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/stretchr/testify/require"
+	api "github.com/uptime-com/uptime-client-go"
+	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
+	"go.uber.org/fx/fxtest"
+
+	"github.com/uptime-com/uptime-mcp/internal/handle"
+	"github.com/uptime-com/uptime-mcp/internal/uptime"
+)
+
+// makeClientSession creates an MCP client session connected to the server via in-memory transport.
+// Uses full fx DI stack to register all tools and resources.
+func makeClientSession(t *testing.T) *mcp.ClientSession {
+	t.Helper()
+
+	apiKey := os.Getenv("UPTIME_API_KEY")
+	if apiKey == "" {
+		t.Fatal("UPTIME_API_KEY environment variable is required for e2e tests")
+	}
+
+	baseURL := os.Getenv("UPTIME_API_URL")
+	if baseURL == "" {
+		baseURL = "https://uptime.com/api/v1/"
+	}
+
+	ctx := context.Background()
+	serverTransport, clientTransport := mcp.NewInMemoryTransports()
+
+	// Create Uptime API client
+	apiClient, err := api.NewClient(&api.Config{
+		Token:   apiKey,
+		BaseURL: baseURL,
+	})
+	require.NoError(t, err)
+	uptimeClient := uptime.NewClient(apiClient)
+
+	// Create MCP server
+	srv := mcp.NewServer(&mcp.Implementation{
+		Name:    "uptime-mcp",
+		Version: "e2e-test",
+	}, nil)
+
+	// Use fx to wire up all tools
+	fxApp := fxtest.New(t,
+		fx.WithLogger(func() fxevent.Logger {
+			return fxevent.NopLogger
+		}),
+		fx.Supply(srv),
+		fx.Provide(func() uptime.Client { return uptimeClient }),
+		handle.Module,
+	)
+	fxApp.RequireStart()
+	t.Cleanup(func() { fxApp.RequireStop() })
+
+	// Connect server first (MCP protocol requirement)
+	go func() {
+		_, err := srv.Connect(ctx, serverTransport, nil)
+		if err != nil {
+			t.Logf("server connect error: %v", err)
+		}
+	}()
+
+	// Create and connect MCP client
+	mcpClient := mcp.NewClient(&mcp.Implementation{Name: "e2e-test"}, nil)
+	session, err := mcpClient.Connect(ctx, clientTransport, nil)
+	require.NoError(t, err)
+
+	t.Cleanup(func() {
+		_ = session.Close()
+	})
+
+	return session
+}
