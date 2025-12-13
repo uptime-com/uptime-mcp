@@ -18,9 +18,9 @@ func registerCreateIMAPCheckTool(srv *mcp.Server, h *checksHandler) {
 type createIMAPCheckInput struct {
 	Name          string   `json:"name"`
 	Address       string   `json:"address"`
-	Interval      int64    `json:"interval,omitempty"`
-	Locations     []string `json:"locations,omitempty"`
-	ContactGroups []string `json:"contact_groups,omitempty"`
+	Interval      int64    `json:"interval"`
+	Locations     []string `json:"locations"`
+	ContactGroups []string `json:"contact_groups"`
 	Tags          []string `json:"tags,omitempty"`
 	Sensitivity   int64    `json:"sensitivity,omitempty"`
 	Notes         string   `json:"notes,omitempty"`

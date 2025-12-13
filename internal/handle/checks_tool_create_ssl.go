@@ -18,8 +18,8 @@ func registerCreateSSLCheckTool(srv *mcp.Server, h *checksHandler) {
 type createSSLCheckInput struct {
 	Name          string   `json:"name"`
 	Address       string   `json:"address"`
-	Locations     []string `json:"locations,omitempty"`
-	ContactGroups []string `json:"contact_groups,omitempty"`
+	Locations     []string `json:"locations"`
+	ContactGroups []string `json:"contact_groups"`
 	Tags          []string `json:"tags,omitempty"`
 	Notes         string   `json:"notes,omitempty"`
 	Port          int64    `json:"port,omitempty"`
