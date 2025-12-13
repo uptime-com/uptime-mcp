@@ -33,6 +33,10 @@ func (h *locationsHandler) handleLocationResource(ctx context.Context, req *mcp.
 		return nil, fmt.Errorf("invalid location encoding: %s", locationEncoded)
 	}
 
+	if excludedLocations[location] {
+		return nil, fmt.Errorf("pseudo-location not supported: %s", location)
+	}
+
 	// Fetch all servers and find the matching one
 	servers, err := h.service.List(ctx)
 	if err != nil {

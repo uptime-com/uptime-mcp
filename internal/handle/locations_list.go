@@ -19,34 +19,43 @@ type listLocationsInput struct {
 	Search string `json:"search,omitempty"`
 }
 
+// excludedLocations are pseudo-locations that cannot be used for check creation.
+var excludedLocations = map[string]bool{
+	"AUTO": true,
+	"TEST": true,
+}
+
 func (h *locationsHandler) handleListLocations(ctx context.Context, _ *mcp.CallToolRequest, in listLocationsInput) (*mcp.CallToolResult, any, error) {
 	servers, err := h.service.List(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list locations: %w", err)
 	}
 
-	// Filter by search if provided
-	if in.Search != "" {
-		search := strings.ToLower(in.Search)
-		filtered := make([]struct{ Location, ProbeName string }, 0)
-		for _, s := range servers {
-			if strings.Contains(strings.ToLower(s.Location), search) ||
-				strings.Contains(strings.ToLower(s.ProbeName), search) {
-				filtered = append(filtered, struct{ Location, ProbeName string }{s.Location, s.ProbeName})
+	// Filter out pseudo-locations and apply search
+	type loc struct{ Location, ProbeName string }
+	filtered := make([]loc, 0, len(servers))
+	search := strings.ToLower(in.Search)
+
+	for _, s := range servers {
+		if excludedLocations[s.Location] {
+			continue
+		}
+		if search != "" {
+			if !strings.Contains(strings.ToLower(s.Location), search) &&
+				!strings.Contains(strings.ToLower(s.ProbeName), search) {
+				continue
 			}
 		}
-
-		var sb strings.Builder
-		fmt.Fprintf(&sb, "Found %d locations matching '%s':\n\n", len(filtered), in.Search)
-		for _, s := range filtered {
-			fmt.Fprintf(&sb, "- %s (%s)\n", s.Location, s.ProbeName)
-		}
-		return textResult(sb.String()), nil, nil
+		filtered = append(filtered, loc{s.Location, s.ProbeName})
 	}
 
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "Found %d probe server locations:\n\n", len(servers))
-	for _, s := range servers {
+	if in.Search != "" {
+		fmt.Fprintf(&sb, "Found %d locations matching '%s':\n\n", len(filtered), in.Search)
+	} else {
+		fmt.Fprintf(&sb, "Found %d probe server locations:\n\n", len(filtered))
+	}
+	for _, s := range filtered {
 		fmt.Fprintf(&sb, "- %s (%s)\n", s.Location, s.ProbeName)
 	}
 
