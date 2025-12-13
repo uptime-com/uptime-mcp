@@ -10,6 +10,7 @@ import (
 	api "github.com/uptime-com/uptime-client-go"
 
 	"github.com/uptime-com/uptime-mcp/internal/app"
+	"github.com/uptime-com/uptime-mcp/internal/uptime"
 )
 
 // stdioKeyMiddleware creates an MCP middleware that injects the API key into session.
@@ -129,10 +130,14 @@ func extractAPIKey(next http.Handler) http.Handler {
 }
 
 // createUptimeClient creates an Uptime.com API client.
-func createUptimeClient(apiKey, baseURL string) (*api.Client, error) {
+func createUptimeClient(apiKey, baseURL string) (uptime.Client, error) {
 	config := &api.Config{
 		Token:   apiKey,
 		BaseURL: baseURL,
 	}
-	return api.NewClient(config)
+	client, err := api.NewClient(config)
+	if err != nil {
+		return nil, err
+	}
+	return uptime.NewClient(client), nil
 }

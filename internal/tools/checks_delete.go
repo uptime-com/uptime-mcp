@@ -9,11 +9,11 @@ import (
 )
 
 var DeleteCheckToolModule = fx.Module("tool.delete_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "delete_check",
 			Description: "Delete a monitoring check by ID",
-		}, HandleDeleteCheck)
+		}, c.HandleDeleteCheck)
 	}),
 )
 
@@ -21,17 +21,12 @@ type deleteCheckInput struct {
 	ID int `json:"id"`
 }
 
-func HandleDeleteCheck(ctx context.Context, _ *mcp.CallToolRequest, in deleteCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleDeleteCheck(ctx context.Context, _ *mcp.CallToolRequest, in deleteCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	_, err = client.Checks.Delete(ctx, in.ID)
+	_, err := c.service.Delete(ctx, in.ID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to delete check: %w", err)
 	}

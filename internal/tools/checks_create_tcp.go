@@ -10,11 +10,11 @@ import (
 )
 
 var CreateTCPCheckToolModule = fx.Module("tool.create_tcp_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "create_tcp_check",
 			Description: "Create a new TCP port connectivity check",
-		}, HandleCreateTCPCheck)
+		}, c.HandleCreateTCPCheck)
 	}),
 )
 
@@ -31,12 +31,7 @@ type createTCPCheckInput struct {
 	ExpectString string   `json:"expect_string,omitempty"`
 }
 
-func HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createTCPCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createTCPCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -58,7 +53,7 @@ func HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToolRequest, in create
 		ExpectString: in.ExpectString,
 	}
 
-	created, _, err := client.Checks.Create(ctx, check)
+	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create TCP check: %w", err)
 	}

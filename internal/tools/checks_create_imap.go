@@ -10,11 +10,11 @@ import (
 )
 
 var CreateIMAPCheckToolModule = fx.Module("tool.create_imap_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "create_imap_check",
 			Description: "Create a new IMAP email server monitoring check",
-		}, HandleCreateIMAPCheck)
+		}, c.HandleCreateIMAPCheck)
 	}),
 )
 
@@ -32,12 +32,7 @@ type createIMAPCheckInput struct {
 	Password    string   `json:"password,omitempty"`
 }
 
-func HandleCreateIMAPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createIMAPCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleCreateIMAPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createIMAPCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -57,7 +52,7 @@ func HandleCreateIMAPCheck(ctx context.Context, _ *mcp.CallToolRequest, in creat
 		Password:    in.Password,
 	}
 
-	created, _, err := client.Checks.Create(ctx, check)
+	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create IMAP check: %w", err)
 	}

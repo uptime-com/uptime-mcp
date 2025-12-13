@@ -10,11 +10,11 @@ import (
 )
 
 var CreateSMTPCheckToolModule = fx.Module("tool.create_smtp_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "create_smtp_check",
 			Description: "Create a new SMTP email server monitoring check",
-		}, HandleCreateSMTPCheck)
+		}, c.HandleCreateSMTPCheck)
 	}),
 )
 
@@ -32,12 +32,7 @@ type createSMTPCheckInput struct {
 	Password    string   `json:"password,omitempty"`
 }
 
-func HandleCreateSMTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSMTPCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleCreateSMTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSMTPCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -57,7 +52,7 @@ func HandleCreateSMTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in creat
 		Password:    in.Password,
 	}
 
-	created, _, err := client.Checks.Create(ctx, check)
+	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create SMTP check: %w", err)
 	}

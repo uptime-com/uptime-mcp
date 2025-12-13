@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
-	"os"
 )
 
 // Config holds the application configuration from CLI flags.
@@ -18,12 +17,12 @@ type Config struct {
 	// Uptime.com API base URL (default: https://uptime.com/api/v1/)
 	APIBaseURL string
 
-	// LogLevel for application logger (DEBUG, INFO, WARN, ERROR)
+	// LogLevel for application logger (debug, info, warn, error)
 	LogLevel *slog.LevelVar
 }
 
 // provideConfig parses CLI flags and returns application configuration.
-func provideConfig() Config {
+func provideConfig() (Config, error) {
 	cfg := Config{
 		LogLevel: new(slog.LevelVar),
 	}
@@ -32,13 +31,12 @@ func provideConfig() Config {
 	flag.StringVar(&cfg.Transport, "transport", "stdio", "Transport mode: stdio or http")
 	flag.StringVar(&cfg.ListenAddr, "listen", ":8080", "HTTP listen address (only used with -transport=http)")
 	flag.StringVar(&cfg.APIBaseURL, "api-url", "", "Uptime.com API base URL (default: https://uptime.com/api/v1/)")
-	flag.TextVar(cfg.LogLevel, "log-level", cfg.LogLevel, "Log level: DEBUG, INFO, WARN, ERROR")
+	flag.TextVar(cfg.LogLevel, "log-level", cfg.LogLevel, "Log level: debug, info, warn, error")
 	flag.Parse()
 
 	if cfg.Transport != "stdio" && cfg.Transport != "http" {
-		fmt.Fprintf(os.Stderr, "invalid transport: %s (must be stdio or http)\n", cfg.Transport)
-		os.Exit(1)
+		return Config{}, fmt.Errorf("invalid transport: %s (must be stdio or http)", cfg.Transport)
 	}
 
-	return cfg
+	return cfg, nil
 }

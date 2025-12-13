@@ -11,11 +11,11 @@ import (
 )
 
 var ListOutagesToolModule = fx.Module("tool.list_outages",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, o *outages) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "list_outages",
 			Description: "List outages across all monitored checks with optional filtering",
-		}, HandleListOutages)
+		}, o.HandleListOutages)
 	}),
 )
 
@@ -26,12 +26,7 @@ type listOutagesInput struct {
 	PageSize int    `json:"page_size,omitempty"`
 }
 
-func HandleListOutages(ctx context.Context, _ *mcp.CallToolRequest, in listOutagesInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (o *outages) HandleListOutages(ctx context.Context, _ *mcp.CallToolRequest, in listOutagesInput) (*mcp.CallToolResult, any, error) {
 	opts := &api.OutageListOptions{
 		Search:                     in.Search,
 		CheckMonitoringServiceType: in.Type,
@@ -39,22 +34,22 @@ func HandleListOutages(ctx context.Context, _ *mcp.CallToolRequest, in listOutag
 		PageSize:                   in.PageSize,
 	}
 
-	outages, _, err := client.Outages.List(ctx, opts)
+	outageList, _, err := o.service.List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list outages: %w", err)
 	}
 
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "Found %d outages:\n\n", len(outages))
-	for _, o := range outages {
+	fmt.Fprintf(&sb, "Found %d outages:\n\n", len(outageList))
+	for _, outage := range outageList {
 		status := "ongoing"
-		if o.StateIsUp {
+		if outage.StateIsUp {
 			status = "resolved"
 		}
-		fmt.Fprintf(&sb, "- [%d] %s (%s) - %s\n", o.PK, o.CheckName, o.CheckMonitoringServiceType, status)
-		fmt.Fprintf(&sb, "  Created: %s\n", o.CreatedAt.Format("2006-01-02 15:04:05"))
-		if o.StateIsUp {
-			fmt.Fprintf(&sb, "  Resolved: %s (duration: %d sec)\n", o.ResolvedAt.Format("2006-01-02 15:04:05"), o.DurationSecs)
+		fmt.Fprintf(&sb, "- [%d] %s (%s) - %s\n", outage.PK, outage.CheckName, outage.CheckMonitoringServiceType, status)
+		fmt.Fprintf(&sb, "  Created: %s\n", outage.CreatedAt.Format("2006-01-02 15:04:05"))
+		if outage.StateIsUp {
+			fmt.Fprintf(&sb, "  Resolved: %s (duration: %d sec)\n", outage.ResolvedAt.Format("2006-01-02 15:04:05"), outage.DurationSecs)
 		}
 	}
 

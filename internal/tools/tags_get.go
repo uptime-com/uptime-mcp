@@ -10,11 +10,11 @@ import (
 )
 
 var GetTagToolModule = fx.Module("tool.get_tag",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, t *tags) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "get_tag",
 			Description: "Get details of a specific tag by ID",
-		}, HandleGetTag)
+		}, t.HandleGetTag)
 	}),
 )
 
@@ -22,17 +22,12 @@ type getTagInput struct {
 	ID int `json:"id"`
 }
 
-func HandleGetTag(ctx context.Context, _ *mcp.CallToolRequest, in getTagInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (t *tags) HandleGetTag(ctx context.Context, _ *mcp.CallToolRequest, in getTagInput) (*mcp.CallToolResult, any, error) {
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	tag, _, err := client.Tags.Get(ctx, in.ID)
+	tag, _, err := t.service.Get(ctx, in.ID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get tag: %w", err)
 	}

@@ -10,11 +10,11 @@ import (
 )
 
 var CreateTagToolModule = fx.Module("tool.create_tag",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, t *tags) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "create_tag",
 			Description: "Create a new check tag",
-		}, HandleCreateTag)
+		}, t.HandleCreateTag)
 	}),
 )
 
@@ -23,12 +23,7 @@ type createTagInput struct {
 	Color string `json:"color,omitempty"`
 }
 
-func HandleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in createTagInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (t *tags) HandleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in createTagInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" {
 		return nil, nil, fmt.Errorf("name is required")
 	}
@@ -38,7 +33,7 @@ func HandleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in createTagIn
 		ColorHex: in.Color,
 	}
 
-	created, _, err := client.Tags.Create(ctx, tag)
+	created, _, err := t.service.Create(ctx, tag)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create tag: %w", err)
 	}

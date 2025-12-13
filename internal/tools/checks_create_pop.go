@@ -10,11 +10,11 @@ import (
 )
 
 var CreatePOPCheckToolModule = fx.Module("tool.create_pop_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "create_pop_check",
 			Description: "Create a new POP3 email server monitoring check",
-		}, HandleCreatePOPCheck)
+		}, c.HandleCreatePOPCheck)
 	}),
 )
 
@@ -32,12 +32,7 @@ type createPOPCheckInput struct {
 	Password    string   `json:"password,omitempty"`
 }
 
-func HandleCreatePOPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createPOPCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleCreatePOPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createPOPCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -57,7 +52,7 @@ func HandleCreatePOPCheck(ctx context.Context, _ *mcp.CallToolRequest, in create
 		Password:    in.Password,
 	}
 
-	created, _, err := client.Checks.Create(ctx, check)
+	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create POP check: %w", err)
 	}

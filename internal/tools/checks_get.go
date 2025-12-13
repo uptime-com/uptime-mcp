@@ -10,11 +10,11 @@ import (
 )
 
 var GetCheckToolModule = fx.Module("tool.get_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "get_check",
 			Description: "Get details of a specific monitoring check by ID",
-		}, HandleGetCheck)
+		}, c.HandleGetCheck)
 	}),
 )
 
@@ -22,17 +22,12 @@ type getCheckInput struct {
 	ID int `json:"id"`
 }
 
-func HandleGetCheck(ctx context.Context, _ *mcp.CallToolRequest, in getCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleGetCheck(ctx context.Context, _ *mcp.CallToolRequest, in getCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	check, _, err := client.Checks.Get(ctx, in.ID)
+	check, _, err := c.service.Get(ctx, in.ID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get check: %w", err)
 	}

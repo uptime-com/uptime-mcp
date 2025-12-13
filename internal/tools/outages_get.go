@@ -10,11 +10,11 @@ import (
 )
 
 var GetOutageToolModule = fx.Module("tool.get_outage",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, o *outages) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "get_outage",
 			Description: "Get details of a specific outage including all alerts",
-		}, HandleGetOutage)
+		}, o.HandleGetOutage)
 	}),
 )
 
@@ -22,17 +22,12 @@ type getOutageInput struct {
 	ID string `json:"id"`
 }
 
-func HandleGetOutage(ctx context.Context, _ *mcp.CallToolRequest, in getOutageInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (o *outages) HandleGetOutage(ctx context.Context, _ *mcp.CallToolRequest, in getOutageInput) (*mcp.CallToolResult, any, error) {
 	if in.ID == "" {
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	outage, _, err := client.Outages.Get(ctx, in.ID)
+	outage, _, err := o.service.Get(ctx, in.ID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get outage: %w", err)
 	}

@@ -10,11 +10,11 @@ import (
 )
 
 var UpdateTagToolModule = fx.Module("tool.update_tag",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, t *tags) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "update_tag",
 			Description: "Update an existing check tag",
-		}, HandleUpdateTag)
+		}, t.HandleUpdateTag)
 	}),
 )
 
@@ -24,12 +24,7 @@ type updateTagInput struct {
 	Color string `json:"color,omitempty"`
 }
 
-func HandleUpdateTag(ctx context.Context, _ *mcp.CallToolRequest, in updateTagInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (t *tags) HandleUpdateTag(ctx context.Context, _ *mcp.CallToolRequest, in updateTagInput) (*mcp.CallToolResult, any, error) {
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
@@ -43,7 +38,7 @@ func HandleUpdateTag(ctx context.Context, _ *mcp.CallToolRequest, in updateTagIn
 		ColorHex: in.Color,
 	}
 
-	updated, _, err := client.Tags.Update(ctx, tag)
+	updated, _, err := t.service.Update(ctx, tag)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to update tag: %w", err)
 	}

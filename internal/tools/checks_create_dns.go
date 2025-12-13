@@ -10,11 +10,11 @@ import (
 )
 
 var CreateDNSCheckToolModule = fx.Module("tool.create_dns_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, checks *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "create_dns_check",
 			Description: "Create a new DNS monitoring check",
-		}, HandleCreateDNSCheck)
+		}, checks.HandleCreateDNSCheck)
 	}),
 )
 
@@ -31,12 +31,7 @@ type createDNSCheckInput struct {
 	ExpectString  string   `json:"expect_string,omitempty"`
 }
 
-func HandleCreateDNSCheck(ctx context.Context, _ *mcp.CallToolRequest, in createDNSCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleCreateDNSCheck(ctx context.Context, _ *mcp.CallToolRequest, in createDNSCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -55,7 +50,7 @@ func HandleCreateDNSCheck(ctx context.Context, _ *mcp.CallToolRequest, in create
 		ExpectString:  in.ExpectString,
 	}
 
-	created, _, err := client.Checks.Create(ctx, check)
+	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create DNS check: %w", err)
 	}

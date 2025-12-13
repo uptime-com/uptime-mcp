@@ -10,11 +10,11 @@ import (
 )
 
 var CreateSSLCheckToolModule = fx.Module("tool.create_ssl_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "create_ssl_check",
 			Description: "Create a new SSL certificate monitoring check",
-		}, HandleCreateSSLCheck)
+		}, c.HandleCreateSSLCheck)
 	}),
 )
 
@@ -30,12 +30,7 @@ type createSSLCheckInput struct {
 	Protocol    string   `json:"protocol,omitempty"`
 }
 
-func HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSSLCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSSLCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -53,7 +48,7 @@ func HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToolRequest, in create
 		Protocol:    in.Protocol,
 	}
 
-	created, _, err := client.Checks.Create(ctx, check)
+	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create SSL check: %w", err)
 	}

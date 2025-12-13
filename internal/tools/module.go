@@ -4,6 +4,11 @@ import "go.uber.org/fx"
 
 // Module aggregates all tool modules.
 var Module = fx.Module("tools",
+	// Providers for handler structs
+	fx.Provide(provideChecksHandler),
+	fx.Provide(provideTags),
+	fx.Provide(provideOutages),
+
 	// Checks - read operations
 	ListChecksToolModule,
 	GetCheckToolModule,

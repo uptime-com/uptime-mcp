@@ -10,11 +10,11 @@ import (
 )
 
 var CreateHTTPCheckToolModule = fx.Module("tool.create_http_check",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "create_http_check",
 			Description: "Create a new HTTP/HTTPS monitoring check",
-		}, HandleCreateHTTPCheck)
+		}, c.HandleCreateHTTPCheck)
 	}),
 )
 
@@ -34,12 +34,7 @@ type createHTTPCheckInput struct {
 	ExpectString string   `json:"expect_string,omitempty"`
 }
 
-func HandleCreateHTTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createHTTPCheckInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleCreateHTTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createHTTPCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -61,7 +56,7 @@ func HandleCreateHTTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in creat
 		ExpectString: in.ExpectString,
 	}
 
-	created, _, err := client.Checks.Create(ctx, check)
+	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create HTTP check: %w", err)
 	}

@@ -12,15 +12,15 @@ import (
 
 // ListChecksToolModule registers the list_checks tool.
 var ListChecksToolModule = fx.Module("tool.list_checks",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "list_checks",
 			Description: "List monitoring checks with optional filtering by search term, tag, or check type",
-		}, HandleListChecks)
+		}, c.HandleListChecks)
 	}),
 )
 
-// listChecksInput defines parameters for listing checks.
+// listChecksInput defines parameters for listing checksHandler.
 type listChecksInput struct {
 	Search   string `json:"search,omitempty"`
 	Tag      string `json:"tag,omitempty"`
@@ -30,12 +30,7 @@ type listChecksInput struct {
 	PageSize int    `json:"page_size,omitempty"`
 }
 
-func HandleListChecks(ctx context.Context, _ *mcp.CallToolRequest, in listChecksInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleListChecks(ctx context.Context, _ *mcp.CallToolRequest, in listChecksInput) (*mcp.CallToolResult, any, error) {
 	opts := &api.CheckListOptions{
 		Search:                in.Search,
 		MonitoringServiceType: in.Type,
@@ -47,15 +42,15 @@ func HandleListChecks(ctx context.Context, _ *mcp.CallToolRequest, in listChecks
 		opts.Tag = []string{in.Tag}
 	}
 
-	checks, _, err := client.Checks.List(ctx, opts)
+	checks, _, err := c.service.List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list checks: %w", err)
 	}
 
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "Found %d checks:\n\n", len(checks))
-	for _, c := range checks {
-		fmt.Fprintf(&sb, "- [%d] %s (%s) - %s\n", c.PK, c.Name, c.CheckType, c.Address)
+	for _, ch := range checks {
+		fmt.Fprintf(&sb, "- [%d] %s (%s) - %s\n", ch.PK, ch.Name, ch.CheckType, ch.Address)
 	}
 
 	return textResult(sb.String()), nil, nil

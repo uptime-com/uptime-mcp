@@ -11,11 +11,11 @@ import (
 )
 
 var GetCheckStatsToolModule = fx.Module("tool.get_check_stats",
-	fx.Invoke(func(srv *mcp.Server) {
+	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
 		mcp.AddTool(srv, &mcp.Tool{
 			Name:        "get_check_stats",
 			Description: "Get statistics for a monitoring check including uptime percentage and outages",
-		}, HandleGetCheckStats)
+		}, c.HandleGetCheckStats)
 	}),
 )
 
@@ -25,12 +25,7 @@ type getCheckStatsInput struct {
 	EndDate   string `json:"end_date,omitempty"`
 }
 
-func HandleGetCheckStats(ctx context.Context, _ *mcp.CallToolRequest, in getCheckStatsInput) (*mcp.CallToolResult, any, error) {
-	client, err := getClient(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (c *checksHandler) HandleGetCheckStats(ctx context.Context, _ *mcp.CallToolRequest, in getCheckStatsInput) (*mcp.CallToolResult, any, error) {
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
@@ -40,7 +35,7 @@ func HandleGetCheckStats(ctx context.Context, _ *mcp.CallToolRequest, in getChec
 		EndDate:   in.EndDate,
 	}
 
-	stats, _, err := client.Checks.Stats(ctx, in.ID, opts)
+	stats, _, err := c.service.Stats(ctx, in.ID, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get check stats: %w", err)
 	}
