@@ -2,3 +2,4 @@
 !.gitignore
 !.mockery.yaml
 !.goreleaser.yaml
+dist/

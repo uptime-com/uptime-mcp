@@ -1,6 +1,10 @@
 package tools
 
-import "github.com/uptime-com/uptime-mcp/internal/uptime"
+import (
+	"go.uber.org/fx"
+
+	"github.com/uptime-com/uptime-mcp/internal/uptime"
+)
 
 type checksHandler struct {
 	service uptime.ChecksService
@@ -9,3 +13,7 @@ type checksHandler struct {
 func provideChecksHandler(c uptime.Client) *checksHandler {
 	return &checksHandler{service: c.Checks()}
 }
+
+var checksModule = fx.Module("tool.checks",
+	fx.Provide(provideChecksHandler),
+)
