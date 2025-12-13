@@ -9,10 +9,12 @@ import (
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
+const defaultPageSize int64 = 25
+
 func registerListChecksTool(srv *mcp.Server, h *checksHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "list_checks",
-		Description: "List monitoring checks with optional filtering by search term, tag, or check type",
+		Description: "List monitoring checks with optional filtering. Returns paginated results (default 25 per page).",
 	}, h.HandleListChecks)
 }
 
@@ -32,6 +34,15 @@ func (c *checksHandler) HandleListChecks(ctx context.Context, _ *mcp.CallToolReq
 		return nil, nil, err
 	}
 
+	pageSize := in.PageSize
+	if pageSize == 0 {
+		pageSize = defaultPageSize
+	}
+	page := in.Page
+	if page == 0 {
+		page = 1
+	}
+
 	opts := upapi.CheckListOptions{
 		Search:                in.Search,
 		MonitoringServiceType: in.Type,
@@ -43,14 +54,14 @@ func (c *checksHandler) HandleListChecks(ctx context.Context, _ *mcp.CallToolReq
 		opts.Tag = []string{in.Tag}
 	}
 
-	checks, err := client.Checks().List(ctx, opts)
+	result, err := client.Checks().List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list checks: %w", err)
 	}
 
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "Found %d checks:\n\n", len(checks))
-	for _, ch := range checks {
+	sb.WriteString(formatPaginationHeader(result.TotalCount, page, pageSize, len(result.Items)))
+	for _, ch := range result.Items {
 		fmt.Fprintf(&sb, "- [%d] %s (%s) - %s\n", ch.PK, ch.Name, ch.CheckType, ch.Address)
 	}
 

@@ -29,6 +29,15 @@ func (o *outagesHandler) HandleListOutages(ctx context.Context, _ *mcp.CallToolR
 		return nil, nil, err
 	}
 
+	pageSize := in.PageSize
+	if pageSize == 0 {
+		pageSize = defaultPageSize
+	}
+	page := in.Page
+	if page == 0 {
+		page = 1
+	}
+
 	opts := upapi.OutageListOptions{
 		Search:                     in.Search,
 		CheckMonitoringServiceType: in.Type,
@@ -36,14 +45,14 @@ func (o *outagesHandler) HandleListOutages(ctx context.Context, _ *mcp.CallToolR
 		PageSize:                   in.PageSize,
 	}
 
-	outageList, err := client.Outages().List(ctx, opts)
+	result, err := client.Outages().List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list outages: %w", err)
 	}
 
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "Found %d outages:\n\n", len(outageList))
-	for _, outage := range outageList {
+	sb.WriteString(formatPaginationHeader(result.TotalCount, page, pageSize, len(result.Items)))
+	for _, outage := range result.Items {
 		status := "ongoing"
 		if outage.StateIsUp {
 			status = "resolved"

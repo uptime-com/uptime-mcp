@@ -43,12 +43,12 @@ func (h *locationsHandler) handleLocationResource(ctx context.Context, req *mcp.
 	}
 
 	// Fetch all servers and find the matching one
-	servers, err := client.ProbeServers().List(ctx)
+	result, err := client.ProbeServers().List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list locations: %w", err)
 	}
 
-	for _, s := range servers {
+	for _, s := range result.Items {
 		if s.Location == location {
 			var sb strings.Builder
 			fmt.Fprintf(&sb, "Location: %s\n", s.Location)

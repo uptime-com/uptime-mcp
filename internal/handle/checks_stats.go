@@ -50,7 +50,7 @@ func (c *checksHandler) HandleGetCheckStats(ctx context.Context, _ *mcp.CallTool
 
 	// Calculate totals from statistics
 	var totalOutages, totalDowntime int64
-	for _, s := range stats {
+	for _, s := range stats.Items {
 		totalOutages += s.Outages
 		totalDowntime += s.DowntimeSecs
 	}
@@ -59,9 +59,9 @@ func (c *checksHandler) HandleGetCheckStats(ctx context.Context, _ *mcp.CallTool
 	fmt.Fprintf(&sb, "  Outages: %d\n", totalOutages)
 	fmt.Fprintf(&sb, "  Downtime: %d seconds\n\n", totalDowntime)
 
-	if len(stats) > 0 {
+	if len(stats.Items) > 0 {
 		fmt.Fprintf(&sb, "Daily breakdown:\n")
-		for _, s := range stats {
+		for _, s := range stats.Items {
 			fmt.Fprintf(&sb, "  %s: %d outages, %d sec downtime\n", s.Date, s.Outages, s.DowntimeSecs)
 		}
 	}

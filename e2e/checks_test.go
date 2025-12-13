@@ -28,7 +28,7 @@ func TestE2E_ListChecks(t *testing.T) {
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(*mcp.TextContent).Text
-	require.Contains(t, text, "Found")
+	requirePaginationHeader(t, text)
 	t.Logf("Response:\n%s", text)
 }
 
@@ -49,7 +49,7 @@ func TestE2E_ListChecks_WithFilter(t *testing.T) {
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(*mcp.TextContent).Text
-	require.Contains(t, text, "Found")
+	requirePaginationHeader(t, text)
 	t.Logf("Response (HTTP only):\n%s", text)
 }
 
@@ -104,6 +104,14 @@ func TestE2E_ReadCheckResource_InvalidID(t *testing.T) {
 	// Should return error for non-existent check
 	require.Error(t, err)
 	require.Nil(t, result)
+}
+
+// requirePaginationHeader asserts that text contains a valid pagination header.
+// Either "Found X results" (single page) or "Showing X of Y total" (multiple pages).
+func requirePaginationHeader(t *testing.T, text string) {
+	t.Helper()
+	hasPagination := strings.Contains(text, "Found") || strings.Contains(text, "Showing")
+	require.True(t, hasPagination, "expected pagination header in output")
 }
 
 // extractCheckID extracts the first check ID from list output like "- [123] Name".

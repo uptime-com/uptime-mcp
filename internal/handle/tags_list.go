@@ -28,20 +28,29 @@ func (t *tagsHandler) HandleListTags(ctx context.Context, _ *mcp.CallToolRequest
 		return nil, nil, err
 	}
 
+	pageSize := in.PageSize
+	if pageSize == 0 {
+		pageSize = defaultPageSize
+	}
+	page := in.Page
+	if page == 0 {
+		page = 1
+	}
+
 	opts := upapi.TagListOptions{
 		Search:   in.Search,
 		Page:     in.Page,
 		PageSize: in.PageSize,
 	}
 
-	tagList, err := client.Tags().List(ctx, opts)
+	result, err := client.Tags().List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list tags: %w", err)
 	}
 
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "Found %d tags:\n\n", len(tagList))
-	for _, tag := range tagList {
+	sb.WriteString(formatPaginationHeader(result.TotalCount, page, pageSize, len(result.Items)))
+	for _, tag := range result.Items {
 		fmt.Fprintf(&sb, "- [%d] %s (color: #%s)\n", tag.PK, tag.Tag, tag.ColorHex)
 	}
 

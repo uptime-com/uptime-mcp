@@ -28,20 +28,29 @@ func (h *contactsHandler) handleListContacts(ctx context.Context, _ *mcp.CallToo
 		return nil, nil, err
 	}
 
+	pageSize := in.PageSize
+	if pageSize == 0 {
+		pageSize = defaultPageSize
+	}
+	page := in.Page
+	if page == 0 {
+		page = 1
+	}
+
 	opts := upapi.ContactListOptions{
 		Search:   in.Search,
 		Page:     in.Page,
 		PageSize: in.PageSize,
 	}
 
-	contacts, err := client.Contacts().List(ctx, opts)
+	result, err := client.Contacts().List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list contacts: %w", err)
 	}
 
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "Found %d contacts:\n\n", len(contacts))
-	for _, c := range contacts {
+	sb.WriteString(formatPaginationHeader(result.TotalCount, page, pageSize, len(result.Items)))
+	for _, c := range result.Items {
 		fmt.Fprintf(&sb, "- [%d] %s\n", c.PK, c.Name)
 	}
 

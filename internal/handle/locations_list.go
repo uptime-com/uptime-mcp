@@ -31,17 +31,17 @@ func (h *locationsHandler) handleListLocations(ctx context.Context, _ *mcp.CallT
 		return nil, nil, err
 	}
 
-	servers, err := client.ProbeServers().List(ctx)
+	result, err := client.ProbeServers().List(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list locations: %w", err)
 	}
 
 	// Filter out pseudo-locations and apply search
 	type loc struct{ Location, ProbeName string }
-	filtered := make([]loc, 0, len(servers))
+	filtered := make([]loc, 0, len(result.Items))
 	search := strings.ToLower(in.Search)
 
-	for _, s := range servers {
+	for _, s := range result.Items {
 		if excludedLocations[s.Location] {
 			continue
 		}

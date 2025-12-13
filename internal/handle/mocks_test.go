@@ -2559,23 +2559,23 @@ func (_c *checksServiceMock_GetEscalations_Call) RunAndReturn(run func(context1 
 }
 
 // List provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) List(context1 context.Context, checkListOptions upapi.CheckListOptions) ([]upapi.Check, error) {
+func (_mock *checksServiceMock) List(context1 context.Context, checkListOptions upapi.CheckListOptions) (*upapi.ListResult[upapi.Check], error) {
 	ret := _mock.Called(context1, checkListOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []upapi.Check
+	var r0 *upapi.ListResult[upapi.Check]
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckListOptions) ([]upapi.Check, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckListOptions) (*upapi.ListResult[upapi.Check], error)); ok {
 		return returnFunc(context1, checkListOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckListOptions) []upapi.Check); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckListOptions) *upapi.ListResult[upapi.Check]); ok {
 		r0 = returnFunc(context1, checkListOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]upapi.Check)
+			r0 = ret.Get(0).(*upapi.ListResult[upapi.Check])
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckListOptions) error); ok {
@@ -2616,34 +2616,34 @@ func (_c *checksServiceMock_List_Call) Run(run func(context1 context.Context, ch
 	return _c
 }
 
-func (_c *checksServiceMock_List_Call) Return(checks []upapi.Check, err error) *checksServiceMock_List_Call {
-	_c.Call.Return(checks, err)
+func (_c *checksServiceMock_List_Call) Return(listResult *upapi.ListResult[upapi.Check], err error) *checksServiceMock_List_Call {
+	_c.Call.Return(listResult, err)
 	return _c
 }
 
-func (_c *checksServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, checkListOptions upapi.CheckListOptions) ([]upapi.Check, error)) *checksServiceMock_List_Call {
+func (_c *checksServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, checkListOptions upapi.CheckListOptions) (*upapi.ListResult[upapi.Check], error)) *checksServiceMock_List_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Stats provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) Stats(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkStatsOptions upapi.CheckStatsOptions) ([]upapi.CheckStats, error) {
+func (_mock *checksServiceMock) Stats(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkStatsOptions upapi.CheckStatsOptions) (*upapi.ListResult[upapi.CheckStats], error) {
 	ret := _mock.Called(context1, primaryKeyable, checkStatsOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Stats")
 	}
 
-	var r0 []upapi.CheckStats
+	var r0 *upapi.ListResult[upapi.CheckStats]
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckStatsOptions) ([]upapi.CheckStats, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckStatsOptions) (*upapi.ListResult[upapi.CheckStats], error)); ok {
 		return returnFunc(context1, primaryKeyable, checkStatsOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckStatsOptions) []upapi.CheckStats); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckStatsOptions) *upapi.ListResult[upapi.CheckStats]); ok {
 		r0 = returnFunc(context1, primaryKeyable, checkStatsOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]upapi.CheckStats)
+			r0 = ret.Get(0).(*upapi.ListResult[upapi.CheckStats])
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckStatsOptions) error); ok {
@@ -2690,12 +2690,12 @@ func (_c *checksServiceMock_Stats_Call) Run(run func(context1 context.Context, p
 	return _c
 }
 
-func (_c *checksServiceMock_Stats_Call) Return(checkStatss []upapi.CheckStats, err error) *checksServiceMock_Stats_Call {
-	_c.Call.Return(checkStatss, err)
+func (_c *checksServiceMock_Stats_Call) Return(listResult *upapi.ListResult[upapi.CheckStats], err error) *checksServiceMock_Stats_Call {
+	_c.Call.Return(listResult, err)
 	return _c
 }
 
-func (_c *checksServiceMock_Stats_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkStatsOptions upapi.CheckStatsOptions) ([]upapi.CheckStats, error)) *checksServiceMock_Stats_Call {
+func (_c *checksServiceMock_Stats_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkStatsOptions upapi.CheckStatsOptions) (*upapi.ListResult[upapi.CheckStats], error)) *checksServiceMock_Stats_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4771,23 +4771,23 @@ func (_c *tagsServiceMock_Get_Call) RunAndReturn(run func(context1 context.Conte
 }
 
 // List provides a mock function for the type tagsServiceMock
-func (_mock *tagsServiceMock) List(context1 context.Context, tagListOptions upapi.TagListOptions) ([]upapi.Tag, error) {
+func (_mock *tagsServiceMock) List(context1 context.Context, tagListOptions upapi.TagListOptions) (*upapi.ListResult[upapi.Tag], error) {
 	ret := _mock.Called(context1, tagListOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []upapi.Tag
+	var r0 *upapi.ListResult[upapi.Tag]
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.TagListOptions) ([]upapi.Tag, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.TagListOptions) (*upapi.ListResult[upapi.Tag], error)); ok {
 		return returnFunc(context1, tagListOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.TagListOptions) []upapi.Tag); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.TagListOptions) *upapi.ListResult[upapi.Tag]); ok {
 		r0 = returnFunc(context1, tagListOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]upapi.Tag)
+			r0 = ret.Get(0).(*upapi.ListResult[upapi.Tag])
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.TagListOptions) error); ok {
@@ -4828,12 +4828,12 @@ func (_c *tagsServiceMock_List_Call) Run(run func(context1 context.Context, tagL
 	return _c
 }
 
-func (_c *tagsServiceMock_List_Call) Return(tags []upapi.Tag, err error) *tagsServiceMock_List_Call {
-	_c.Call.Return(tags, err)
+func (_c *tagsServiceMock_List_Call) Return(listResult *upapi.ListResult[upapi.Tag], err error) *tagsServiceMock_List_Call {
+	_c.Call.Return(listResult, err)
 	return _c
 }
 
-func (_c *tagsServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, tagListOptions upapi.TagListOptions) ([]upapi.Tag, error)) *tagsServiceMock_List_Call {
+func (_c *tagsServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, tagListOptions upapi.TagListOptions) (*upapi.ListResult[upapi.Tag], error)) *tagsServiceMock_List_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -5008,23 +5008,23 @@ func (_c *outagesServiceMock_Get_Call) RunAndReturn(run func(context1 context.Co
 }
 
 // List provides a mock function for the type outagesServiceMock
-func (_mock *outagesServiceMock) List(context1 context.Context, outageListOptions upapi.OutageListOptions) ([]upapi.Outage, error) {
+func (_mock *outagesServiceMock) List(context1 context.Context, outageListOptions upapi.OutageListOptions) (*upapi.ListResult[upapi.Outage], error) {
 	ret := _mock.Called(context1, outageListOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []upapi.Outage
+	var r0 *upapi.ListResult[upapi.Outage]
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.OutageListOptions) ([]upapi.Outage, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.OutageListOptions) (*upapi.ListResult[upapi.Outage], error)); ok {
 		return returnFunc(context1, outageListOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.OutageListOptions) []upapi.Outage); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.OutageListOptions) *upapi.ListResult[upapi.Outage]); ok {
 		r0 = returnFunc(context1, outageListOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]upapi.Outage)
+			r0 = ret.Get(0).(*upapi.ListResult[upapi.Outage])
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.OutageListOptions) error); ok {
@@ -5065,12 +5065,12 @@ func (_c *outagesServiceMock_List_Call) Run(run func(context1 context.Context, o
 	return _c
 }
 
-func (_c *outagesServiceMock_List_Call) Return(outages []upapi.Outage, err error) *outagesServiceMock_List_Call {
-	_c.Call.Return(outages, err)
+func (_c *outagesServiceMock_List_Call) Return(listResult *upapi.ListResult[upapi.Outage], err error) *outagesServiceMock_List_Call {
+	_c.Call.Return(listResult, err)
 	return _c
 }
 
-func (_c *outagesServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, outageListOptions upapi.OutageListOptions) ([]upapi.Outage, error)) *outagesServiceMock_List_Call {
+func (_c *outagesServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, outageListOptions upapi.OutageListOptions) (*upapi.ListResult[upapi.Outage], error)) *outagesServiceMock_List_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -5296,23 +5296,23 @@ func (_c *contactsServiceMock_Get_Call) RunAndReturn(run func(context1 context.C
 }
 
 // List provides a mock function for the type contactsServiceMock
-func (_mock *contactsServiceMock) List(context1 context.Context, contactListOptions upapi.ContactListOptions) ([]upapi.Contact, error) {
+func (_mock *contactsServiceMock) List(context1 context.Context, contactListOptions upapi.ContactListOptions) (*upapi.ListResult[upapi.Contact], error) {
 	ret := _mock.Called(context1, contactListOptions)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []upapi.Contact
+	var r0 *upapi.ListResult[upapi.Contact]
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.ContactListOptions) ([]upapi.Contact, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.ContactListOptions) (*upapi.ListResult[upapi.Contact], error)); ok {
 		return returnFunc(context1, contactListOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.ContactListOptions) []upapi.Contact); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.ContactListOptions) *upapi.ListResult[upapi.Contact]); ok {
 		r0 = returnFunc(context1, contactListOptions)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]upapi.Contact)
+			r0 = ret.Get(0).(*upapi.ListResult[upapi.Contact])
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.ContactListOptions) error); ok {
@@ -5353,12 +5353,12 @@ func (_c *contactsServiceMock_List_Call) Run(run func(context1 context.Context, 
 	return _c
 }
 
-func (_c *contactsServiceMock_List_Call) Return(contacts []upapi.Contact, err error) *contactsServiceMock_List_Call {
-	_c.Call.Return(contacts, err)
+func (_c *contactsServiceMock_List_Call) Return(listResult *upapi.ListResult[upapi.Contact], err error) *contactsServiceMock_List_Call {
+	_c.Call.Return(listResult, err)
 	return _c
 }
 
-func (_c *contactsServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, contactListOptions upapi.ContactListOptions) ([]upapi.Contact, error)) *contactsServiceMock_List_Call {
+func (_c *contactsServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, contactListOptions upapi.ContactListOptions) (*upapi.ListResult[upapi.Contact], error)) *contactsServiceMock_List_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -5465,23 +5465,23 @@ func (_m *probeServersServiceMock) EXPECT() *probeServersServiceMock_Expecter {
 }
 
 // List provides a mock function for the type probeServersServiceMock
-func (_mock *probeServersServiceMock) List(ctx context.Context) ([]upapi.ProbeServer, error) {
+func (_mock *probeServersServiceMock) List(ctx context.Context) (*upapi.ListResult[upapi.ProbeServer], error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []upapi.ProbeServer
+	var r0 *upapi.ListResult[upapi.ProbeServer]
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]upapi.ProbeServer, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context) (*upapi.ListResult[upapi.ProbeServer], error)); ok {
 		return returnFunc(ctx)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context) []upapi.ProbeServer); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context) *upapi.ListResult[upapi.ProbeServer]); ok {
 		r0 = returnFunc(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]upapi.ProbeServer)
+			r0 = ret.Get(0).(*upapi.ListResult[upapi.ProbeServer])
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
@@ -5516,12 +5516,12 @@ func (_c *probeServersServiceMock_List_Call) Run(run func(ctx context.Context)) 
 	return _c
 }
 
-func (_c *probeServersServiceMock_List_Call) Return(probeServers []upapi.ProbeServer, err error) *probeServersServiceMock_List_Call {
-	_c.Call.Return(probeServers, err)
+func (_c *probeServersServiceMock_List_Call) Return(listResult *upapi.ListResult[upapi.ProbeServer], err error) *probeServersServiceMock_List_Call {
+	_c.Call.Return(listResult, err)
 	return _c
 }
 
-func (_c *probeServersServiceMock_List_Call) RunAndReturn(run func(ctx context.Context) ([]upapi.ProbeServer, error)) *probeServersServiceMock_List_Call {
+func (_c *probeServersServiceMock_List_Call) RunAndReturn(run func(ctx context.Context) (*upapi.ListResult[upapi.ProbeServer], error)) *probeServersServiceMock_List_Call {
 	_c.Call.Return(run)
 	return _c
 }

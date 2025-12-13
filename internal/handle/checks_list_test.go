@@ -22,9 +22,12 @@ func testContext(t *testing.T, client upapi.API) context.Context {
 func TestHandleListChecks(t *testing.T) {
 	t.Run("returns formatted list of checks", func(t *testing.T) {
 		svc := newChecksServiceMock(t)
-		svc.EXPECT().List(mock.Anything, mock.Anything).Return([]upapi.Check{
-			{PK: 1, Name: "Web Check", MonitoringServiceType: "HTTP", Address: "https://example.com"},
-			{PK: 2, Name: "API Check", MonitoringServiceType: "HTTP", Address: "https://api.example.com"},
+		svc.EXPECT().List(mock.Anything, mock.Anything).Return(&upapi.ListResult[upapi.Check]{
+			TotalCount: 2,
+			Items: []upapi.Check{
+				{PK: 1, Name: "Web Check", MonitoringServiceType: "HTTP", Address: "https://example.com"},
+				{PK: 2, Name: "API Check", MonitoringServiceType: "HTTP", Address: "https://api.example.com"},
+			},
 		}, nil)
 
 		client := newClientMock(t)
@@ -37,7 +40,7 @@ func TestHandleListChecks(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, result.Content, 1)
 		text := result.Content[0].(*mcp.TextContent).Text
-		assert.Contains(t, text, "Found 2 checks")
+		assert.Contains(t, text, "Found 2 results")
 		assert.Contains(t, text, "[1] Web Check")
 		assert.Contains(t, text, "[2] API Check")
 	})
@@ -50,7 +53,7 @@ func TestHandleListChecks(t *testing.T) {
 			MonitoringServiceType: "HTTP",
 			Page:                  2,
 			PageSize:              10,
-		}).Return([]upapi.Check{}, nil)
+		}).Return(&upapi.ListResult[upapi.Check]{TotalCount: 0, Items: []upapi.Check{}}, nil)
 
 		client := newClientMock(t)
 		client.EXPECT().Checks().Return(svc)
@@ -70,7 +73,7 @@ func TestHandleListChecks(t *testing.T) {
 
 	t.Run("returns error on service failure", func(t *testing.T) {
 		svc := newChecksServiceMock(t)
-		svc.EXPECT().List(mock.Anything, mock.Anything).Return(nil, assert.AnError)
+		svc.EXPECT().List(mock.Anything, mock.Anything).Return((*upapi.ListResult[upapi.Check])(nil), assert.AnError)
 
 		client := newClientMock(t)
 		client.EXPECT().Checks().Return(svc)
