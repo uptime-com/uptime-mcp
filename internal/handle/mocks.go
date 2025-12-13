@@ -30,4 +30,9 @@ type (
 	mockeryContactsService interface {
 		upapi.ContactsEndpoint
 	}
+
+	// mockeryProbeServersService wraps upapi.ProbeServersEndpoint for mock generation.
+	mockeryProbeServersService interface {
+		upapi.ProbeServersEndpoint
+	}
 )

@@ -18,6 +18,7 @@ func TestToolRegistration(t *testing.T) {
 	client.EXPECT().Checks().Return(newChecksServiceMock(t)).Maybe()
 	client.EXPECT().Contacts().Return(newContactsServiceMock(t)).Maybe()
 	client.EXPECT().Outages().Return(newOutagesServiceMock(t)).Maybe()
+	client.EXPECT().ProbeServers().Return(newProbeServersServiceMock(t)).Maybe()
 	client.EXPECT().Tags().Return(newTagsServiceMock(t)).Maybe()
 
 	app := fxtest.New(t,
