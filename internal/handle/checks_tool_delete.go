@@ -20,11 +20,16 @@ type deleteCheckInput struct {
 }
 
 func (c *checksHandler) HandleDeleteCheck(ctx context.Context, _ *mcp.CallToolRequest, in deleteCheckInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	err := c.service.Delete(ctx, upapi.PrimaryKey(in.ID))
+	err = client.Checks().Delete(ctx, upapi.PrimaryKey(in.ID))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to delete check: %w", err)
 	}

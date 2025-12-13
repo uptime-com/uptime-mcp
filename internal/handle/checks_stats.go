@@ -23,6 +23,11 @@ type getCheckStatsInput struct {
 }
 
 func (c *checksHandler) HandleGetCheckStats(ctx context.Context, _ *mcp.CallToolRequest, in getCheckStatsInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
@@ -32,7 +37,7 @@ func (c *checksHandler) HandleGetCheckStats(ctx context.Context, _ *mcp.CallTool
 		EndDate:   in.EndDate,
 	}
 
-	stats, err := c.service.Stats(ctx, upapi.PrimaryKey(in.ID), opts)
+	stats, err := client.Checks().Stats(ctx, upapi.PrimaryKey(in.ID), opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get check stats: %w", err)
 	}

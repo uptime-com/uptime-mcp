@@ -27,6 +27,11 @@ type listChecksInput struct {
 }
 
 func (c *checksHandler) HandleListChecks(ctx context.Context, _ *mcp.CallToolRequest, in listChecksInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	opts := upapi.CheckListOptions{
 		Search:                in.Search,
 		MonitoringServiceType: in.Type,
@@ -38,7 +43,7 @@ func (c *checksHandler) HandleListChecks(ctx context.Context, _ *mcp.CallToolReq
 		opts.Tag = []string{in.Tag}
 	}
 
-	checks, err := c.service.List(ctx, opts)
+	checks, err := client.Checks().List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list checks: %w", err)
 	}

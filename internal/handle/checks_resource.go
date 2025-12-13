@@ -22,6 +22,11 @@ func registerCheckResource(srv *mcp.Server, h *checksHandler) {
 }
 
 func (h *checksHandler) handleCheckResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	uri := req.Params.URI
 
 	idStr := strings.TrimPrefix(uri, checkURIPrefix)
@@ -34,7 +39,7 @@ func (h *checksHandler) handleCheckResource(ctx context.Context, req *mcp.ReadRe
 		return nil, fmt.Errorf("invalid check ID: %s", idStr)
 	}
 
-	check, err := h.service.Get(ctx, upapi.PrimaryKey(id))
+	check, err := client.Checks().Get(ctx, upapi.PrimaryKey(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get check: %w", err)
 	}

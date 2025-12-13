@@ -29,6 +29,11 @@ type createPOPCheckInput struct {
 }
 
 func (c *checksHandler) HandleCreatePOPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createPOPCheckInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -46,7 +51,7 @@ func (c *checksHandler) HandleCreatePOPCheck(ctx context.Context, _ *mcp.CallToo
 		ExpectString: in.ExpectString,
 	}
 
-	created, err := c.service.CreatePOP(ctx, check)
+	created, err := client.Checks().CreatePOP(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create POP check: %w", err)
 	}

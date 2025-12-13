@@ -1,17 +1,11 @@
 package handle
 
-import (
-	"go.uber.org/fx"
+import "go.uber.org/fx"
 
-	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
-)
+type checksHandler struct{}
 
-type checksHandler struct {
-	service upapi.ChecksEndpoint
-}
-
-func provideChecksHandler(c upapi.API) *checksHandler {
-	return &checksHandler{service: c.Checks()}
+func provideChecksHandler() *checksHandler {
+	return &checksHandler{}
 }
 
 var checksModule = fx.Module("tool.checks",

@@ -21,6 +21,11 @@ func registerLocationResource(srv *mcp.Server, h *locationsHandler) {
 }
 
 func (h *locationsHandler) handleLocationResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	uri := req.Params.URI
 
 	locationEncoded := strings.TrimPrefix(uri, locationURIPrefix)
@@ -38,7 +43,7 @@ func (h *locationsHandler) handleLocationResource(ctx context.Context, req *mcp.
 	}
 
 	// Fetch all servers and find the matching one
-	servers, err := h.service.List(ctx)
+	servers, err := client.ProbeServers().List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list locations: %w", err)
 	}

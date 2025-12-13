@@ -33,6 +33,11 @@ type createHTTPCheckInput struct {
 }
 
 func (c *checksHandler) HandleCreateHTTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createHTTPCheckInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -65,7 +70,7 @@ func (c *checksHandler) HandleCreateHTTPCheck(ctx context.Context, _ *mcp.CallTo
 		ExpectString:  in.ExpectString,
 	}
 
-	created, err := c.service.CreateHTTP(ctx, check)
+	created, err := client.Checks().CreateHTTP(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create HTTP check: %w", err)
 	}

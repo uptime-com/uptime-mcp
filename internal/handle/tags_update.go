@@ -8,7 +8,7 @@ import (
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
-func registerUpdateTagTool(srv *mcp.Server, h *tags) {
+func registerUpdateTagTool(srv *mcp.Server, h *tagsHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "update_tag",
 		Description: "Update an existing check tag",
@@ -21,7 +21,12 @@ type updateTagInput struct {
 	Color string `json:"color,omitempty"`
 }
 
-func (t *tags) HandleUpdateTag(ctx context.Context, _ *mcp.CallToolRequest, in updateTagInput) (*mcp.CallToolResult, any, error) {
+func (t *tagsHandler) HandleUpdateTag(ctx context.Context, _ *mcp.CallToolRequest, in updateTagInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
@@ -34,7 +39,7 @@ func (t *tags) HandleUpdateTag(ctx context.Context, _ *mcp.CallToolRequest, in u
 		ColorHex: in.Color,
 	}
 
-	updated, err := t.service.Update(ctx, upapi.PrimaryKey(in.ID), tag)
+	updated, err := client.Tags().Update(ctx, upapi.PrimaryKey(in.ID), tag)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to update tag: %w", err)
 	}

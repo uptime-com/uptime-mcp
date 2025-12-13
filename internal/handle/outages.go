@@ -1,21 +1,15 @@
 package handle
 
-import (
-	"go.uber.org/fx"
+import "go.uber.org/fx"
 
-	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
-)
+type outagesHandler struct{}
 
-type outages struct {
-	service upapi.OutagesEndpoint
-}
-
-func provideOutages(c upapi.API) *outages {
-	return &outages{service: c.Outages()}
+func provideOutagesHandler() *outagesHandler {
+	return &outagesHandler{}
 }
 
 var outagesModule = fx.Module("tool.outages",
-	fx.Provide(provideOutages),
+	fx.Provide(provideOutagesHandler),
 	fx.Invoke(registerListOutagesTool),
 	fx.Invoke(registerOutageResource),
 )

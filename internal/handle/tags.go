@@ -1,21 +1,15 @@
 package handle
 
-import (
-	"go.uber.org/fx"
+import "go.uber.org/fx"
 
-	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
-)
+type tagsHandler struct{}
 
-type tags struct {
-	service upapi.TagsEndpoint
-}
-
-func provideTags(c upapi.API) *tags {
-	return &tags{service: c.Tags()}
+func provideTagsHandler() *tagsHandler {
+	return &tagsHandler{}
 }
 
 var tagsModule = fx.Module("tool.tags",
-	fx.Provide(provideTags),
+	fx.Provide(provideTagsHandler),
 	fx.Invoke(registerListTagsTool),
 	fx.Invoke(registerTagResource),
 	fx.Invoke(registerCreateTagTool),

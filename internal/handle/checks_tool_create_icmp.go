@@ -26,6 +26,11 @@ type createICMPCheckInput struct {
 }
 
 func (c *checksHandler) HandleCreateICMPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createICMPCheckInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -40,7 +45,7 @@ func (c *checksHandler) HandleCreateICMPCheck(ctx context.Context, _ *mcp.CallTo
 		Notes:       in.Notes,
 	}
 
-	created, err := c.service.CreateICMP(ctx, check)
+	created, err := client.Checks().CreateICMP(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create ICMP check: %w", err)
 	}

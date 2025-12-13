@@ -22,6 +22,11 @@ type createContactInput struct {
 }
 
 func (h *contactsHandler) handleCreateContact(ctx context.Context, _ *mcp.CallToolRequest, in createContactInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.Name == "" {
 		return nil, nil, fmt.Errorf("name is required")
 	}
@@ -35,7 +40,7 @@ func (h *contactsHandler) handleCreateContact(ctx context.Context, _ *mcp.CallTo
 		SmsList:   in.SMSList,
 	}
 
-	created, err := h.service.Create(ctx, contact)
+	created, err := client.Contacts().Create(ctx, contact)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create contact: %w", err)
 	}

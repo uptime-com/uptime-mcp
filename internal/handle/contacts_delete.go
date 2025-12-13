@@ -20,11 +20,16 @@ type deleteContactInput struct {
 }
 
 func (h *contactsHandler) handleDeleteContact(ctx context.Context, _ *mcp.CallToolRequest, in deleteContactInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.ID == 0 {
 		return nil, nil, fmt.Errorf("id is required")
 	}
 
-	err := h.service.Delete(ctx, upapi.PrimaryKey(in.ID))
+	err = client.Contacts().Delete(ctx, upapi.PrimaryKey(in.ID))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to delete contact: %w", err)
 	}

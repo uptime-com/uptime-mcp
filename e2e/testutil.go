@@ -14,6 +14,7 @@ import (
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/fx/fxtest"
 
+	"github.com/uptime-com/uptime-mcp/internal/app"
 	"github.com/uptime-com/uptime-mcp/internal/handle"
 )
 
@@ -51,13 +52,15 @@ func makeClientSession(t *testing.T) *mcp.ClientSession {
 		Version: "e2e-test",
 	}, nil)
 
+	// Add middleware that injects session into context
+	srv.AddReceivingMiddleware(clientMiddleware(uptimeClient))
+
 	// Use fx to wire up all tools
 	fxApp := fxtest.New(t,
 		fx.WithLogger(func() fxevent.Logger {
 			return fxevent.NopLogger
 		}),
 		fx.Supply(srv),
-		fx.Provide(func() upapi.API { return uptimeClient }),
 		handle.Module,
 	)
 	fxApp.RequireStart()
@@ -81,4 +84,15 @@ func makeClientSession(t *testing.T) *mcp.ClientSession {
 	})
 
 	return session
+}
+
+// clientMiddleware creates a middleware that injects the API client into context.
+func clientMiddleware(client upapi.API) mcp.Middleware {
+	return func(next mcp.MethodHandler) mcp.MethodHandler {
+		return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
+			session := &app.Session{Client: client}
+			ctx = app.ContextWithSession(ctx, session)
+			return next(ctx, method, req)
+		}
+	}
 }

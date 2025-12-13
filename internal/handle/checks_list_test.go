@@ -9,7 +9,15 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
+
+	"github.com/uptime-com/uptime-mcp/internal/app"
 )
+
+// testContext creates a context with a mock client for testing.
+func testContext(t *testing.T, client upapi.API) context.Context {
+	session := &app.Session{Client: client}
+	return app.ContextWithSession(context.Background(), session)
+}
 
 func TestHandleListChecks(t *testing.T) {
 	t.Run("returns formatted list of checks", func(t *testing.T) {
@@ -19,8 +27,12 @@ func TestHandleListChecks(t *testing.T) {
 			{PK: 2, Name: "API Check", MonitoringServiceType: "HTTP", Address: "https://api.example.com"},
 		}, nil)
 
-		h := &checksHandler{service: svc}
-		result, _, err := h.HandleListChecks(context.Background(), nil, listChecksInput{})
+		client := newClientMock(t)
+		client.EXPECT().Checks().Return(svc)
+
+		h := &checksHandler{}
+		ctx := testContext(t, client)
+		result, _, err := h.HandleListChecks(ctx, nil, listChecksInput{})
 
 		require.NoError(t, err)
 		require.Len(t, result.Content, 1)
@@ -40,8 +52,12 @@ func TestHandleListChecks(t *testing.T) {
 			PageSize:              10,
 		}).Return([]upapi.Check{}, nil)
 
-		h := &checksHandler{service: svc}
-		_, _, err := h.HandleListChecks(context.Background(), nil, listChecksInput{
+		client := newClientMock(t)
+		client.EXPECT().Checks().Return(svc)
+
+		h := &checksHandler{}
+		ctx := testContext(t, client)
+		_, _, err := h.HandleListChecks(ctx, nil, listChecksInput{
 			Search:   "prod",
 			Tag:      "critical",
 			Type:     "HTTP",
@@ -56,9 +72,20 @@ func TestHandleListChecks(t *testing.T) {
 		svc := newChecksServiceMock(t)
 		svc.EXPECT().List(mock.Anything, mock.Anything).Return(nil, assert.AnError)
 
-		h := &checksHandler{service: svc}
-		_, _, err := h.HandleListChecks(context.Background(), nil, listChecksInput{})
+		client := newClientMock(t)
+		client.EXPECT().Checks().Return(svc)
+
+		h := &checksHandler{}
+		ctx := testContext(t, client)
+		_, _, err := h.HandleListChecks(ctx, nil, listChecksInput{})
 
 		assert.ErrorContains(t, err, "failed to list checks")
+	})
+
+	t.Run("returns error when no client in context", func(t *testing.T) {
+		h := &checksHandler{}
+		_, _, err := h.HandleListChecks(context.Background(), nil, listChecksInput{})
+
+		assert.ErrorContains(t, err, "no API client in context")
 	})
 }

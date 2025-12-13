@@ -9,7 +9,7 @@ import (
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
-func registerListOutagesTool(srv *mcp.Server, h *outages) {
+func registerListOutagesTool(srv *mcp.Server, h *outagesHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "list_outages",
 		Description: "List outages across all monitored checks with optional filtering",
@@ -23,7 +23,12 @@ type listOutagesInput struct {
 	PageSize int64  `json:"page_size,omitempty"`
 }
 
-func (o *outages) HandleListOutages(ctx context.Context, _ *mcp.CallToolRequest, in listOutagesInput) (*mcp.CallToolResult, any, error) {
+func (o *outagesHandler) HandleListOutages(ctx context.Context, _ *mcp.CallToolRequest, in listOutagesInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	opts := upapi.OutageListOptions{
 		Search:                     in.Search,
 		CheckMonitoringServiceType: in.Type,
@@ -31,7 +36,7 @@ func (o *outages) HandleListOutages(ctx context.Context, _ *mcp.CallToolRequest,
 		PageSize:                   in.PageSize,
 	}
 
-	outageList, err := o.service.List(ctx, opts)
+	outageList, err := client.Outages().List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list outages: %w", err)
 	}

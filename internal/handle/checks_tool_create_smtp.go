@@ -30,6 +30,11 @@ type createSMTPCheckInput struct {
 }
 
 func (c *checksHandler) HandleCreateSMTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSMTPCheckInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -48,7 +53,7 @@ func (c *checksHandler) HandleCreateSMTPCheck(ctx context.Context, _ *mcp.CallTo
 		Password:    in.Password,
 	}
 
-	created, err := c.service.CreateSMTP(ctx, check)
+	created, err := client.Checks().CreateSMTP(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create SMTP check: %w", err)
 	}

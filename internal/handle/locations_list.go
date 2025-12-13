@@ -26,7 +26,12 @@ var excludedLocations = map[string]bool{
 }
 
 func (h *locationsHandler) handleListLocations(ctx context.Context, _ *mcp.CallToolRequest, in listLocationsInput) (*mcp.CallToolResult, any, error) {
-	servers, err := h.service.List(ctx)
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	servers, err := client.ProbeServers().List(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list locations: %w", err)
 	}

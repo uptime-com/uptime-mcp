@@ -22,6 +22,11 @@ func registerContactResource(srv *mcp.Server, h *contactsHandler) {
 }
 
 func (h *contactsHandler) handleContactResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	uri := req.Params.URI
 
 	idStr := strings.TrimPrefix(uri, contactURIPrefix)
@@ -34,7 +39,7 @@ func (h *contactsHandler) handleContactResource(ctx context.Context, req *mcp.Re
 		return nil, fmt.Errorf("invalid contact ID: %s", idStr)
 	}
 
-	contact, err := h.service.Get(ctx, upapi.PrimaryKey(id))
+	contact, err := client.Contacts().Get(ctx, upapi.PrimaryKey(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get contact: %w", err)
 	}

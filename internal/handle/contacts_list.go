@@ -23,13 +23,18 @@ type listContactsInput struct {
 }
 
 func (h *contactsHandler) handleListContacts(ctx context.Context, _ *mcp.CallToolRequest, in listContactsInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	opts := upapi.ContactListOptions{
 		Search:   in.Search,
 		Page:     in.Page,
 		PageSize: in.PageSize,
 	}
 
-	contacts, err := h.service.List(ctx, opts)
+	contacts, err := client.Contacts().List(ctx, opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list contacts: %w", err)
 	}

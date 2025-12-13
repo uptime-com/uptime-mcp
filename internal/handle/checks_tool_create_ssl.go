@@ -27,6 +27,11 @@ type createSSLCheckInput struct {
 }
 
 func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSSLCheckInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
@@ -42,7 +47,7 @@ func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToo
 		Threshold: in.Threshold,
 	}
 
-	created, err := c.service.CreateSSLCert(ctx, check)
+	created, err := client.Checks().CreateSSLCert(ctx, check)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create SSL check: %w", err)
 	}

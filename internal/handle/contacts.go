@@ -1,17 +1,11 @@
 package handle
 
-import (
-	"go.uber.org/fx"
+import "go.uber.org/fx"
 
-	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
-)
+type contactsHandler struct{}
 
-type contactsHandler struct {
-	service upapi.ContactsEndpoint
-}
-
-func provideContactsHandler(c upapi.API) *contactsHandler {
-	return &contactsHandler{service: c.Contacts()}
+func provideContactsHandler() *contactsHandler {
+	return &contactsHandler{}
 }
 
 var contactsModule = fx.Module("tool.contacts",

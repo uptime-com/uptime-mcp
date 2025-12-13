@@ -10,7 +10,8 @@ type sessionKeyType struct{}
 
 var sessionKey sessionKeyType
 
-// Session holds per-request state including the authenticated Uptime client.
+// Session holds per-session state including the authenticated Uptime client.
+// Client is created once per session by middleware and cached.
 type Session struct {
 	APIKey string
 	Client upapi.API

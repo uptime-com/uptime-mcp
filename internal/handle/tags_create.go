@@ -8,7 +8,7 @@ import (
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
-func registerCreateTagTool(srv *mcp.Server, h *tags) {
+func registerCreateTagTool(srv *mcp.Server, h *tagsHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "create_tag",
 		Description: "Create a new check tag",
@@ -20,7 +20,12 @@ type createTagInput struct {
 	Color string `json:"color,omitempty"`
 }
 
-func (t *tags) HandleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in createTagInput) (*mcp.CallToolResult, any, error) {
+func (t *tagsHandler) HandleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in createTagInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if in.Name == "" {
 		return nil, nil, fmt.Errorf("name is required")
 	}
@@ -30,7 +35,7 @@ func (t *tags) HandleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in c
 		ColorHex: in.Color,
 	}
 
-	created, err := t.service.Create(ctx, tag)
+	created, err := client.Tags().Create(ctx, tag)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create tag: %w", err)
 	}

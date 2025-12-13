@@ -12,7 +12,7 @@ import (
 
 const outageURIPrefix = "https://uptime.com/api/v1/outages/"
 
-func registerOutageResource(srv *mcp.Server, h *outages) {
+func registerOutageResource(srv *mcp.Server, h *outagesHandler) {
 	srv.AddResourceTemplate(&mcp.ResourceTemplate{
 		URITemplate: outageURIPrefix + "{id}",
 		Name:        "outage",
@@ -21,7 +21,12 @@ func registerOutageResource(srv *mcp.Server, h *outages) {
 	}, h.handleOutageResource)
 }
 
-func (o *outages) handleOutageResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+func (o *outagesHandler) handleOutageResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	uri := req.Params.URI
 
 	idStr := strings.TrimPrefix(uri, outageURIPrefix)
@@ -34,7 +39,7 @@ func (o *outages) handleOutageResource(ctx context.Context, req *mcp.ReadResourc
 		return nil, fmt.Errorf("invalid outage ID: %s", idStr)
 	}
 
-	outage, err := o.service.Get(ctx, upapi.PrimaryKey(id))
+	outage, err := client.Outages().Get(ctx, upapi.PrimaryKey(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get outage: %w", err)
 	}

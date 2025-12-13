@@ -12,7 +12,7 @@ import (
 
 const tagURIPrefix = "https://uptime.com/api/v1/check-tags/"
 
-func registerTagResource(srv *mcp.Server, h *tags) {
+func registerTagResource(srv *mcp.Server, h *tagsHandler) {
 	srv.AddResourceTemplate(&mcp.ResourceTemplate{
 		URITemplate: tagURIPrefix + "{id}",
 		Name:        "tag",
@@ -21,7 +21,12 @@ func registerTagResource(srv *mcp.Server, h *tags) {
 	}, h.handleTagResource)
 }
 
-func (t *tags) handleTagResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+func (t *tagsHandler) handleTagResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	uri := req.Params.URI
 
 	idStr := strings.TrimPrefix(uri, tagURIPrefix)
@@ -34,7 +39,7 @@ func (t *tags) handleTagResource(ctx context.Context, req *mcp.ReadResourceReque
 		return nil, fmt.Errorf("invalid tag ID: %s", idStr)
 	}
 
-	tag, err := t.service.Get(ctx, upapi.PrimaryKey(id))
+	tag, err := client.Tags().Get(ctx, upapi.PrimaryKey(id))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get tag: %w", err)
 	}
