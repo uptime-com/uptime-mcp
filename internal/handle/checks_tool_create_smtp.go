@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var CreateSMTPCheckToolModule = fx.Module("tool.create_smtp_check",
-	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "create_smtp_check",
-			Description: "Create a new SMTP email server monitoring check",
-		}, c.HandleCreateSMTPCheck)
-	}),
-)
+func registerCreateSMTPCheckTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "create_smtp_check",
+		Description: "Create a new SMTP email server monitoring check",
+	}, h.HandleCreateSMTPCheck)
+}
 
 type createSMTPCheckInput struct {
 	Name        string   `json:"name"`

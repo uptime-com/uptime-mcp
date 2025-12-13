@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var CreateTagToolModule = fx.Module("tool.create_tag",
-	fx.Invoke(func(srv *mcp.Server, t *tags) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "create_tag",
-			Description: "Create a new check tag",
-		}, t.HandleCreateTag)
-	}),
-)
+func registerCreateTagTool(srv *mcp.Server, h *tags) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "create_tag",
+		Description: "Create a new check tag",
+	}, h.HandleCreateTag)
+}
 
 type createTagInput struct {
 	Name  string `json:"name"`

@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import "github.com/uptime-com/uptime-mcp/internal/uptime"
 

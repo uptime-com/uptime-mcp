@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var UpdateTagToolModule = fx.Module("tool.update_tag",
-	fx.Invoke(func(srv *mcp.Server, t *tags) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "update_tag",
-			Description: "Update an existing check tag",
-		}, t.HandleUpdateTag)
-	}),
-)
+func registerUpdateTagTool(srv *mcp.Server, h *tags) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "update_tag",
+		Description: "Update an existing check tag",
+	}, h.HandleUpdateTag)
+}
 
 type updateTagInput struct {
 	ID    int    `json:"id"`

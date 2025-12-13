@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var CreateSSLCheckToolModule = fx.Module("tool.create_ssl_check",
-	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "create_ssl_check",
-			Description: "Create a new SSL certificate monitoring check",
-		}, c.HandleCreateSSLCheck)
-	}),
-)
+func registerCreateSSLCheckTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "create_ssl_check",
+		Description: "Create a new SSL certificate monitoring check",
+	}, h.HandleCreateSSLCheck)
+}
 
 type createSSLCheckInput struct {
 	Name        string   `json:"name"`

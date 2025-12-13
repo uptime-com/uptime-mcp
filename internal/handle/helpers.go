@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import "github.com/modelcontextprotocol/go-sdk/mcp"
 

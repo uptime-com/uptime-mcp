@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,19 +6,16 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var CreateIMAPCheckToolModule = fx.Module("tool.create_imap_check",
-	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "create_imap_check",
-			Description: "Create a new IMAP email server monitoring check",
-		}, c.HandleCreateIMAPCheck)
-	}),
-)
+func registerCreatePOPCheckTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "create_pop_check",
+		Description: "Create a new POP3 email server monitoring check",
+	}, h.HandleCreatePOPCheck)
+}
 
-type createIMAPCheckInput struct {
+type createPOPCheckInput struct {
 	Name        string   `json:"name"`
 	Address     string   `json:"address"`
 	Interval    int      `json:"interval,omitempty"`
@@ -32,13 +29,13 @@ type createIMAPCheckInput struct {
 	Password    string   `json:"password,omitempty"`
 }
 
-func (c *checksHandler) HandleCreateIMAPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createIMAPCheckInput) (*mcp.CallToolResult, any, error) {
+func (c *checksHandler) HandleCreatePOPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createPOPCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
 	check := &api.Check{
-		CheckType:   "IMAP",
+		CheckType:   "POP",
 		Name:        in.Name,
 		Address:     in.Address,
 		Port:        in.Port,
@@ -54,8 +51,8 @@ func (c *checksHandler) HandleCreateIMAPCheck(ctx context.Context, _ *mcp.CallTo
 
 	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to create IMAP check: %w", err)
+		return nil, nil, fmt.Errorf("failed to create POP check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created IMAP check #%d: %s", created.PK, created.Name)), nil, nil
+	return textResult(fmt.Sprintf("Created POP check #%d: %s", created.PK, created.Name)), nil, nil
 }

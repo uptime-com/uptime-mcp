@@ -1,6 +1,6 @@
 //go:build acc
 
-package tools
+package handle
 
 import (
 	"os"

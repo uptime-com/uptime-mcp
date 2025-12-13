@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -7,18 +7,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-// ListChecksToolModule registers the list_checks tool.
-var ListChecksToolModule = fx.Module("tool.list_checks",
-	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "list_checks",
-			Description: "List monitoring checks with optional filtering by search term, tag, or check type",
-		}, c.HandleListChecks)
-	}),
-)
+func registerListChecksTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "list_checks",
+		Description: "List monitoring checks with optional filtering by search term, tag, or check type",
+	}, h.HandleListChecks)
+}
 
 // listChecksInput defines parameters for listing checksHandler.
 type listChecksInput struct {

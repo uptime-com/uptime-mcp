@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -7,17 +7,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var ListOutagesToolModule = fx.Module("tool.list_outages",
-	fx.Invoke(func(srv *mcp.Server, o *outages) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "list_outages",
-			Description: "List outages across all monitored checks with optional filtering",
-		}, o.HandleListOutages)
-	}),
-)
+func registerListOutagesTool(srv *mcp.Server, h *outages) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "list_outages",
+		Description: "List outages across all monitored checks with optional filtering",
+	}, h.HandleListOutages)
+}
 
 type listOutagesInput struct {
 	Search   string `json:"search,omitempty"`

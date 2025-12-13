@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,19 +6,16 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var CreateTCPCheckToolModule = fx.Module("tool.create_tcp_check",
-	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "create_tcp_check",
-			Description: "Create a new TCP port connectivity check",
-		}, c.HandleCreateTCPCheck)
-	}),
-)
+func registerCreateHTTPCheckTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "create_http_check",
+		Description: "Create a new HTTP/HTTPS monitoring check",
+	}, h.HandleCreateHTTPCheck)
+}
 
-type createTCPCheckInput struct {
+type createHTTPCheckInput struct {
 	Name         string   `json:"name"`
 	Address      string   `json:"address"`
 	Interval     int      `json:"interval,omitempty"`
@@ -26,21 +23,21 @@ type createTCPCheckInput struct {
 	Tags         []string `json:"tags,omitempty"`
 	Sensitivity  int      `json:"sensitivity,omitempty"`
 	Notes        string   `json:"notes,omitempty"`
-	Port         int      `json:"port"`
+	Port         int      `json:"port,omitempty"`
+	Username     string   `json:"username,omitempty"`
+	Password     string   `json:"password,omitempty"`
+	Headers      string   `json:"headers,omitempty"`
 	SendString   string   `json:"send_string,omitempty"`
 	ExpectString string   `json:"expect_string,omitempty"`
 }
 
-func (c *checksHandler) HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createTCPCheckInput) (*mcp.CallToolResult, any, error) {
+func (c *checksHandler) HandleCreateHTTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createHTTPCheckInput) (*mcp.CallToolResult, any, error) {
 	if in.Name == "" || in.Address == "" {
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
-	if in.Port == 0 {
-		return nil, nil, fmt.Errorf("port is required for TCP check")
-	}
 
 	check := &api.Check{
-		CheckType:    "TCP",
+		CheckType:    "HTTP",
 		Name:         in.Name,
 		Address:      in.Address,
 		Port:         in.Port,
@@ -49,14 +46,17 @@ func (c *checksHandler) HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToo
 		Tags:         in.Tags,
 		Sensitivity:  in.Sensitivity,
 		Notes:        in.Notes,
+		Username:     in.Username,
+		Password:     in.Password,
+		Headers:      in.Headers,
 		SendString:   in.SendString,
 		ExpectString: in.ExpectString,
 	}
 
 	created, _, err := c.service.Create(ctx, check)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to create TCP check: %w", err)
+		return nil, nil, fmt.Errorf("failed to create HTTP check: %w", err)
 	}
 
-	return textResult(fmt.Sprintf("Created TCP check #%d: %s", created.PK, created.Name)), nil, nil
+	return textResult(fmt.Sprintf("Created HTTP check #%d: %s", created.PK, created.Name)), nil, nil
 }

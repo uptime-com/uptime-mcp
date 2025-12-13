@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -7,17 +7,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var ListTagsToolModule = fx.Module("tool.list_tags",
-	fx.Invoke(func(srv *mcp.Server, t *tags) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "list_tags",
-			Description: "List all check tags with optional search filtering",
-		}, t.HandleListTags)
-	}),
-)
+func registerListTagsTool(srv *mcp.Server, h *tags) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "list_tags",
+		Description: "List all check tags with optional search filtering",
+	}, h.HandleListTags)
+}
 
 type listTagsInput struct {
 	Search   string `json:"search,omitempty"`

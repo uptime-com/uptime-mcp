@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"go.uber.org/fx"
 )
 
-var GetTagToolModule = fx.Module("tool.get_tag",
-	fx.Invoke(func(srv *mcp.Server, t *tags) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "get_tag",
-			Description: "Get details of a specific tag by ID",
-		}, t.HandleGetTag)
-	}),
-)
+func registerGetTagTool(srv *mcp.Server, h *tags) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "get_tag",
+		Description: "Get details of a specific tag by ID",
+	}, h.HandleGetTag)
+}
 
 type getTagInput struct {
 	ID int `json:"id"`

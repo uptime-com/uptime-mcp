@@ -1,21 +1,18 @@
-package tools
+package handle
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"go.uber.org/fx"
 )
 
-var DeleteTagToolModule = fx.Module("tool.delete_tag",
-	fx.Invoke(func(srv *mcp.Server, t *tags) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "delete_tag",
-			Description: "Delete a check tag by ID",
-		}, t.HandleDeleteTag)
-	}),
-)
+func registerDeleteTagTool(srv *mcp.Server, h *tags) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "delete_tag",
+		Description: "Delete a check tag by ID",
+	}, h.HandleDeleteTag)
+}
 
 type deleteTagInput struct {
 	ID int `json:"id"`

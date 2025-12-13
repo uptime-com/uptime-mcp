@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"go.uber.org/fx"
 )
 
-var GetOutageToolModule = fx.Module("tool.get_outage",
-	fx.Invoke(func(srv *mcp.Server, o *outages) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "get_outage",
-			Description: "Get details of a specific outage including all alerts",
-		}, o.HandleGetOutage)
-	}),
-)
+func registerGetOutageTool(srv *mcp.Server, h *outages) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "get_outage",
+		Description: "Get details of a specific outage including all alerts",
+	}, h.HandleGetOutage)
+}
 
 type getOutageInput struct {
 	ID string `json:"id"`

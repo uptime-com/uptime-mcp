@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var CreateDNSCheckToolModule = fx.Module("tool.create_dns_check",
-	fx.Invoke(func(srv *mcp.Server, checks *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "create_dns_check",
-			Description: "Create a new DNS monitoring check",
-		}, checks.HandleCreateDNSCheck)
-	}),
-)
+func registerCreateDNSCheckTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "create_dns_check",
+		Description: "Create a new DNS monitoring check",
+	}, h.HandleCreateDNSCheck)
+}
 
 type createDNSCheckInput struct {
 	Name          string   `json:"name"`

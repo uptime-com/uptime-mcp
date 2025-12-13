@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -6,17 +6,14 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"go.uber.org/fx"
 )
 
-var GetCheckToolModule = fx.Module("tool.get_check",
-	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "get_check",
-			Description: "Get details of a specific monitoring check by ID",
-		}, c.HandleGetCheck)
-	}),
-)
+func registerGetCheckTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "get_check",
+		Description: "Get details of a specific monitoring check by ID",
+	}, h.HandleGetCheck)
+}
 
 type getCheckInput struct {
 	ID int `json:"id"`

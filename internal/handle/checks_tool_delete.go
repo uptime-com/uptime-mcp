@@ -1,21 +1,18 @@
-package tools
+package handle
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"go.uber.org/fx"
 )
 
-var DeleteCheckToolModule = fx.Module("tool.delete_check",
-	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "delete_check",
-			Description: "Delete a monitoring check by ID",
-		}, c.HandleDeleteCheck)
-	}),
-)
+func registerDeleteCheckTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "delete_check",
+		Description: "Delete a monitoring check by ID",
+	}, h.HandleDeleteCheck)
+}
 
 type deleteCheckInput struct {
 	ID int `json:"id"`

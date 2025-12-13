@@ -1,4 +1,4 @@
-package tools
+package handle
 
 import (
 	"context"
@@ -7,17 +7,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	api "github.com/uptime-com/uptime-client-go"
-	"go.uber.org/fx"
 )
 
-var GetCheckStatsToolModule = fx.Module("tool.get_check_stats",
-	fx.Invoke(func(srv *mcp.Server, c *checksHandler) {
-		mcp.AddTool(srv, &mcp.Tool{
-			Name:        "get_check_stats",
-			Description: "Get statistics for a monitoring check including uptime percentage and outages",
-		}, c.HandleGetCheckStats)
-	}),
-)
+func registerGetCheckStatsTool(srv *mcp.Server, h *checksHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "get_check_stats",
+		Description: "Get statistics for a monitoring check including uptime percentage and outages",
+	}, h.HandleGetCheckStats)
+}
 
 type getCheckStatsInput struct {
 	ID        int    `json:"id"`
