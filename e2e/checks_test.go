@@ -5,6 +5,7 @@ package e2e
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -112,6 +113,92 @@ func requirePaginationHeader(t *testing.T, text string) {
 	t.Helper()
 	hasPagination := strings.Contains(text, "Found") || strings.Contains(text, "Showing")
 	require.True(t, hasPagination, "expected pagination header in output")
+}
+
+func TestE2E_GetCheckStats(t *testing.T) {
+	session := makeClientSession(t)
+	ctx := context.Background()
+
+	// First, list checks to get a valid ID
+	listResult, err := session.CallTool(ctx, &mcp.CallToolParams{
+		Name: "list_checks",
+		Arguments: map[string]any{
+			"page_size": 1,
+		},
+	})
+	require.NoError(t, err)
+	require.Len(t, listResult.Content, 1)
+
+	text := listResult.Content[0].(*mcp.TextContent).Text
+	checkIDStr := extractCheckID(t, text)
+	if checkIDStr == "" {
+		t.Skip("no checks found in account")
+	}
+	checkID, err := strconv.ParseInt(checkIDStr, 10, 64)
+	require.NoError(t, err)
+
+	// Get stats for the check
+	result, err := session.CallTool(ctx, &mcp.CallToolParams{
+		Name: "get_check_stats",
+		Arguments: map[string]any{
+			"id": checkID,
+		},
+	})
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	require.Len(t, result.Content, 1)
+
+	statsText := result.Content[0].(*mcp.TextContent).Text
+	require.Contains(t, statsText, "Statistics for check")
+	require.Contains(t, statsText, "Totals:")
+
+	t.Logf("Check ID: %d", checkID)
+	t.Logf("Response:\n%s", statsText)
+}
+
+func TestE2E_GetCheckStats_WithDateRange(t *testing.T) {
+	session := makeClientSession(t)
+	ctx := context.Background()
+
+	// First, list checks to get a valid ID
+	listResult, err := session.CallTool(ctx, &mcp.CallToolParams{
+		Name: "list_checks",
+		Arguments: map[string]any{
+			"page_size": 1,
+		},
+	})
+	require.NoError(t, err)
+	require.Len(t, listResult.Content, 1)
+
+	text := listResult.Content[0].(*mcp.TextContent).Text
+	checkIDStr := extractCheckID(t, text)
+	if checkIDStr == "" {
+		t.Skip("no checks found in account")
+	}
+	checkID, err := strconv.ParseInt(checkIDStr, 10, 64)
+	require.NoError(t, err)
+
+	// Get stats with date range
+	result, err := session.CallTool(ctx, &mcp.CallToolParams{
+		Name: "get_check_stats",
+		Arguments: map[string]any{
+			"id":         checkID,
+			"start_date": "2024-12-01",
+			"end_date":   "2024-12-13",
+		},
+	})
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	require.Len(t, result.Content, 1)
+
+	statsText := result.Content[0].(*mcp.TextContent).Text
+	require.Contains(t, statsText, "Statistics for check")
+	require.Contains(t, statsText, "Period: 2024-12-01 to 2024-12-13")
+
+	t.Logf("Check ID: %d", checkID)
+	t.Logf("Response:\n%s", statsText)
 }
 
 // extractCheckID extracts the first check ID from list output like "- [123] Name".
