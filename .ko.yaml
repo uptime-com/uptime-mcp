@@ -1,0 +1,7 @@
+builds:
+  - id: uptime-mcp
+    dir: .
+    main: ./app/uptime-mcp
+    ldflags:
+      - -X main.Version={{.Env.GITHUB_REF_NAME}}
+      - -X main.Commit={{.Env.GITHUB_SHA}}

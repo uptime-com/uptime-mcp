@@ -3,4 +3,5 @@
 !.gitattributes
 !.mockery.yaml
 !.goreleaser.yaml
+!.ko.yaml
 dist/

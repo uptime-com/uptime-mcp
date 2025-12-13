@@ -5,14 +5,20 @@ import (
 	"go.uber.org/fx"
 )
 
+// Info holds server metadata injected at build time.
+type Info struct {
+	Version string
+	Commit  string
+}
+
 var Module = fx.Module("server",
 	fx.Provide(New),
 	fx.Invoke(Run),
 )
 
-func New() *mcp.Server {
+func New(info Info) *mcp.Server {
 	return mcp.NewServer(&mcp.Implementation{
 		Name:    "uptime-mcp",
-		Version: "0.1.0",
+		Version: info.Version,
 	}, nil)
 }
