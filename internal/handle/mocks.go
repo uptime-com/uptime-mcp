@@ -35,4 +35,9 @@ type (
 	mockeryProbeServersService interface {
 		upapi.ProbeServersEndpoint
 	}
+
+	// mockeryAlertsService wraps upapi.AlertsEndpoint for mock generation.
+	mockeryAlertsService interface {
+		upapi.AlertsEndpoint
+	}
 )
