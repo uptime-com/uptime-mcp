@@ -16,14 +16,15 @@ func registerCreateSSLCheckTool(srv *mcp.Server, h *checksHandler) {
 }
 
 type createSSLCheckInput struct {
-	Name      string   `json:"name"`
-	Address   string   `json:"address"`
-	Locations []string `json:"locations,omitempty"`
-	Tags      []string `json:"tags,omitempty"`
-	Notes     string   `json:"notes,omitempty"`
-	Port      int64    `json:"port,omitempty"`
-	Protocol  string   `json:"protocol,omitempty"`
-	Threshold int64    `json:"threshold,omitempty"`
+	Name          string   `json:"name"`
+	Address       string   `json:"address"`
+	Locations     []string `json:"locations,omitempty"`
+	ContactGroups []string `json:"contact_groups,omitempty"`
+	Tags          []string `json:"tags,omitempty"`
+	Notes         string   `json:"notes,omitempty"`
+	Port          int64    `json:"port,omitempty"`
+	Protocol      string   `json:"protocol,omitempty"`
+	Threshold     int64    `json:"threshold,omitempty"`
 }
 
 func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSSLCheckInput) (*mcp.CallToolResult, any, error) {
@@ -36,15 +37,21 @@ func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToo
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
+	var contactGroups *[]string
+	if len(in.ContactGroups) > 0 {
+		contactGroups = &in.ContactGroups
+	}
+
 	check := upapi.CheckSSLCert{
-		Name:      in.Name,
-		Address:   in.Address,
-		Port:      in.Port,
-		Locations: in.Locations,
-		Tags:      in.Tags,
-		Notes:     in.Notes,
-		Protocol:  in.Protocol,
-		Threshold: in.Threshold,
+		Name:          in.Name,
+		Address:       in.Address,
+		Port:          in.Port,
+		Locations:     in.Locations,
+		ContactGroups: contactGroups,
+		Tags:          in.Tags,
+		Notes:         in.Notes,
+		Protocol:      in.Protocol,
+		Threshold:     in.Threshold,
 	}
 
 	created, err := client.Checks().CreateSSLCert(ctx, check)

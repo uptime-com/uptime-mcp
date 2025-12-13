@@ -20,6 +20,7 @@ type createDNSCheckInput struct {
 	Address       string   `json:"address"`
 	Interval      int64    `json:"interval,omitempty"`
 	Locations     []string `json:"locations,omitempty"`
+	ContactGroups []string `json:"contact_groups,omitempty"`
 	Tags          []string `json:"tags,omitempty"`
 	Sensitivity   int64    `json:"sensitivity,omitempty"`
 	Notes         string   `json:"notes,omitempty"`
@@ -38,11 +39,17 @@ func (c *checksHandler) HandleCreateDNSCheck(ctx context.Context, _ *mcp.CallToo
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
+	var contactGroups *[]string
+	if len(in.ContactGroups) > 0 {
+		contactGroups = &in.ContactGroups
+	}
+
 	check := upapi.CheckDNS{
 		Name:          in.Name,
 		Address:       in.Address,
 		Interval:      in.Interval,
 		Locations:     in.Locations,
+		ContactGroups: contactGroups,
 		Tags:          in.Tags,
 		Sensitivity:   in.Sensitivity,
 		Notes:         in.Notes,

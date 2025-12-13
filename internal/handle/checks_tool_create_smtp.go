@@ -16,17 +16,18 @@ func registerCreateSMTPCheckTool(srv *mcp.Server, h *checksHandler) {
 }
 
 type createSMTPCheckInput struct {
-	Name        string   `json:"name"`
-	Address     string   `json:"address"`
-	Interval    int64    `json:"interval,omitempty"`
-	Locations   []string `json:"locations,omitempty"`
-	Tags        []string `json:"tags,omitempty"`
-	Sensitivity int64    `json:"sensitivity,omitempty"`
-	Notes       string   `json:"notes,omitempty"`
-	Port        int64    `json:"port,omitempty"`
-	Encryption  string   `json:"encryption,omitempty"`
-	Username    string   `json:"username,omitempty"`
-	Password    string   `json:"password,omitempty"`
+	Name          string   `json:"name"`
+	Address       string   `json:"address"`
+	Interval      int64    `json:"interval,omitempty"`
+	Locations     []string `json:"locations,omitempty"`
+	ContactGroups []string `json:"contact_groups,omitempty"`
+	Tags          []string `json:"tags,omitempty"`
+	Sensitivity   int64    `json:"sensitivity,omitempty"`
+	Notes         string   `json:"notes,omitempty"`
+	Port          int64    `json:"port,omitempty"`
+	Encryption    string   `json:"encryption,omitempty"`
+	Username      string   `json:"username,omitempty"`
+	Password      string   `json:"password,omitempty"`
 }
 
 func (c *checksHandler) HandleCreateSMTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSMTPCheckInput) (*mcp.CallToolResult, any, error) {
@@ -39,18 +40,24 @@ func (c *checksHandler) HandleCreateSMTPCheck(ctx context.Context, _ *mcp.CallTo
 		return nil, nil, fmt.Errorf("name and address are required")
 	}
 
+	var contactGroups *[]string
+	if len(in.ContactGroups) > 0 {
+		contactGroups = &in.ContactGroups
+	}
+
 	check := upapi.CheckSMTP{
-		Name:        in.Name,
-		Address:     in.Address,
-		Port:        in.Port,
-		Interval:    in.Interval,
-		Locations:   in.Locations,
-		Tags:        in.Tags,
-		Sensitivity: in.Sensitivity,
-		Notes:       in.Notes,
-		Encryption:  in.Encryption,
-		Username:    in.Username,
-		Password:    in.Password,
+		Name:          in.Name,
+		Address:       in.Address,
+		Port:          in.Port,
+		Interval:      in.Interval,
+		Locations:     in.Locations,
+		ContactGroups: contactGroups,
+		Tags:          in.Tags,
+		Sensitivity:   in.Sensitivity,
+		Notes:         in.Notes,
+		Encryption:    in.Encryption,
+		Username:      in.Username,
+		Password:      in.Password,
 	}
 
 	created, err := client.Checks().CreateSMTP(ctx, check)

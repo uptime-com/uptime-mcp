@@ -16,16 +16,17 @@ func registerCreateTCPCheckTool(srv *mcp.Server, h *checksHandler) {
 }
 
 type createTCPCheckInput struct {
-	Name         string   `json:"name"`
-	Address      string   `json:"address"`
-	Interval     int64    `json:"interval,omitempty"`
-	Locations    []string `json:"locations,omitempty"`
-	Tags         []string `json:"tags,omitempty"`
-	Sensitivity  int64    `json:"sensitivity,omitempty"`
-	Notes        string   `json:"notes,omitempty"`
-	Port         int64    `json:"port"`
-	SendString   string   `json:"send_string,omitempty"`
-	ExpectString string   `json:"expect_string,omitempty"`
+	Name          string   `json:"name"`
+	Address       string   `json:"address"`
+	Interval      int64    `json:"interval,omitempty"`
+	Locations     []string `json:"locations,omitempty"`
+	ContactGroups []string `json:"contact_groups,omitempty"`
+	Tags          []string `json:"tags,omitempty"`
+	Sensitivity   int64    `json:"sensitivity,omitempty"`
+	Notes         string   `json:"notes,omitempty"`
+	Port          int64    `json:"port"`
+	SendString    string   `json:"send_string,omitempty"`
+	ExpectString  string   `json:"expect_string,omitempty"`
 }
 
 func (c *checksHandler) HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createTCPCheckInput) (*mcp.CallToolResult, any, error) {
@@ -41,17 +42,23 @@ func (c *checksHandler) HandleCreateTCPCheck(ctx context.Context, _ *mcp.CallToo
 		return nil, nil, fmt.Errorf("port is required for TCP check")
 	}
 
+	var contactGroups *[]string
+	if len(in.ContactGroups) > 0 {
+		contactGroups = &in.ContactGroups
+	}
+
 	check := upapi.CheckTCP{
-		Name:         in.Name,
-		Address:      in.Address,
-		Port:         in.Port,
-		Interval:     in.Interval,
-		Locations:    in.Locations,
-		Tags:         in.Tags,
-		Sensitivity:  in.Sensitivity,
-		Notes:        in.Notes,
-		SendString:   in.SendString,
-		ExpectString: in.ExpectString,
+		Name:          in.Name,
+		Address:       in.Address,
+		Port:          in.Port,
+		Interval:      in.Interval,
+		Locations:     in.Locations,
+		ContactGroups: contactGroups,
+		Tags:          in.Tags,
+		Sensitivity:   in.Sensitivity,
+		Notes:         in.Notes,
+		SendString:    in.SendString,
+		ExpectString:  in.ExpectString,
 	}
 
 	created, err := client.Checks().CreateTCP(ctx, check)
