@@ -11,5 +11,6 @@ func provideOutagesHandler() *outagesHandler {
 var outagesModule = fx.Module("tool.outages",
 	fx.Provide(provideOutagesHandler),
 	fx.Invoke(registerListOutagesTool),
+	fx.Invoke(registerGetOutageTool),
 	fx.Invoke(registerOutageResource),
 )

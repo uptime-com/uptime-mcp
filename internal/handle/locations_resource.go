@@ -7,9 +7,10 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
-const locationURIPrefix = "https://uptime.com/api/v1/probe-servers/"
+const locationURIPrefix = "uptime://locations/"
 
 func registerLocationResource(srv *mcp.Server, h *locationsHandler) {
 	srv.AddResourceTemplate(&mcp.ResourceTemplate{
@@ -42,33 +43,39 @@ func (h *locationsHandler) handleLocationResource(ctx context.Context, req *mcp.
 		return nil, fmt.Errorf("pseudo-location not supported: %s", location)
 	}
 
-	// Fetch all servers and find the matching one
+	var sb strings.Builder
+	if err := h.loadLocation(ctx, client, location, &sb); err != nil {
+		return nil, err
+	}
+
+	return &mcp.ReadResourceResult{
+		Contents: []*mcp.ResourceContents{{
+			URI:      uri,
+			MIMEType: "text/plain",
+			Text:     sb.String(),
+		}},
+	}, nil
+}
+
+func (h *locationsHandler) loadLocation(ctx context.Context, client upapi.API, location string, sb *strings.Builder) error {
 	result, err := client.ProbeServers().List(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list locations: %w", err)
+		return fmt.Errorf("failed to list locations: %w", err)
 	}
 
 	for _, s := range result.Items {
 		if s.Location == location {
-			var sb strings.Builder
-			fmt.Fprintf(&sb, "Location: %s\n", s.Location)
-			fmt.Fprintf(&sb, "Probe Name: %s\n", s.ProbeName)
+			fmt.Fprintf(sb, "Location: %s\n", s.Location)
+			fmt.Fprintf(sb, "Probe Name: %s\n", s.ProbeName)
 			if len(s.IPv4Addresses) > 0 {
-				fmt.Fprintf(&sb, "IPv4 Addresses: %s\n", strings.Join(s.IPv4Addresses, ", "))
+				fmt.Fprintf(sb, "IPv4 Addresses: %s\n", strings.Join(s.IPv4Addresses, ", "))
 			}
 			if len(s.IPv6Addresses) > 0 {
-				fmt.Fprintf(&sb, "IPv6 Addresses: %s\n", strings.Join(s.IPv6Addresses, ", "))
+				fmt.Fprintf(sb, "IPv6 Addresses: %s\n", strings.Join(s.IPv6Addresses, ", "))
 			}
-
-			return &mcp.ReadResourceResult{
-				Contents: []*mcp.ResourceContents{{
-					URI:      uri,
-					MIMEType: "text/plain",
-					Text:     sb.String(),
-				}},
-			}, nil
+			return nil
 		}
 	}
 
-	return nil, fmt.Errorf("location not found: %s", location)
+	return fmt.Errorf("location not found: %s", location)
 }

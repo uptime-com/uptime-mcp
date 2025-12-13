@@ -76,7 +76,7 @@ func TestE2E_ReadCheckResource(t *testing.T) {
 	}
 
 	// Now read the resource
-	uri := fmt.Sprintf("https://uptime.com/api/v1/checks/%s", checkID)
+	uri := fmt.Sprintf("uptime://checks/%s", checkID)
 	result, err := session.ReadResource(ctx, &mcp.ReadResourceParams{
 		URI: uri,
 	})
@@ -99,7 +99,7 @@ func TestE2E_ReadCheckResource_InvalidID(t *testing.T) {
 	ctx := context.Background()
 
 	result, err := session.ReadResource(ctx, &mcp.ReadResourceParams{
-		URI: "https://uptime.com/api/v1/checks/999999999",
+		URI: "uptime://checks/999999999",
 	})
 
 	// Should return error for non-existent check

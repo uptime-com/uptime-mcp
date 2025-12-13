@@ -75,7 +75,7 @@ func TestE2E_ReadOutageResource(t *testing.T) {
 	}
 
 	// Now read the resource
-	uri := fmt.Sprintf("https://uptime.com/api/v1/outages/%s", outageID)
+	uri := fmt.Sprintf("uptime://outages/%s", outageID)
 	result, err := session.ReadResource(ctx, &mcp.ReadResourceParams{
 		URI: uri,
 	})
@@ -98,7 +98,7 @@ func TestE2E_ReadOutageResource_InvalidID(t *testing.T) {
 	ctx := context.Background()
 
 	result, err := session.ReadResource(ctx, &mcp.ReadResourceParams{
-		URI: "https://uptime.com/api/v1/outages/999999999",
+		URI: "uptime://outages/999999999",
 	})
 
 	require.Error(t, err)

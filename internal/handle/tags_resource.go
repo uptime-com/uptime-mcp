@@ -10,7 +10,7 @@ import (
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
-const tagURIPrefix = "https://uptime.com/api/v1/check-tags/"
+const tagURIPrefix = "uptime://tags/"
 
 func registerTagResource(srv *mcp.Server, h *tagsHandler) {
 	srv.AddResourceTemplate(&mcp.ResourceTemplate{
@@ -21,7 +21,7 @@ func registerTagResource(srv *mcp.Server, h *tagsHandler) {
 	}, h.handleTagResource)
 }
 
-func (t *tagsHandler) handleTagResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
+func (h *tagsHandler) handleTagResource(ctx context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
 	client, err := clientFromContext(ctx)
 	if err != nil {
 		return nil, err
@@ -39,15 +39,10 @@ func (t *tagsHandler) handleTagResource(ctx context.Context, req *mcp.ReadResour
 		return nil, fmt.Errorf("invalid tag ID: %s", idStr)
 	}
 
-	tag, err := client.Tags().Get(ctx, upapi.PrimaryKey(id))
-	if err != nil {
-		return nil, fmt.Errorf("failed to get tag: %w", err)
-	}
-
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "Tag #%d\n", tag.PK)
-	fmt.Fprintf(&sb, "Name: %s\n", tag.Tag)
-	fmt.Fprintf(&sb, "Color: #%s\n", tag.ColorHex)
+	if err := h.loadTag(ctx, client, id, &sb); err != nil {
+		return nil, err
+	}
 
 	return &mcp.ReadResourceResult{
 		Contents: []*mcp.ResourceContents{{
@@ -56,4 +51,17 @@ func (t *tagsHandler) handleTagResource(ctx context.Context, req *mcp.ReadResour
 			Text:     sb.String(),
 		}},
 	}, nil
+}
+
+func (h *tagsHandler) loadTag(ctx context.Context, client upapi.API, id int64, sb *strings.Builder) error {
+	tag, err := client.Tags().Get(ctx, upapi.PrimaryKey(id))
+	if err != nil {
+		return fmt.Errorf("failed to get tag: %w", err)
+	}
+
+	fmt.Fprintf(sb, "Tag #%d\n", tag.PK)
+	fmt.Fprintf(sb, "Name: %s\n", tag.Tag)
+	fmt.Fprintf(sb, "Color: #%s\n", tag.ColorHex)
+
+	return nil
 }

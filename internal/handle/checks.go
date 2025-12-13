@@ -11,6 +11,7 @@ func provideChecksHandler() *checksHandler {
 var checksModule = fx.Module("tool.checks",
 	fx.Provide(provideChecksHandler),
 	fx.Invoke(registerListChecksTool),
+	fx.Invoke(registerGetCheckTool),
 	fx.Invoke(registerCheckResource),
 	fx.Invoke(registerDeleteCheckTool),
 	fx.Invoke(registerGetCheckStatsTool),

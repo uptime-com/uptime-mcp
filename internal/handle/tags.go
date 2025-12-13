@@ -11,6 +11,7 @@ func provideTagsHandler() *tagsHandler {
 var tagsModule = fx.Module("tool.tags",
 	fx.Provide(provideTagsHandler),
 	fx.Invoke(registerListTagsTool),
+	fx.Invoke(registerGetTagTool),
 	fx.Invoke(registerTagResource),
 	fx.Invoke(registerCreateTagTool),
 	fx.Invoke(registerUpdateTagTool),

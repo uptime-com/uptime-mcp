@@ -10,7 +10,7 @@ import (
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 )
 
-const checkURIPrefix = "https://uptime.com/api/v1/checks/"
+const checkURIPrefix = "uptime://checks/"
 
 func registerCheckResource(srv *mcp.Server, h *checksHandler) {
 	srv.AddResourceTemplate(&mcp.ResourceTemplate{
@@ -39,47 +39,9 @@ func (h *checksHandler) handleCheckResource(ctx context.Context, req *mcp.ReadRe
 		return nil, fmt.Errorf("invalid check ID: %s", idStr)
 	}
 
-	check, err := client.Checks().Get(ctx, upapi.PrimaryKey(id))
-	if err != nil {
-		return nil, fmt.Errorf("failed to get check: %w", err)
-	}
-
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "Check #%d: %s\n", check.PK, check.Name)
-	fmt.Fprintf(&sb, "Type: %s\n", check.CheckType)
-	fmt.Fprintf(&sb, "Address: %s\n", check.Address)
-	if check.Port > 0 {
-		fmt.Fprintf(&sb, "Port: %d\n", check.Port)
-	}
-
-	// Operational status
-	if check.IsPaused {
-		fmt.Fprintf(&sb, "Status: Paused\n")
-	} else if check.IsUnderMaintenance {
-		fmt.Fprintf(&sb, "Status: Under Maintenance\n")
-	} else if check.StateIsUp {
-		fmt.Fprintf(&sb, "Status: Up\n")
-	} else {
-		fmt.Fprintf(&sb, "Status: Down\n")
-	}
-	if !check.StateChangedAt.IsZero() {
-		fmt.Fprintf(&sb, "State Changed: %s\n", check.StateChangedAt.Format("2006-01-02 15:04:05"))
-	}
-	if check.CachedResponseTime > 0 {
-		fmt.Fprintf(&sb, "Response Time: %.0fms\n", check.CachedResponseTime)
-	}
-
-	// Configuration
-	fmt.Fprintf(&sb, "Interval: %d seconds\n", check.Interval)
-	fmt.Fprintf(&sb, "Sensitivity: %d\n", check.Sensitivity)
-	if len(check.Locations) > 0 {
-		fmt.Fprintf(&sb, "Locations: %s\n", strings.Join(check.Locations, ", "))
-	}
-	if len(check.Tags) > 0 {
-		fmt.Fprintf(&sb, "Tags: %s\n", strings.Join(check.Tags, ", "))
-	}
-	if check.Notes != "" {
-		fmt.Fprintf(&sb, "Notes: %s\n", check.Notes)
+	if err := h.loadCheck(ctx, client, id, &sb); err != nil {
+		return nil, err
 	}
 
 	return &mcp.ReadResourceResult{
@@ -89,4 +51,50 @@ func (h *checksHandler) handleCheckResource(ctx context.Context, req *mcp.ReadRe
 			Text:     sb.String(),
 		}},
 	}, nil
+}
+
+func (h *checksHandler) loadCheck(ctx context.Context, client upapi.API, id int64, sb *strings.Builder) error {
+	check, err := client.Checks().Get(ctx, upapi.PrimaryKey(id))
+	if err != nil {
+		return fmt.Errorf("failed to get check: %w", err)
+	}
+
+	fmt.Fprintf(sb, "Check #%d: %s\n", check.PK, check.Name)
+	fmt.Fprintf(sb, "Type: %s\n", check.CheckType)
+	fmt.Fprintf(sb, "Address: %s\n", check.Address)
+	if check.Port > 0 {
+		fmt.Fprintf(sb, "Port: %d\n", check.Port)
+	}
+
+	// Operational status
+	if check.IsPaused {
+		fmt.Fprintf(sb, "Status: Paused\n")
+	} else if check.IsUnderMaintenance {
+		fmt.Fprintf(sb, "Status: Under Maintenance\n")
+	} else if check.StateIsUp {
+		fmt.Fprintf(sb, "Status: Up\n")
+	} else {
+		fmt.Fprintf(sb, "Status: Down\n")
+	}
+	if !check.StateChangedAt.IsZero() {
+		fmt.Fprintf(sb, "State Changed: %s\n", check.StateChangedAt.Format("2006-01-02 15:04:05"))
+	}
+	if check.CachedResponseTime > 0 {
+		fmt.Fprintf(sb, "Response Time: %.0fms\n", check.CachedResponseTime)
+	}
+
+	// Configuration
+	fmt.Fprintf(sb, "Interval: %d seconds\n", check.Interval)
+	fmt.Fprintf(sb, "Sensitivity: %d\n", check.Sensitivity)
+	if len(check.Locations) > 0 {
+		fmt.Fprintf(sb, "Locations: %s\n", strings.Join(check.Locations, ", "))
+	}
+	if len(check.Tags) > 0 {
+		fmt.Fprintf(sb, "Tags: %s\n", strings.Join(check.Tags, ", "))
+	}
+	if check.Notes != "" {
+		fmt.Fprintf(sb, "Notes: %s\n", check.Notes)
+	}
+
+	return nil
 }

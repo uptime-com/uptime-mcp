@@ -53,7 +53,7 @@ func TestE2E_CheckLifecycle(t *testing.T) {
 
 	// 2. Confirm location via resource
 	t.Log("Step 2: Confirming location via resource...")
-	locationURI := "https://uptime.com/api/v1/probe-servers/" + locationName
+	locationURI := "uptime://locations/" + locationName
 	locationResource, err := session.ReadResource(ctx, &mcp.ReadResourceParams{URI: locationURI})
 	require.NoError(t, err)
 	require.Contains(t, locationResource.Contents[0].Text, locationName)
@@ -118,7 +118,7 @@ func TestE2E_CheckLifecycle(t *testing.T) {
 
 	// 5. Confirm tag via resource
 	t.Log("Step 5: Confirming tag via resource...")
-	tagURI := fmt.Sprintf("https://uptime.com/api/v1/check-tags/%d", tagID)
+	tagURI := fmt.Sprintf("uptime://tags/%d", tagID)
 	tagResource, err := session.ReadResource(ctx, &mcp.ReadResourceParams{URI: tagURI})
 	require.NoError(t, err)
 	require.Contains(t, tagResource.Contents[0].Text, tagName)
@@ -138,6 +138,7 @@ func TestE2E_CheckLifecycle(t *testing.T) {
 				"tags":           []string{tagName},
 				"contact_groups": []string{contactName},
 				"locations":      []string{locationName},
+				"interval":       60,
 			},
 		})
 		require.NoError(t, err)
@@ -186,7 +187,7 @@ func TestE2E_CheckLifecycle(t *testing.T) {
 
 	// 8. Confirm check via resource
 	t.Log("Step 8: Confirming check via resource...")
-	checkURI := fmt.Sprintf("https://uptime.com/api/v1/checks/%d", checkIDs[0])
+	checkURI := fmt.Sprintf("uptime://checks/%d", checkIDs[0])
 	checkResource, err := session.ReadResource(ctx, &mcp.ReadResourceParams{URI: checkURI})
 	require.NoError(t, err)
 	require.Contains(t, checkResource.Contents[0].Text, tagName)

@@ -11,5 +11,6 @@ func provideLocationsHandler() *locationsHandler {
 var locationsModule = fx.Module("tool.locations",
 	fx.Provide(provideLocationsHandler),
 	fx.Invoke(registerListLocationsTool),
+	fx.Invoke(registerGetLocationTool),
 	fx.Invoke(registerLocationResource),
 )

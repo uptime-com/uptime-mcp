@@ -75,7 +75,7 @@ func TestE2E_ReadTagResource(t *testing.T) {
 	}
 
 	// Now read the resource
-	uri := fmt.Sprintf("https://uptime.com/api/v1/check-tags/%s", tagID)
+	uri := fmt.Sprintf("uptime://tags/%s", tagID)
 	result, err := session.ReadResource(ctx, &mcp.ReadResourceParams{
 		URI: uri,
 	})
@@ -98,7 +98,7 @@ func TestE2E_ReadTagResource_InvalidID(t *testing.T) {
 	ctx := context.Background()
 
 	result, err := session.ReadResource(ctx, &mcp.ReadResourceParams{
-		URI: "https://uptime.com/api/v1/check-tags/999999999",
+		URI: "uptime://tags/999999999",
 	})
 
 	require.Error(t, err)
