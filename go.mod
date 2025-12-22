@@ -5,7 +5,7 @@ go 1.25.5
 require (
 	github.com/modelcontextprotocol/go-sdk v1.1.0
 	github.com/stretchr/testify v1.8.2
-	github.com/uptime-com/uptime-client-go/v2 v2.5.4-0.20251213144711-b82de3f35f90
+	github.com/uptime-com/uptime-client-go/v2 v2.6.0
 	go.uber.org/fx v1.24.0
 )
 

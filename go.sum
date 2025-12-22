@@ -24,10 +24,8 @@ github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
-github.com/uptime-com/uptime-client-go/v2 v2.5.3 h1:psf15L1AV2pN4yQiSbBY9Yb8hJGVQp+E4p89BaTd5qU=
-github.com/uptime-com/uptime-client-go/v2 v2.5.3/go.mod h1:jtWeB/tQ00fLX2r9OwKfTnxQ/PMR0YjmhTuc9RZH2h0=
-github.com/uptime-com/uptime-client-go/v2 v2.5.4-0.20251213144711-b82de3f35f90 h1:4qWEOMFh8NsaYBMyJv+HTRh+/6FFs2cWXWLxEipjEsU=
-github.com/uptime-com/uptime-client-go/v2 v2.5.4-0.20251213144711-b82de3f35f90/go.mod h1:jtWeB/tQ00fLX2r9OwKfTnxQ/PMR0YjmhTuc9RZH2h0=
+github.com/uptime-com/uptime-client-go/v2 v2.6.0 h1:+Ff8WauMoZQkTOTQJhOhDYeorZLNXK4hn8IieCfeFRk=
+github.com/uptime-com/uptime-client-go/v2 v2.6.0/go.mod h1:jtWeB/tQ00fLX2r9OwKfTnxQ/PMR0YjmhTuc9RZH2h0=
 github.com/yosida95/uritemplate/v3 v3.0.2 h1:Ed3Oyj9yrmi9087+NczuL5BwkIc4wvTb5zIM+UJPGz4=
 github.com/yosida95/uritemplate/v3 v3.0.2/go.mod h1:ILOh0sOhIJR3+L/8afwt/kE++YT040gmv5BQTMR2HP4=
 go.uber.org/dig v1.19.0 h1:BACLhebsYdpQ7IROQ1AGPjrXcP5dF80U3gKoFzbaq/4=
