@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"os"
 )
 
 // Config holds the application configuration from CLI flags.
@@ -36,6 +37,10 @@ func provideConfig() (Config, error) {
 
 	if cfg.Transport != "stdio" && cfg.Transport != "http" {
 		return Config{}, fmt.Errorf("invalid transport: %s (must be stdio or http)", cfg.Transport)
+	}
+
+	if cfg.APIBaseURL == "" {
+		cfg.APIBaseURL = os.Getenv("UPTIME_API_URL")
 	}
 
 	return cfg, nil

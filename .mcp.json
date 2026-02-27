@@ -1,10 +1,11 @@
 {
   "mcpServers": {
     "uptime": {
-      "command": "bash",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/launcher.sh"],
+      "command": "go",
+      "args": ["run", "${CLAUDE_PLUGIN_ROOT}/app/uptime-mcp", "-transport=stdio"],
       "env": {
-        "UPTIME_API_KEY": "${UPTIME_API_KEY}"
+        "UPTIME_API_KEY": "${UPTIME_API_KEY}",
+        "UPTIME_API_URL": "${UPTIME_API_URL}"
       }
     }
   }
