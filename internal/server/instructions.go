@@ -42,4 +42,12 @@ When monitoring a domain, consider these check types beyond basic HTTP:
 - ICMP: basic reachability check, useful as a network-layer baseline.
 - TCP: port connectivity checks for non-HTTP services (databases, custom protocols).
 - Email monitoring: if the domain handles email, create a DNS check with dns_record_type set to MX to verify mail exchange records. Consider SMTP, IMAP, or POP checks for mail server availability.
+- WHOIS/RDAP: monitor domain registration expiry to prevent accidental domain lapses. Use threshold to set how many days before expiry to alert. Locations are assigned automatically.
+- Blacklist: check if a domain or IP appears on spam/abuse blacklists. Locations are assigned automatically.
+- Malware: scan a website against the Google Safe Browsing list for malware and viruses. Locations are assigned automatically.
+- SSH: verify SSH server connectivity on a specific port.
+- UDP/NTP: monitor UDP services and NTP time servers.
+- Heartbeat/Webhook: for services that push status. The server generates a unique URL for your service to ping (heartbeat) or post status updates to (webhook).
+- Group: aggregate multiple existing checks into a single logical check.
+- Page Speed: measure website performance using Google Lighthouse.
 `
