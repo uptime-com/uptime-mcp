@@ -16,7 +16,7 @@ func registerListLocationsTool(srv *mcp.Server, h *locationsHandler) {
 }
 
 type listLocationsInput struct {
-	Search string `json:"search,omitempty" jsonschema:"filter locations by name or probe name"`
+	Search string `json:"search,omitempty" jsonschema:"filter locations by name"`
 }
 
 // excludedLocations are pseudo-locations that cannot be used for check creation.
@@ -31,26 +31,22 @@ func (h *locationsHandler) handleListLocations(ctx context.Context, _ *mcp.CallT
 		return nil, nil, err
 	}
 
-	result, err := client.ProbeServers().List(ctx)
+	result, err := client.Checks().ListLocations(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list locations: %w", err)
 	}
 
-	// Filter out pseudo-locations and apply search
 	filtered := make([]string, 0, len(result.Items))
 	search := strings.ToLower(in.Search)
 
-	for _, s := range result.Items {
-		if excludedLocations[s.Location] {
+	for _, loc := range result.Items {
+		if excludedLocations[loc] {
 			continue
 		}
-		if search != "" {
-			if !strings.Contains(strings.ToLower(s.Location), search) &&
-				!strings.Contains(strings.ToLower(s.ProbeName), search) {
-				continue
-			}
+		if search != "" && !strings.Contains(strings.ToLower(loc), search) {
+			continue
 		}
-		filtered = append(filtered, s.Location)
+		filtered = append(filtered, loc)
 	}
 
 	var sb strings.Builder

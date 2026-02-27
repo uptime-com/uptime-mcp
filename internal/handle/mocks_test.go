@@ -2626,6 +2626,68 @@ func (_c *checksServiceMock_List_Call) RunAndReturn(run func(context1 context.Co
 	return _c
 }
 
+// ListLocations provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) ListLocations(context1 context.Context) (*upapi.ListResult[string], error) {
+	ret := _mock.Called(context1)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListLocations")
+	}
+
+	var r0 *upapi.ListResult[string]
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) (*upapi.ListResult[string], error)); ok {
+		return returnFunc(context1)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) *upapi.ListResult[string]); ok {
+		r0 = returnFunc(context1)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.ListResult[string])
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(context1)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_ListLocations_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListLocations'
+type checksServiceMock_ListLocations_Call struct {
+	*mock.Call
+}
+
+// ListLocations is a helper method to define mock.On call
+//   - context1 context.Context
+func (_e *checksServiceMock_Expecter) ListLocations(context1 interface{}) *checksServiceMock_ListLocations_Call {
+	return &checksServiceMock_ListLocations_Call{Call: _e.mock.On("ListLocations", context1)}
+}
+
+func (_c *checksServiceMock_ListLocations_Call) Run(run func(context1 context.Context)) *checksServiceMock_ListLocations_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_ListLocations_Call) Return(listResult *upapi.ListResult[string], err error) *checksServiceMock_ListLocations_Call {
+	_c.Call.Return(listResult, err)
+	return _c
+}
+
+func (_c *checksServiceMock_ListLocations_Call) RunAndReturn(run func(context1 context.Context) (*upapi.ListResult[string], error)) *checksServiceMock_ListLocations_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Stats provides a mock function for the type checksServiceMock
 func (_mock *checksServiceMock) Stats(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkStatsOptions upapi.CheckStatsOptions) (*upapi.ListResult[upapi.CheckStats], error) {
 	ret := _mock.Called(context1, primaryKeyable, checkStatsOptions)
