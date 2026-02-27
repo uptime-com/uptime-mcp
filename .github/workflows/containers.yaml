@@ -1,6 +1,6 @@
 ---
-name: build
-run-name: 🏗️ Build ${{ github.ref_name }}
+name: containers
+run-name: "🏗️ Containers ${{ github.ref_name }}"
 
 on:
   push:

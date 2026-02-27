@@ -1,0 +1,27 @@
+---
+version: 2
+
+builds:
+  - id: uptime-mcp
+    main: ./app/uptime-mcp
+    binary: uptime-mcp
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -X main.Version={{.Version}}
+      - -X main.Commit={{.Commit}}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats:
+      - tar.gz
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
