@@ -42,6 +42,7 @@ func (c *checksHandler) HandleCreateRUM2Check(ctx context.Context, _ *mcp.CallTo
 	check := upapi.CheckRUM2{
 		Name:          in.Name,
 		Address:       in.Address,
+		Locations:     []string{"AUTO"},
 		ContactGroups: contactGroups,
 		Tags:          in.Tags,
 		Threshold:     in.Threshold,

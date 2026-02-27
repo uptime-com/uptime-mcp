@@ -41,6 +41,7 @@ func (c *checksHandler) HandleCreateBlacklistCheck(ctx context.Context, _ *mcp.C
 	check := upapi.CheckBlacklist{
 		Name:          in.Name,
 		Address:       in.Address,
+		Locations:     []string{"AUTO"},
 		ContactGroups: contactGroups,
 		Tags:          in.Tags,
 		Notes:         in.Notes,

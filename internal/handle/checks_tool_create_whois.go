@@ -43,6 +43,7 @@ func (c *checksHandler) HandleCreateWHOISCheck(ctx context.Context, _ *mcp.CallT
 	check := upapi.CheckWHOIS{
 		Name:          in.Name,
 		Address:       in.Address,
+		Locations:     []string{"AUTO"},
 		ContactGroups: contactGroups,
 		Tags:          in.Tags,
 		Threshold:     in.Threshold,

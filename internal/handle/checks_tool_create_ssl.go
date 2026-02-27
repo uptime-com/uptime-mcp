@@ -45,6 +45,7 @@ func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToo
 		Name:          in.Name,
 		Address:       in.Address,
 		Port:          in.Port,
+		Locations:     []string{"AUTO"},
 		ContactGroups: contactGroups,
 		Tags:          in.Tags,
 		Notes:         in.Notes,
