@@ -42,8 +42,10 @@ func runStdio(p RunParams) {
 	}
 
 	// Add middlewares: inject API key → initialize client
-	p.Server.AddReceivingMiddleware(stdioKeyMiddleware(apiKey))
-	p.Server.AddReceivingMiddleware(clientInitMiddleware(p.Config.APIBaseURL))
+	p.Server.AddReceivingMiddleware(
+		stdioKeyMiddleware(apiKey),
+		clientInitMiddleware(p.Config.APIBaseURL),
+	)
 
 	p.Logger.Info("configured with Uptime.com API key")
 
