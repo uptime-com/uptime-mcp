@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "uptime": {
+      "command": "bash",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/launcher.sh"],
+      "env": {
+        "UPTIME_API_KEY": "${UPTIME_API_KEY}"
+      }
+    }
+  }
+}

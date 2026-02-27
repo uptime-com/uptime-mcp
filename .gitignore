@@ -4,4 +4,6 @@
 !.mockery.yaml
 !.goreleaser.yaml
 !.ko.yaml
+!.claude-plugin/
+!.mcp.json
 dist/
