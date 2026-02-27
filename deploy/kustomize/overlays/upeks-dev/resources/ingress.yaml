@@ -11,13 +11,23 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  - host: mcp.dev.upeks.net
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: uptime-mcp
-            port:
-              name: http
+    - host: mcp.dev.upeks.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: uptime-mcp
+                port:
+                  name: http
+    - host: mcp.sandbox.upeks.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: uptime-mcp
+                port:
+                  name: http
