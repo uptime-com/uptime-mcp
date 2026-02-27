@@ -11,14 +11,13 @@ import (
 func registerCreateSSLCheckTool(srv *mcp.Server, h *checksHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "create_ssl_check",
-		Description: "Create a new SSL certificate monitoring check. Use list_locations for valid probe locations and list_contacts for contact group names.",
+		Description: "Create a new SSL certificate monitoring check. Locations are assigned automatically by the server. Use list_contacts for contact group names.",
 	}, h.HandleCreateSSLCheck)
 }
 
 type createSSLCheckInput struct {
 	Name          string   `json:"name" jsonschema:"display name for the check"`
 	Address       string   `json:"address" jsonschema:"hostname to check SSL certificate for, e.g. example.com"`
-	Locations     []string `json:"locations" jsonschema:"probe location identifiers, use list_locations tool to discover valid values"`
 	ContactGroups []string `json:"contact_groups" jsonschema:"contact group names to notify on alerts, use list_contacts tool to discover"`
 	Tags          []string `json:"tags,omitempty" jsonschema:"tag names to assign, use create_tag to create new tags first"`
 	Notes         string   `json:"notes,omitempty" jsonschema:"free-text notes for the check"`
@@ -46,7 +45,6 @@ func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToo
 		Name:          in.Name,
 		Address:       in.Address,
 		Port:          in.Port,
-		Locations:     in.Locations,
 		ContactGroups: contactGroups,
 		Tags:          in.Tags,
 		Notes:         in.Notes,
