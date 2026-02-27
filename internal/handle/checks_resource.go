@@ -84,7 +84,7 @@ func (h *checksHandler) loadCheck(ctx context.Context, client upapi.API, id int6
 	}
 
 	// Configuration
-	fmt.Fprintf(sb, "Interval: %d seconds\n", check.Interval)
+	fmt.Fprintf(sb, "Interval: %d minutes\n", check.Interval)
 	fmt.Fprintf(sb, "Sensitivity: %d\n", check.Sensitivity)
 	if len(check.Locations) > 0 {
 		fmt.Fprintf(sb, "Locations: %s\n", strings.Join(check.Locations, ", "))
