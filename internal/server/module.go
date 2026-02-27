@@ -20,5 +20,7 @@ func New(info Info) *mcp.Server {
 	return mcp.NewServer(&mcp.Implementation{
 		Name:    "uptime-mcp",
 		Version: info.Version,
-	}, nil)
+	}, &mcp.ServerOptions{
+		Instructions: instructions,
+	})
 }
