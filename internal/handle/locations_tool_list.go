@@ -11,7 +11,7 @@ import (
 func registerListLocationsTool(srv *mcp.Server, h *locationsHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "list_locations",
-		Description: "List all available probe server locations for monitoring checks",
+		Description: "List available probe server location identifiers. Pass these identifiers directly in the locations field when creating checks.",
 	}, h.handleListLocations)
 }
 
@@ -37,8 +37,7 @@ func (h *locationsHandler) handleListLocations(ctx context.Context, _ *mcp.CallT
 	}
 
 	// Filter out pseudo-locations and apply search
-	type loc struct{ Location, ProbeName string }
-	filtered := make([]loc, 0, len(result.Items))
+	filtered := make([]string, 0, len(result.Items))
 	search := strings.ToLower(in.Search)
 
 	for _, s := range result.Items {
@@ -51,17 +50,18 @@ func (h *locationsHandler) handleListLocations(ctx context.Context, _ *mcp.CallT
 				continue
 			}
 		}
-		filtered = append(filtered, loc{s.Location, s.ProbeName})
+		filtered = append(filtered, s.Location)
 	}
 
 	var sb strings.Builder
 	if in.Search != "" {
-		fmt.Fprintf(&sb, "Found %d locations matching '%s':\n\n", len(filtered), in.Search)
+		fmt.Fprintf(&sb, "Found %d locations matching '%s'.\n", len(filtered), in.Search)
 	} else {
-		fmt.Fprintf(&sb, "Found %d probe server locations:\n\n", len(filtered))
+		fmt.Fprintf(&sb, "Found %d locations.\n", len(filtered))
 	}
-	for _, s := range filtered {
-		fmt.Fprintf(&sb, "- %s (%s)\n", s.Location, s.ProbeName)
+	fmt.Fprintf(&sb, "Use these identifiers in the locations field when creating checks:\n\n")
+	for _, loc := range filtered {
+		fmt.Fprintf(&sb, "- %s\n", loc)
 	}
 
 	return textResult(sb.String()), nil, nil
