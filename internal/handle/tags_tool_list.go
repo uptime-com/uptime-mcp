@@ -17,9 +17,9 @@ func registerListTagsTool(srv *mcp.Server, h *tagsHandler) {
 }
 
 type listTagsInput struct {
-	Search   string `json:"search,omitempty"`
-	Page     int64  `json:"page,omitempty"`
-	PageSize int64  `json:"page_size,omitempty"`
+	Search   string `json:"search,omitempty" jsonschema:"filter tags by name"`
+	Page     int64  `json:"page,omitempty" jsonschema:"page number, defaults to 1"`
+	PageSize int64  `json:"page_size,omitempty" jsonschema:"results per page, defaults to 25"`
 }
 
 func (t *tagsHandler) HandleListTags(ctx context.Context, _ *mcp.CallToolRequest, in listTagsInput) (*mcp.CallToolResult, any, error) {

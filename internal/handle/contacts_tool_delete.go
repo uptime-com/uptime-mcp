@@ -16,7 +16,7 @@ func registerDeleteContactTool(srv *mcp.Server, h *contactsHandler) {
 }
 
 type deleteContactInput struct {
-	ID int64 `json:"id"`
+	ID int64 `json:"id" jsonschema:"contact ID as returned by list_contacts"`
 }
 
 func (h *contactsHandler) handleDeleteContact(ctx context.Context, _ *mcp.CallToolRequest, in deleteContactInput) (*mcp.CallToolResult, any, error) {

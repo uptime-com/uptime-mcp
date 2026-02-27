@@ -17,15 +17,15 @@ func registerListAlertsTool(srv *mcp.Server, h *alertsHandler) {
 }
 
 type listAlertsInput struct {
-	CheckID   int64  `json:"check_id,omitempty"`
-	Type      string `json:"type,omitempty"`
-	Tag       string `json:"tag,omitempty"`
-	Resolved  *bool  `json:"resolved,omitempty"`
-	StartDate string `json:"start_date,omitempty"`
-	EndDate   string `json:"end_date,omitempty"`
-	Search    string `json:"search,omitempty"`
-	Page      int64  `json:"page,omitempty"`
-	PageSize  int64  `json:"page_size,omitempty"`
+	CheckID   int64  `json:"check_id,omitempty" jsonschema:"filter by check ID"`
+	Type      string `json:"type,omitempty" jsonschema:"filter by check type, e.g. HTTP, DNS, SSL_CERT"`
+	Tag       string `json:"tag,omitempty" jsonschema:"filter by tag name"`
+	Resolved  *bool  `json:"resolved,omitempty" jsonschema:"filter by resolution state, true for resolved alerts only"`
+	StartDate string `json:"start_date,omitempty" jsonschema:"filter alerts created after this date, format YYYY-MM-DD"`
+	EndDate   string `json:"end_date,omitempty" jsonschema:"filter alerts created before this date, format YYYY-MM-DD"`
+	Search    string `json:"search,omitempty" jsonschema:"search alerts by check name"`
+	Page      int64  `json:"page,omitempty" jsonschema:"page number, defaults to 1"`
+	PageSize  int64  `json:"page_size,omitempty" jsonschema:"results per page, defaults to 25"`
 }
 
 func (h *alertsHandler) HandleListAlerts(ctx context.Context, _ *mcp.CallToolRequest, in listAlertsInput) (*mcp.CallToolResult, any, error) {

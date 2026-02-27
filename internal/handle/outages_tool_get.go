@@ -16,7 +16,7 @@ func registerGetOutageTool(srv *mcp.Server, h *outagesHandler) {
 }
 
 type getOutageInput struct {
-	ID int64 `json:"id"`
+	ID int64 `json:"id" jsonschema:"outage ID as returned by list_outages"`
 }
 
 func (h *outagesHandler) HandleGetOutage(ctx context.Context, _ *mcp.CallToolRequest, in getOutageInput) (*mcp.CallToolResult, any, error) {

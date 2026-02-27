@@ -16,7 +16,7 @@ func registerGetCheckTool(srv *mcp.Server, h *checksHandler) {
 }
 
 type getCheckInput struct {
-	ID int64 `json:"id"`
+	ID int64 `json:"id" jsonschema:"check ID as returned by list_checks"`
 }
 
 func (h *checksHandler) HandleGetCheck(ctx context.Context, _ *mcp.CallToolRequest, in getCheckInput) (*mcp.CallToolResult, any, error) {

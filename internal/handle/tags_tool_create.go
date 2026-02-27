@@ -16,8 +16,8 @@ func registerCreateTagTool(srv *mcp.Server, h *tagsHandler) {
 }
 
 type createTagInput struct {
-	Name  string `json:"name"`
-	Color string `json:"color,omitempty"`
+	Name  string `json:"name" jsonschema:"tag name"`
+	Color string `json:"color,omitempty" jsonschema:"hex color code, e.g. #FF5733"`
 }
 
 func (t *tagsHandler) HandleCreateTag(ctx context.Context, _ *mcp.CallToolRequest, in createTagInput) (*mcp.CallToolResult, any, error) {

@@ -16,9 +16,9 @@ func registerCreateContactTool(srv *mcp.Server, h *contactsHandler) {
 }
 
 type createContactInput struct {
-	Name      string   `json:"name"`
-	EmailList []string `json:"email_list,omitempty"`
-	SMSList   []string `json:"sms_list,omitempty"`
+	Name      string   `json:"name" jsonschema:"contact group name"`
+	EmailList []string `json:"email_list,omitempty" jsonschema:"email addresses for notifications"`
+	SMSList   []string `json:"sms_list,omitempty" jsonschema:"phone numbers for SMS notifications in E.164 format"`
 }
 
 func (h *contactsHandler) handleCreateContact(ctx context.Context, _ *mcp.CallToolRequest, in createContactInput) (*mcp.CallToolResult, any, error) {

@@ -16,7 +16,7 @@ func registerGetAlertTool(srv *mcp.Server, h *alertsHandler) {
 }
 
 type getAlertInput struct {
-	ID int64 `json:"id"`
+	ID int64 `json:"id" jsonschema:"alert ID as returned by list_alerts"`
 }
 
 func (h *alertsHandler) HandleGetAlert(ctx context.Context, _ *mcp.CallToolRequest, in getAlertInput) (*mcp.CallToolResult, any, error) {

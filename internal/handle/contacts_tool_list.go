@@ -17,9 +17,9 @@ func registerListContactsTool(srv *mcp.Server, h *contactsHandler) {
 }
 
 type listContactsInput struct {
-	Search   string `json:"search,omitempty"`
-	Page     int64  `json:"page,omitempty"`
-	PageSize int64  `json:"page_size,omitempty"`
+	Search   string `json:"search,omitempty" jsonschema:"filter contacts by name"`
+	Page     int64  `json:"page,omitempty" jsonschema:"page number, defaults to 1"`
+	PageSize int64  `json:"page_size,omitempty" jsonschema:"results per page, defaults to 25"`
 }
 
 func (h *contactsHandler) handleListContacts(ctx context.Context, _ *mcp.CallToolRequest, in listContactsInput) (*mcp.CallToolResult, any, error) {

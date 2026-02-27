@@ -11,20 +11,20 @@ import (
 func registerCreateSSLCheckTool(srv *mcp.Server, h *checksHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "create_ssl_check",
-		Description: "Create a new SSL certificate monitoring check",
+		Description: "Create a new SSL certificate monitoring check. Use list_locations for valid probe locations and list_contacts for contact group names.",
 	}, h.HandleCreateSSLCheck)
 }
 
 type createSSLCheckInput struct {
-	Name          string   `json:"name"`
-	Address       string   `json:"address"`
-	Locations     []string `json:"locations"`
-	ContactGroups []string `json:"contact_groups"`
-	Tags          []string `json:"tags,omitempty"`
-	Notes         string   `json:"notes,omitempty"`
-	Port          int64    `json:"port,omitempty"`
-	Protocol      string   `json:"protocol,omitempty"`
-	Threshold     int64    `json:"threshold,omitempty"`
+	Name          string   `json:"name" jsonschema:"display name for the check"`
+	Address       string   `json:"address" jsonschema:"hostname to check SSL certificate for, e.g. example.com"`
+	Locations     []string `json:"locations" jsonschema:"probe location identifiers, use list_locations tool to discover valid values"`
+	ContactGroups []string `json:"contact_groups" jsonschema:"contact group names to notify on alerts, use list_contacts tool to discover"`
+	Tags          []string `json:"tags,omitempty" jsonschema:"tag names to assign, use create_tag to create new tags first"`
+	Notes         string   `json:"notes,omitempty" jsonschema:"free-text notes for the check"`
+	Port          int64    `json:"port,omitempty" jsonschema:"port number, defaults to 443"`
+	Protocol      string   `json:"protocol,omitempty" jsonschema:"protocol to use, e.g. HTTPS, IMAPS, POP3S, SMTPS"`
+	Threshold     int64    `json:"threshold,omitempty" jsonschema:"days before certificate expiry to trigger an alert"`
 }
 
 func (c *checksHandler) HandleCreateSSLCheck(ctx context.Context, _ *mcp.CallToolRequest, in createSSLCheckInput) (*mcp.CallToolResult, any, error) {

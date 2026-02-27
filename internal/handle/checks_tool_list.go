@@ -18,14 +18,13 @@ func registerListChecksTool(srv *mcp.Server, h *checksHandler) {
 	}, h.HandleListChecks)
 }
 
-// listChecksInput defines parameters for listing checksHandler.
 type listChecksInput struct {
-	Search   string `json:"search,omitempty"`
-	Tag      string `json:"tag,omitempty"`
-	Type     string `json:"type,omitempty"`
-	IsPaused bool   `json:"is_paused,omitempty"`
-	Page     int64  `json:"page,omitempty"`
-	PageSize int64  `json:"page_size,omitempty"`
+	Search   string `json:"search,omitempty" jsonschema:"filter checks by name or address"`
+	Tag      string `json:"tag,omitempty" jsonschema:"filter by tag name"`
+	Type     string `json:"type,omitempty" jsonschema:"filter by check type, e.g. HTTP, DNS, SSL_CERT, TCP, ICMP, IMAP, POP, SMTP"`
+	IsPaused bool   `json:"is_paused,omitempty" jsonschema:"filter by paused state"`
+	Page     int64  `json:"page,omitempty" jsonschema:"page number, defaults to 1"`
+	PageSize int64  `json:"page_size,omitempty" jsonschema:"results per page, defaults to 25"`
 }
 
 func (c *checksHandler) HandleListChecks(ctx context.Context, _ *mcp.CallToolRequest, in listChecksInput) (*mcp.CallToolResult, any, error) {

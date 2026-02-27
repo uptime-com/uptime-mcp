@@ -11,25 +11,25 @@ import (
 func registerCreateHTTPCheckTool(srv *mcp.Server, h *checksHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "create_http_check",
-		Description: "Create a new HTTP/HTTPS monitoring check",
+		Description: "Create a new HTTP/HTTPS monitoring check. Use list_locations for valid probe locations and list_contacts for contact group names.",
 	}, h.HandleCreateHTTPCheck)
 }
 
 type createHTTPCheckInput struct {
-	Name          string   `json:"name"`
-	Address       string   `json:"address"`
-	Interval      int64    `json:"interval"`
-	Locations     []string `json:"locations"`
-	ContactGroups []string `json:"contact_groups"`
-	Tags          []string `json:"tags,omitempty"`
-	Sensitivity   int64    `json:"sensitivity,omitempty"`
-	Notes         string   `json:"notes,omitempty"`
-	Port          int64    `json:"port,omitempty"`
-	Username      string   `json:"username,omitempty"`
-	Password      string   `json:"password,omitempty"`
-	Headers       string   `json:"headers,omitempty"`
-	SendString    string   `json:"send_string,omitempty"`
-	ExpectString  string   `json:"expect_string,omitempty"`
+	Name          string   `json:"name" jsonschema:"display name for the check"`
+	Address       string   `json:"address" jsonschema:"URL to monitor, e.g. https://example.com"`
+	Interval      int64    `json:"interval" jsonschema:"check frequency in minutes, defaults to 5"`
+	Locations     []string `json:"locations" jsonschema:"probe location identifiers, use list_locations tool to discover valid values"`
+	ContactGroups []string `json:"contact_groups" jsonschema:"contact group names to notify on alerts, use list_contacts tool to discover"`
+	Tags          []string `json:"tags,omitempty" jsonschema:"tag names to assign, use create_tag to create new tags first"`
+	Sensitivity   int64    `json:"sensitivity,omitempty" jsonschema:"number of locations that must confirm an outage before alerting, 0 uses account default"`
+	Notes         string   `json:"notes,omitempty" jsonschema:"free-text notes for the check"`
+	Port          int64    `json:"port,omitempty" jsonschema:"port number, defaults to 80 for HTTP or 443 for HTTPS"`
+	Username      string   `json:"username,omitempty" jsonschema:"HTTP basic auth username"`
+	Password      string   `json:"password,omitempty" jsonschema:"HTTP basic auth password"`
+	Headers       string   `json:"headers,omitempty" jsonschema:"custom HTTP headers, one per line as Header: Value"`
+	SendString    string   `json:"send_string,omitempty" jsonschema:"string to send in the request body"`
+	ExpectString  string   `json:"expect_string,omitempty" jsonschema:"string expected in the response body, check fails if not found"`
 }
 
 func (c *checksHandler) HandleCreateHTTPCheck(ctx context.Context, _ *mcp.CallToolRequest, in createHTTPCheckInput) (*mcp.CallToolResult, any, error) {

@@ -16,7 +16,7 @@ func registerIgnoreAlertTool(srv *mcp.Server, h *alertsHandler) {
 }
 
 type ignoreAlertInput struct {
-	ID int64 `json:"id"`
+	ID int64 `json:"id" jsonschema:"alert ID to toggle ignore state"`
 }
 
 func (h *alertsHandler) HandleIgnoreAlert(ctx context.Context, _ *mcp.CallToolRequest, in ignoreAlertInput) (*mcp.CallToolResult, any, error) {

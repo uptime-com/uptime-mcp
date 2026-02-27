@@ -16,7 +16,7 @@ func registerGetLocationTool(srv *mcp.Server, h *locationsHandler) {
 }
 
 type getLocationInput struct {
-	Location string `json:"location"`
+	Location string `json:"location" jsonschema:"location identifier as returned by list_locations"`
 }
 
 func (h *locationsHandler) HandleGetLocation(ctx context.Context, _ *mcp.CallToolRequest, in getLocationInput) (*mcp.CallToolResult, any, error) {

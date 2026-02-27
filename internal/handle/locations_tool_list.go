@@ -16,7 +16,7 @@ func registerListLocationsTool(srv *mcp.Server, h *locationsHandler) {
 }
 
 type listLocationsInput struct {
-	Search string `json:"search,omitempty"`
+	Search string `json:"search,omitempty" jsonschema:"filter locations by name or probe name"`
 }
 
 // excludedLocations are pseudo-locations that cannot be used for check creation.

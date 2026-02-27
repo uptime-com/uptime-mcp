@@ -17,10 +17,10 @@ func registerListOutagesTool(srv *mcp.Server, h *outagesHandler) {
 }
 
 type listOutagesInput struct {
-	Search   string `json:"search,omitempty"`
-	Type     string `json:"type,omitempty"`
-	Page     int64  `json:"page,omitempty"`
-	PageSize int64  `json:"page_size,omitempty"`
+	Search   string `json:"search,omitempty" jsonschema:"search outages by check name"`
+	Type     string `json:"type,omitempty" jsonschema:"filter by check type, e.g. HTTP, DNS, SSL_CERT"`
+	Page     int64  `json:"page,omitempty" jsonschema:"page number, defaults to 1"`
+	PageSize int64  `json:"page_size,omitempty" jsonschema:"results per page, defaults to 25"`
 }
 
 func (o *outagesHandler) HandleListOutages(ctx context.Context, _ *mcp.CallToolRequest, in listOutagesInput) (*mcp.CallToolResult, any, error) {

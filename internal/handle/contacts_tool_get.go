@@ -16,7 +16,7 @@ func registerGetContactTool(srv *mcp.Server, h *contactsHandler) {
 }
 
 type getContactInput struct {
-	ID int64 `json:"id"`
+	ID int64 `json:"id" jsonschema:"contact ID as returned by list_contacts"`
 }
 
 func (h *contactsHandler) HandleGetContact(ctx context.Context, _ *mcp.CallToolRequest, in getContactInput) (*mcp.CallToolResult, any, error) {
