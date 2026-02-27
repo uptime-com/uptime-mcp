@@ -2,6 +2,7 @@ package handle
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -48,6 +49,11 @@ func (c *checksHandler) HandleCreatePageSpeedCheck(ctx context.Context, _ *mcp.C
 		contactGroups = &in.ContactGroups
 	}
 
+	script, err := pageSpeedScript(in.Address)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to build page speed script: %w", err)
+	}
+
 	check := upapi.CheckPageSpeed{
 		Name:          in.Name,
 		Address:       in.Address,
@@ -56,6 +62,7 @@ func (c *checksHandler) HandleCreatePageSpeedCheck(ctx context.Context, _ *mcp.C
 		ContactGroups: contactGroups,
 		Tags:          in.Tags,
 		Notes:         in.Notes,
+		Script:        script,
 		Config: upapi.CheckPageSpeedConfig{
 			EmulatedDevice:       in.EmulatedDevice,
 			ConnectionThrottling: in.ConnectionThrottling,
@@ -69,4 +76,16 @@ func (c *checksHandler) HandleCreatePageSpeedCheck(ctx context.Context, _ *mcp.C
 	}
 
 	return textResult(fmt.Sprintf("Created page speed check #%d: %s", created.PK, created.Name)), nil, nil
+}
+
+func pageSpeedScript(url string) (string, error) {
+	steps := []map[string]any{{
+		"step_def": "C_PAGESPEED_NAVIGATE",
+		"values":   map[string]string{"url": url},
+	}}
+	b, err := json.Marshal(steps)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }

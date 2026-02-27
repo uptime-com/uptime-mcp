@@ -22,7 +22,7 @@ type createWHOISCheckInput struct {
 	Tags          []string `json:"tags,omitempty" jsonschema:"tag names to assign, use create_tag to create new tags first"`
 	Notes         string   `json:"notes,omitempty" jsonschema:"free-text notes for the check"`
 	Threshold     int64    `json:"threshold,omitempty" jsonschema:"days before domain expiry to trigger an alert"`
-	ExpectString  string   `json:"expect_string,omitempty" jsonschema:"expected string in WHOIS response, check fails if not found"`
+	ExpectString  string   `json:"expect_string" jsonschema:"required,expected string in WHOIS response, check fails if not found, typically set to the domain name being monitored"`
 }
 
 func (c *checksHandler) HandleCreateWHOISCheck(ctx context.Context, _ *mcp.CallToolRequest, in createWHOISCheckInput) (*mcp.CallToolResult, any, error) {
