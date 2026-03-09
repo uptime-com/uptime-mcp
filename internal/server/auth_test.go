@@ -17,46 +17,61 @@ func TestExtractAPIKey(t *testing.T) {
 		authHeader   string
 		queryKey     string
 		wantKey      string
+		wantScheme   string
 		wantAuthGone bool
 	}{
 		{
 			name:         "bearer header",
 			authHeader:   "Bearer test-api-key",
 			wantKey:      "test-api-key",
+			wantScheme:   "bearer",
 			wantAuthGone: true,
 		},
 		{
-			name:     "query parameter",
-			queryKey: "query-api-key",
-			wantKey:  "query-api-key",
+			name:       "query parameter",
+			queryKey:   "query-api-key",
+			wantKey:    "query-api-key",
+			wantScheme: "token",
 		},
 		{
 			name:         "header takes precedence",
 			authHeader:   "Bearer header-key",
 			queryKey:     "query-key",
 			wantKey:      "header-key",
+			wantScheme:   "bearer",
 			wantAuthGone: true,
 		},
 		{
-			name:    "empty when neither present",
-			wantKey: "",
+			name:       "empty when neither present",
+			wantKey:    "",
+			wantScheme: "token",
+		},
+		{
+			name:         "token header",
+			authHeader:   "Token test-token-key",
+			wantKey:      "test-token-key",
+			wantScheme:   "token",
+			wantAuthGone: true,
 		},
 		{
 			name:         "non-bearer auth header ignored",
 			authHeader:   "Basic dXNlcjpwYXNz",
 			wantKey:      "",
+			wantScheme:   "token",
 			wantAuthGone: true,
 		},
 		{
 			name:         "bearer prefix only",
 			authHeader:   "Bearer ",
 			wantKey:      "",
+			wantScheme:   "bearer",
 			wantAuthGone: true,
 		},
 		{
 			name:         "bearer with extra spaces preserved",
 			authHeader:   "Bearer  key-with-space",
 			wantKey:      " key-with-space",
+			wantScheme:   "bearer",
 			wantAuthGone: true,
 		},
 	}
@@ -64,10 +79,12 @@ func TestExtractAPIKey(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var capturedKey string
+			var capturedScheme string
 			var capturedAuthHeader string
 
 			handler := extractAPIKey(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				capturedKey = r.Header.Get(headerUptimeAPIKey)
+				capturedScheme = r.Header.Get(headerUptimeAuthScheme)
 				capturedAuthHeader = r.Header.Get("Authorization")
 			}))
 
@@ -84,6 +101,9 @@ func TestExtractAPIKey(t *testing.T) {
 
 			if capturedKey != tt.wantKey {
 				t.Errorf("got key %q, want %q", capturedKey, tt.wantKey)
+			}
+			if capturedScheme != tt.wantScheme {
+				t.Errorf("got scheme %q, want %q", capturedScheme, tt.wantScheme)
 			}
 			if tt.wantAuthGone && capturedAuthHeader != "" {
 				t.Errorf("Authorization header should be removed, got %q", capturedAuthHeader)
@@ -133,7 +153,7 @@ func TestValidateAPIKey(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			err := validateAPIKey(context.Background(), "test-key", ts.URL)
+			err := validateAPIKey(context.Background(), "test-key", "token", ts.URL)
 
 			if tt.wantErr == "" {
 				if err != nil {
@@ -150,6 +170,48 @@ func TestValidateAPIKey(t *testing.T) {
 	}
 }
 
+func TestValidateAPIKeyBearerScheme(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if auth := r.Header.Get("Authorization"); auth != "Bearer oauth2-token" {
+			t.Errorf("expected Authorization 'Bearer oauth2-token', got %q", auth)
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer ts.Close()
+
+	err := validateAPIKey(context.Background(), "oauth2-token", "bearer", ts.URL)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+}
+
+func TestStdioKeyMiddlewareBearerToken(t *testing.T) {
+	var capturedCtx context.Context
+	next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
+		capturedCtx = ctx
+		return nil, nil
+	}
+
+	middleware := stdioKeyMiddleware("", "bearer-token")
+	handler := middleware(next)
+
+	_, err := handler(context.Background(), "test/method", nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	session := app.SessionFromContext(capturedCtx)
+	if session == nil {
+		t.Fatal("expected session in context")
+	}
+	if session.APIKey != "bearer-token" {
+		t.Errorf("got APIKey %q, want %q", session.APIKey, "bearer-token")
+	}
+	if session.AuthScheme != "bearer" {
+		t.Errorf("got AuthScheme %q, want %q", session.AuthScheme, "bearer")
+	}
+}
+
 func TestStdioKeyMiddleware(t *testing.T) {
 	t.Run("creates session when none exists", func(t *testing.T) {
 		var capturedCtx context.Context
@@ -158,7 +220,7 @@ func TestStdioKeyMiddleware(t *testing.T) {
 			return nil, nil
 		}
 
-		middleware := stdioKeyMiddleware("test-api-key")
+		middleware := stdioKeyMiddleware("test-api-key", "")
 		handler := middleware(next)
 
 		_, err := handler(context.Background(), "test/method", nil)
@@ -173,6 +235,9 @@ func TestStdioKeyMiddleware(t *testing.T) {
 		if session.APIKey != "test-api-key" {
 			t.Errorf("got APIKey %q, want %q", session.APIKey, "test-api-key")
 		}
+		if session.AuthScheme != "token" {
+			t.Errorf("got AuthScheme %q, want %q", session.AuthScheme, "token")
+		}
 	})
 
 	t.Run("preserves existing session", func(t *testing.T) {
@@ -185,7 +250,7 @@ func TestStdioKeyMiddleware(t *testing.T) {
 			return nil, nil
 		}
 
-		middleware := stdioKeyMiddleware("new-key")
+		middleware := stdioKeyMiddleware("new-key", "")
 		handler := middleware(next)
 
 		_, err := handler(ctx, "test/method", nil)
@@ -311,7 +376,7 @@ func TestClientInitMiddleware(t *testing.T) {
 
 	t.Run("skips when client already initialized", func(t *testing.T) {
 		// Create a real client to test the "already initialized" path
-		client, err := createUptimeClient("test-key", "http://example.com")
+		client, err := createUptimeClient("test-key", "token", "http://example.com")
 		if err != nil {
 			t.Fatalf("failed to create test client: %v", err)
 		}
