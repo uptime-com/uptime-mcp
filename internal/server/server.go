@@ -12,7 +12,10 @@ import (
 	"github.com/uptime-com/uptime-mcp/internal/app"
 )
 
-const headerUptimeAPIKey = "X-Uptime-API-Key"
+const (
+	headerUptimeAPIKey     = "X-Uptime-API-Key"
+	headerUptimeAuthScheme = "X-Uptime-Auth-Scheme"
+)
 
 type RunParams struct {
 	fx.In
@@ -36,14 +39,15 @@ func Run(p RunParams) {
 
 func runStdio(p RunParams) {
 	apiKey := os.Getenv("UPTIME_API_KEY")
-	if apiKey == "" {
-		p.Logger.Error("UPTIME_API_KEY environment variable is required for stdio mode")
+	bearerToken := os.Getenv("UPTIME_BEARER_TOKEN")
+	if apiKey == "" && bearerToken == "" {
+		p.Logger.Error("UPTIME_API_KEY or UPTIME_BEARER_TOKEN environment variable is required for stdio mode")
 		os.Exit(1)
 	}
 
 	// Add middlewares: inject API key → initialize client
 	p.Server.AddReceivingMiddleware(
-		stdioKeyMiddleware(apiKey),
+		stdioKeyMiddleware(apiKey, bearerToken),
 		clientInitMiddleware(p.Config.APIBaseURL),
 	)
 

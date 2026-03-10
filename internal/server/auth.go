@@ -14,12 +14,17 @@ import (
 
 // stdioKeyMiddleware creates an MCP middleware that injects the API key into session.
 // Used in STDIO mode where the key comes from environment variable.
-func stdioKeyMiddleware(apiKey string) mcp.Middleware {
+// If bearerToken is set, it takes precedence over apiKey and uses the "bearer" auth scheme.
+func stdioKeyMiddleware(apiKey, bearerToken string) mcp.Middleware {
 	return func(next mcp.MethodHandler) mcp.MethodHandler {
 		return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 			session := app.SessionFromContext(ctx)
 			if session == nil {
-				session = &app.Session{APIKey: apiKey}
+				if bearerToken != "" {
+					session = &app.Session{APIKey: bearerToken, AuthScheme: "bearer"}
+				} else {
+					session = &app.Session{APIKey: apiKey, AuthScheme: "token"}
+				}
 				ctx = app.ContextWithSession(ctx, session)
 			}
 			return next(ctx, method, req)
@@ -38,7 +43,11 @@ func httpKeyMiddleware() mcp.Middleware {
 				if apiKey == "" {
 					return nil, errors.New("authorization required")
 				}
-				session = &app.Session{APIKey: apiKey}
+				authScheme := req.GetExtra().Header.Get(headerUptimeAuthScheme)
+				if authScheme == "" {
+					authScheme = "token"
+				}
+				session = &app.Session{APIKey: apiKey, AuthScheme: authScheme}
 				ctx = app.ContextWithSession(ctx, session)
 			}
 			return next(ctx, method, req)
@@ -62,12 +71,12 @@ func clientInitMiddleware(baseURL string) mcp.Middleware {
 			}
 
 			// Validate API key
-			if err := validateAPIKey(ctx, session.APIKey, baseURL); err != nil {
+			if err := validateAPIKey(ctx, session.APIKey, session.AuthScheme, baseURL); err != nil {
 				return nil, err
 			}
 
 			// Create client
-			client, err := createUptimeClient(session.APIKey, baseURL)
+			client, err := createUptimeClient(session.APIKey, session.AuthScheme, baseURL)
 			if err != nil {
 				return nil, err
 			}
@@ -80,7 +89,8 @@ func clientInitMiddleware(baseURL string) mcp.Middleware {
 
 // validateAPIKey checks if the API key is valid by making a HEAD request to the API root.
 // Returns nil if valid (200 or 405), error otherwise (401 for invalid key).
-func validateAPIKey(ctx context.Context, apiKey, baseURL string) error {
+// authScheme should be "token" or "bearer".
+func validateAPIKey(ctx context.Context, apiKey, authScheme, baseURL string) error {
 	// Ensure trailing slash to prevent redirect issues
 	if baseURL != "" && !strings.HasSuffix(baseURL, "/") {
 		baseURL += "/"
@@ -89,7 +99,11 @@ func validateAPIKey(ctx context.Context, apiKey, baseURL string) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Authorization", "Token "+apiKey)
+	if authScheme == "bearer" {
+		req.Header.Set("Authorization", "Bearer "+apiKey)
+	} else {
+		req.Header.Set("Authorization", "Token "+apiKey)
+	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -110,12 +124,18 @@ func validateAPIKey(ctx context.Context, apiKey, baseURL string) error {
 func extractAPIKey(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var apiKey string
+		authScheme := "token"
 
 		// Try Authorization header first
 		if auth := r.Header.Get("Authorization"); auth != "" {
-			const prefix = "Bearer "
-			if strings.HasPrefix(auth, prefix) {
-				apiKey = strings.TrimPrefix(auth, prefix)
+			const bearerPrefix = "Bearer "
+			const tokenPrefix = "Token "
+			if strings.HasPrefix(auth, bearerPrefix) {
+				apiKey = strings.TrimPrefix(auth, bearerPrefix)
+				authScheme = "bearer"
+			} else if strings.HasPrefix(auth, tokenPrefix) {
+				apiKey = strings.TrimPrefix(auth, tokenPrefix)
+				authScheme = "token"
 			}
 			r.Header.Del("Authorization")
 		}
@@ -125,17 +145,22 @@ func extractAPIKey(next http.Handler) http.Handler {
 			apiKey = r.URL.Query().Get("key")
 		}
 
-		// Set internal header (validation happens at MCP level)
+		// Set internal headers (validation happens at MCP level)
 		r.Header.Set(headerUptimeAPIKey, apiKey)
+		r.Header.Set(headerUptimeAuthScheme, authScheme)
 
 		next.ServeHTTP(w, r)
 	})
 }
 
 // createUptimeClient creates an Uptime.com API client.
-func createUptimeClient(apiKey, baseURL string) (upapi.API, error) {
-	opts := []upapi.Option{
-		upapi.WithToken(apiKey),
+// authScheme should be "token" or "bearer".
+func createUptimeClient(apiKey, authScheme, baseURL string) (upapi.API, error) {
+	var opts []upapi.Option
+	if authScheme == "bearer" {
+		opts = append(opts, upapi.WithBearerToken(apiKey))
+	} else {
+		opts = append(opts, upapi.WithToken(apiKey))
 	}
 	if baseURL != "" {
 		// Ensure trailing slash to prevent url.ResolveReference issues
