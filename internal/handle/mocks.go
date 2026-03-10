@@ -40,4 +40,9 @@ type (
 	mockeryAlertsService interface {
 		upapi.AlertsEndpoint
 	}
+
+	// mockeryDashboardsService wraps upapi.DashboardsEndpoint for mock generation.
+	mockeryDashboardsService interface {
+		upapi.DashboardsEndpoint
+	}
 )

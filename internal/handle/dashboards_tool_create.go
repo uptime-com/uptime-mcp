@@ -1,0 +1,68 @@
+package handle
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
+)
+
+func registerCreateDashboardTool(srv *mcp.Server, h *dashboardsHandler) {
+	mcp.AddTool(srv, &mcp.Tool{
+		Name:        "create_dashboard",
+		Description: "Create a new dashboard. Filter checks by tag names (services_tags) or specific check IDs (services_selected).",
+	}, h.HandleCreateDashboard)
+}
+
+type createDashboardInput struct {
+	Name                       string   `json:"name" jsonschema:"dashboard name"`
+	ServicesSelected           []string `json:"services_selected,omitempty" jsonschema:"check IDs to include on the dashboard"`
+	ServicesTags               []string `json:"services_tags,omitempty" jsonschema:"tag names to filter checks, use list_tags to discover"`
+	IsPinned                   bool     `json:"is_pinned,omitempty" jsonschema:"pin dashboard to top of list"`
+	ServicesShowSection        bool     `json:"services_show_section,omitempty" jsonschema:"show services section"`
+	ServicesNumToShow          int64    `json:"services_num_to_show,omitempty" jsonschema:"number of services to display"`
+	ServicesIncludeUp          bool     `json:"services_include_up,omitempty" jsonschema:"include checks with UP status"`
+	ServicesIncludeDown        bool     `json:"services_include_down,omitempty" jsonschema:"include checks with DOWN status"`
+	ServicesIncludePaused      bool     `json:"services_include_paused,omitempty" jsonschema:"include paused checks"`
+	ServicesIncludeMaintenance bool     `json:"services_include_maintenance,omitempty" jsonschema:"include checks in maintenance"`
+	MetricsShowSection         bool     `json:"metrics_show_section,omitempty" jsonschema:"show metrics section"`
+	MetricsForAllChecks        bool     `json:"metrics_for_all_checks,omitempty" jsonschema:"show metrics for all checks"`
+	AlertsShowSection          bool     `json:"alerts_show_section,omitempty" jsonschema:"show alerts section"`
+	AlertsForAllChecks         bool     `json:"alerts_for_all_checks,omitempty" jsonschema:"show alerts for all checks"`
+}
+
+func (h *dashboardsHandler) HandleCreateDashboard(ctx context.Context, _ *mcp.CallToolRequest, in createDashboardInput) (*mcp.CallToolResult, any, error) {
+	client, err := clientFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if in.Name == "" {
+		return nil, nil, fmt.Errorf("name is required")
+	}
+
+	dashboard := upapi.Dashboard{
+		Name:                       in.Name,
+		ServicesSelected:           in.ServicesSelected,
+		ServicesTags:               in.ServicesTags,
+		IsPinned:                   in.IsPinned,
+		ServicesShowSection:        in.ServicesShowSection,
+		ServicesNumToShow:          in.ServicesNumToShow,
+		ServicesIncludeUp:          in.ServicesIncludeUp,
+		ServicesIncludeDown:        in.ServicesIncludeDown,
+		ServicesIncludePaused:      in.ServicesIncludePaused,
+		ServicesIncludeMaintenance: in.ServicesIncludeMaintenance,
+		MetricsShowSection:         in.MetricsShowSection,
+		MetricsForAllChecks:        in.MetricsForAllChecks,
+		AlertsShowSection:          in.AlertsShowSection,
+		AlertsForAllChecks:         in.AlertsForAllChecks,
+	}
+
+	created, err := client.Dashboards().Create(ctx, dashboard)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create dashboard: %w", err)
+	}
+
+	return textResult(fmt.Sprintf("Created dashboard #%d: %s", created.PK, created.Name)), nil, nil
+}
