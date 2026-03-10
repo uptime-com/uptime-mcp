@@ -30,6 +30,9 @@ type createDashboardInput struct {
 	MetricsForAllChecks        bool     `json:"metrics_for_all_checks,omitempty" jsonschema:"show metrics for all checks"`
 	AlertsShowSection          bool     `json:"alerts_show_section,omitempty" jsonschema:"show alerts section"`
 	AlertsForAllChecks         bool     `json:"alerts_for_all_checks,omitempty" jsonschema:"show alerts for all checks"`
+	AlertsNumToShow            int64    `json:"alerts_num_to_show,omitempty" jsonschema:"number of alerts to display, defaults to 10"`
+	ServicesPrimarySort        string   `json:"services_primary_sort,omitempty" jsonschema:"primary sort for services, e.g. name_asc, name_desc, status, defaults to name_asc"`
+	ServicesSecondarySort      string   `json:"services_secondary_sort,omitempty" jsonschema:"secondary sort for services, e.g. name_asc, status, defaults to status"`
 }
 
 func (h *dashboardsHandler) HandleCreateDashboard(ctx context.Context, _ *mcp.CallToolRequest, in createDashboardInput) (*mcp.CallToolResult, any, error) {
@@ -42,21 +45,49 @@ func (h *dashboardsHandler) HandleCreateDashboard(ctx context.Context, _ *mcp.Ca
 		return nil, nil, fmt.Errorf("name is required")
 	}
 
+	servicesSelected := in.ServicesSelected
+	if servicesSelected == nil {
+		servicesSelected = []string{}
+	}
+
+	servicesNumToShow := in.ServicesNumToShow
+	if servicesNumToShow == 0 {
+		servicesNumToShow = 10
+	}
+
+	alertsNumToShow := in.AlertsNumToShow
+	if alertsNumToShow == 0 {
+		alertsNumToShow = 10
+	}
+
+	servicesPrimarySort := in.ServicesPrimarySort
+	if servicesPrimarySort == "" {
+		servicesPrimarySort = "name_asc"
+	}
+
+	servicesSecondarySort := in.ServicesSecondarySort
+	if servicesSecondarySort == "" {
+		servicesSecondarySort = "status"
+	}
+
 	dashboard := upapi.Dashboard{
 		Name:                       in.Name,
-		ServicesSelected:           in.ServicesSelected,
+		ServicesSelected:           servicesSelected,
 		ServicesTags:               in.ServicesTags,
 		IsPinned:                   in.IsPinned,
 		ServicesShowSection:        in.ServicesShowSection,
-		ServicesNumToShow:          in.ServicesNumToShow,
+		ServicesNumToShow:          servicesNumToShow,
 		ServicesIncludeUp:          in.ServicesIncludeUp,
 		ServicesIncludeDown:        in.ServicesIncludeDown,
 		ServicesIncludePaused:      in.ServicesIncludePaused,
 		ServicesIncludeMaintenance: in.ServicesIncludeMaintenance,
+		ServicesPrimarySort:        servicesPrimarySort,
+		ServicesSecondarySort:      servicesSecondarySort,
 		MetricsShowSection:         in.MetricsShowSection,
 		MetricsForAllChecks:        in.MetricsForAllChecks,
 		AlertsShowSection:          in.AlertsShowSection,
 		AlertsForAllChecks:         in.AlertsForAllChecks,
+		AlertsnumToShow:            alertsNumToShow,
 	}
 
 	created, err := client.Dashboards().Create(ctx, dashboard)
