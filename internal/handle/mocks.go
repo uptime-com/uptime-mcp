@@ -45,4 +45,9 @@ type (
 	mockeryDashboardsService interface {
 		upapi.DashboardsEndpoint
 	}
+
+	// mockeryStatusPagesService wraps upapi.StatusPagesEndpoint for mock generation.
+	mockeryStatusPagesService interface {
+		upapi.StatusPagesEndpoint
+	}
 )
