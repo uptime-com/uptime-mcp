@@ -21,7 +21,7 @@ type createDashboardInput struct {
 	ServicesTags               []string `json:"services_tags,omitempty" jsonschema:"tag names to filter checks, use list_tags to discover"`
 	IsPinned                   bool     `json:"is_pinned,omitempty" jsonschema:"pin dashboard to top of list"`
 	ServicesShowSection        bool     `json:"services_show_section,omitempty" jsonschema:"show services section"`
-	ServicesNumToShow          int64    `json:"services_num_to_show,omitempty" jsonschema:"number of services to display"`
+	ServicesNumToShow          int64    `json:"services_num_to_show,omitempty" jsonschema:"number of services to display, valid: 4 8 12 16 20 24"`
 	ServicesIncludeUp          bool     `json:"services_include_up,omitempty" jsonschema:"include checks with UP status"`
 	ServicesIncludeDown        bool     `json:"services_include_down,omitempty" jsonschema:"include checks with DOWN status"`
 	ServicesIncludePaused      bool     `json:"services_include_paused,omitempty" jsonschema:"include paused checks"`
@@ -30,9 +30,9 @@ type createDashboardInput struct {
 	MetricsForAllChecks        bool     `json:"metrics_for_all_checks,omitempty" jsonschema:"show metrics for all checks"`
 	AlertsShowSection          bool     `json:"alerts_show_section,omitempty" jsonschema:"show alerts section"`
 	AlertsForAllChecks         bool     `json:"alerts_for_all_checks,omitempty" jsonschema:"show alerts for all checks"`
-	AlertsNumToShow            int64    `json:"alerts_num_to_show,omitempty" jsonschema:"number of alerts to display, defaults to 10"`
-	ServicesPrimarySort        string   `json:"services_primary_sort,omitempty" jsonschema:"primary sort for services, e.g. name_asc, name_desc, status, defaults to name_asc"`
-	ServicesSecondarySort      string   `json:"services_secondary_sort,omitempty" jsonschema:"secondary sort for services, e.g. name_asc, status, defaults to status"`
+	AlertsNumToShow            int64    `json:"alerts_num_to_show,omitempty" jsonschema:"number of alerts to display, valid: 5 10 15"`
+	ServicesPrimarySort        string   `json:"services_primary_sort,omitempty" jsonschema:"primary sort for services, valid: cached_ordering device__address -created_at is_paused,cached_state_is_up -cached_last_down_alert_at -cached_response_time"`
+	ServicesSecondarySort      string   `json:"services_secondary_sort,omitempty" jsonschema:"secondary sort for services, valid: cached_ordering device__address -created_at is_paused,cached_state_is_up -cached_last_down_alert_at -cached_response_time"`
 }
 
 func (h *dashboardsHandler) HandleCreateDashboard(ctx context.Context, _ *mcp.CallToolRequest, in createDashboardInput) (*mcp.CallToolResult, any, error) {
@@ -52,22 +52,22 @@ func (h *dashboardsHandler) HandleCreateDashboard(ctx context.Context, _ *mcp.Ca
 
 	servicesNumToShow := in.ServicesNumToShow
 	if servicesNumToShow == 0 {
-		servicesNumToShow = 10
+		servicesNumToShow = 4
 	}
 
 	alertsNumToShow := in.AlertsNumToShow
 	if alertsNumToShow == 0 {
-		alertsNumToShow = 10
+		alertsNumToShow = 5
 	}
 
 	servicesPrimarySort := in.ServicesPrimarySort
 	if servicesPrimarySort == "" {
-		servicesPrimarySort = "name_asc"
+		servicesPrimarySort = "is_paused,cached_state_is_up"
 	}
 
 	servicesSecondarySort := in.ServicesSecondarySort
 	if servicesSecondarySort == "" {
-		servicesSecondarySort = "status"
+		servicesSecondarySort = "-cached_last_down_alert_at"
 	}
 
 	dashboard := upapi.Dashboard{
