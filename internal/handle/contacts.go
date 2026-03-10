@@ -14,5 +14,6 @@ var contactsModule = fx.Module("tool.contacts",
 	fx.Invoke(registerGetContactTool),
 	fx.Invoke(registerContactResource),
 	fx.Invoke(registerCreateContactTool),
+	fx.Invoke(registerUpdateContactTool),
 	fx.Invoke(registerDeleteContactTool),
 )
