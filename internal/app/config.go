@@ -81,10 +81,10 @@ func provideConfig() (Config, error) {
 		cfg.ResourceURL = "http://" + host + ":" + port
 	}
 	if cfg.ClientID == "" {
-		cfg.ClientID = os.Getenv("UPTIME_CLIENT_ID")
+		cfg.ClientID = os.Getenv("UPTIME_OAUTH_CLIENT_ID")
 	}
 	if cfg.ClientSecret == "" {
-		cfg.ClientSecret = os.Getenv("UPTIME_CLIENT_SECRET")
+		cfg.ClientSecret = os.Getenv("UPTIME_OAUTH_CLIENT_SECRET")
 	}
 
 	return cfg, nil
