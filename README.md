@@ -2,13 +2,11 @@
 
 MCP server for [Uptime.com](https://uptime.com) monitoring integration.
 
+## Authentication
+
+This server uses OAuth 2.1 authentication. Users authenticate via Uptime.com's OAuth2 provider.
+
 ## Claude Code plugin
-
-Make sure the `UPTIME_API_KEY` environment variable is set in your shell:
-
-```bash
-export UPTIME_API_KEY="<your-token>"
-```
 
 ### Quick start (ad-hoc)
 
@@ -35,29 +33,37 @@ The plugin automatically downloads the correct binary for your platform on first
 For direct integration with any MCP client (Claude Desktop, Cursor, etc.):
 
 ```bash
-UPTIME_API_TOKEN= <your-token >uptime-mcp -transport=stdio
+uptime-mcp -transport=stdio -oauth-issuer=https://uptime.com -client-id=your-client-id
 ```
+
+On startup, the server opens a browser for OAuth2 authorization. After completing the flow,
+the server starts accepting MCP requests. Tokens are automatically refreshed in the background.
 
 ### HTTP mode
 
-Run as an HTTP server with bearer token authentication:
+Run as an HTTP server with OAuth2 bearer token authentication:
 
 ```bash
-uptime-mcp -transport=http -listen=:8080
+uptime-mcp -transport=http -listen=:8080 -oauth-issuer=https://uptime.com
 ```
 
-Each request must include an `Authorization: Bearer <token>` header. The token is validated against the Uptime.com API
-on every request.
+Each request must include an `Authorization: Bearer <token>` header with a valid OAuth2 access token
+from Uptime.com.
+
+The server exposes `/.well-known/oauth-protected-resource` (RFC 9728) for OAuth2 client discovery.
 
 ### CLI flags
 
-| Flag         | Default                      | Description                                 |
-|--------------|------------------------------|---------------------------------------------|
-| `-transport` | `stdio`                      | Transport mode: `stdio` or `http`           |
-| `-listen`    | `:8080`                      | HTTP listen address (http mode only)        |
-| `-api-url`   | `https://uptime.com/api/v1/` | Uptime.com API base URL                     |
-| `-log-level` | `info`                       | Log level: `debug`, `info`, `warn`, `error` |
-| `-version`   |                              | Print version and exit                      |
+| Flag             | Default | Description                                  |
+|------------------|---------|----------------------------------------------|
+| `-transport`     | `stdio`                  | Transport mode: `stdio` or `http`                       |
+| `-listen`        | `:8080`                  | HTTP listen address (http mode only)                    |
+| `-oauth-issuer`  |                          | OAuth2 issuer URL                                       |
+| `-resource-url`  | `http://localhost:{port}` | Public URL of this server (for reverse proxy setups)    |
+| `-client-id`     |                          | OAuth2 client ID                                        |
+| `-client-secret` |                          | OAuth2 client secret (confidential clients)             |
+| `-log-level`     | `info`                   | Log level: `debug`, `info`, `warn`, `error`             |
+| `-version`       |                          | Print version and exit                                  |
 
 ## Tools
 

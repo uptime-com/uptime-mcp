@@ -10,27 +10,27 @@ import (
 
 func TestContextWithSession(t *testing.T) {
 	t.Run("attaches session to context", func(t *testing.T) {
-		session := &Session{APIKey: "test-key"}
+		session := &Session{Token: "test-token"}
 		ctx := ContextWithSession(context.Background(), session)
 
 		require.NotNil(t, ctx)
 
 		retrieved := SessionFromContext(ctx)
 		require.NotNil(t, retrieved)
-		assert.Equal(t, "test-key", retrieved.APIKey)
+		assert.Equal(t, "test-token", retrieved.Token)
 		assert.Same(t, session, retrieved)
 	})
 }
 
 func TestSessionFromContext(t *testing.T) {
 	t.Run("returns session when present", func(t *testing.T) {
-		session := &Session{APIKey: "my-key"}
+		session := &Session{Token: "my-token"}
 		ctx := ContextWithSession(context.Background(), session)
 
 		retrieved := SessionFromContext(ctx)
 
 		require.NotNil(t, retrieved)
-		assert.Equal(t, "my-key", retrieved.APIKey)
+		assert.Equal(t, "my-token", retrieved.Token)
 	})
 
 	t.Run("returns nil when no session", func(t *testing.T) {
@@ -42,7 +42,6 @@ func TestSessionFromContext(t *testing.T) {
 	})
 
 	t.Run("returns nil for wrong type in context", func(t *testing.T) {
-		// Simulate someone putting wrong type with same key pattern
 		ctx := context.WithValue(context.Background(), sessionKey, "not-a-session")
 
 		retrieved := SessionFromContext(ctx)

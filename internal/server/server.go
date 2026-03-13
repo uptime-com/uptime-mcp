@@ -2,19 +2,17 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 
+	"github.com/modelcontextprotocol/go-sdk/auth"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/modelcontextprotocol/go-sdk/oauthex"
 	"go.uber.org/fx"
 
 	"github.com/uptime-com/uptime-mcp/internal/app"
-)
-
-const (
-	headerUptimeAPIKey     = "X-Uptime-API-Key"
-	headerUptimeAuthScheme = "X-Uptime-Auth-Scheme"
 )
 
 type RunParams struct {
@@ -38,24 +36,41 @@ func Run(p RunParams) {
 }
 
 func runStdio(p RunParams) {
-	apiKey := os.Getenv("UPTIME_API_KEY")
-	bearerToken := os.Getenv("UPTIME_BEARER_TOKEN")
-	if apiKey == "" && bearerToken == "" {
-		p.Logger.Error("UPTIME_API_KEY or UPTIME_BEARER_TOKEN environment variable is required for stdio mode")
-		os.Exit(1)
-	}
-
-	// Add middlewares: inject API key → initialize client
-	p.Server.AddReceivingMiddleware(
-		stdioKeyMiddleware(apiKey, bearerToken),
-		clientInitMiddleware(p.Config.APIBaseURL),
-	)
-
-	p.Logger.Info("configured with Uptime.com API key")
+	apiBaseURL := p.Config.APIBaseURL()
 
 	p.Lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			p.Logger.Info("starting stdio transport")
+			// Perform OAuth2 browser flow
+			oauthCfg := stdioOAuthConfig{
+				Issuer:       p.Config.OAuthIssuer,
+				ClientID:     p.Config.ClientID,
+				ClientSecret: p.Config.ClientSecret,
+				Scopes:       []string{"api/v1"},
+			}
+
+			if oauthCfg.Issuer == "" || oauthCfg.ClientID == "" {
+				p.Logger.Error("-oauth-issuer and -client-id are required for stdio mode")
+				os.Exit(1)
+			}
+
+			token, err := stdioOAuthFlow(ctx, p.Logger, oauthCfg)
+			if err != nil {
+				return fmt.Errorf("OAuth2 authorization failed: %w", err)
+			}
+
+			holder := newTokenHolder(token)
+
+			// Start background token refresh
+			startTokenRefresh(ctx, p.Logger, holder, oauthCfg)
+
+			// Add middlewares: inject token → initialize client
+			p.Server.AddReceivingMiddleware(
+				stdioTokenMiddleware(holder),
+				clientInitMiddleware(apiBaseURL),
+			)
+
+			p.Logger.Info("authenticated via OAuth2")
+
 			go func() {
 				transport := &mcp.StdioTransport{}
 				ss, err := p.Server.Connect(ctx, transport, nil)
@@ -73,26 +88,43 @@ func runStdio(p RunParams) {
 }
 
 func runHTTP(p RunParams) {
-	// Add middlewares: extract API key from header → initialize client
+	apiBaseURL := p.Config.APIBaseURL()
+	resourceURL := p.Config.ResourceURL
+
+	// Add middlewares: extract token from context → initialize client
 	p.Server.AddReceivingMiddleware(
 		loggingMiddleware(os.Stderr),
-		httpKeyMiddleware(),
-		clientInitMiddleware(p.Config.APIBaseURL),
+		httpTokenMiddleware(),
+		clientInitMiddleware(apiBaseURL),
 	)
 
-	handler := mcp.NewStreamableHTTPHandler(
+	mcpHandler := mcp.NewStreamableHTTPHandler(
 		func(r *http.Request) *mcp.Server { return p.Server },
 		nil,
 	)
 
-	// Wrap with API key extraction (validation happens at MCP level)
-	var h http.Handler = extractAPIKey(handler)
+	verifier := uptimeTokenVerifier(apiBaseURL)
 
 	mux := http.NewServeMux()
+
+	// RFC 9728: OAuth 2.0 Protected Resource Metadata
+	mux.Handle("/.well-known/oauth-protected-resource",
+		auth.ProtectedResourceMetadataHandler(&oauthex.ProtectedResourceMetadata{
+			Resource:               resourceURL,
+			AuthorizationServers:   []string{p.Config.OAuthIssuer},
+			ScopesSupported:        []string{"api/v1", "api/v1:read"},
+			BearerMethodsSupported: []string{"header"},
+		}))
+
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
-	mux.Handle("/", h)
+
+	// Protect MCP endpoints with bearer token verification
+	resourceMetadataURL := resourceURL + "/.well-known/oauth-protected-resource"
+	mux.Handle("/", auth.RequireBearerToken(verifier, &auth.RequireBearerTokenOptions{
+		ResourceMetadataURL: resourceMetadataURL,
+	})(mcpHandler))
 
 	httpServer := &http.Server{
 		Addr:    p.Config.ListenAddr,
