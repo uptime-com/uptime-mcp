@@ -1,6 +1,6 @@
 - op: add
   path: /spec/template/spec/containers/0/args/-
-  value: -oauth-issuer=http://uptime-app.uptime.svc.cluster.local
+  value: -oauth-issuer=https://sandbox.upeks.net
 - op: add
   path: /spec/template/spec/containers/0/args/-
   value: -resource-url=https://mcp.sandbox.upeks.net
