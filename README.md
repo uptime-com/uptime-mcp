@@ -26,9 +26,10 @@ UPTIME_BEARER_TOKEN=your-token uptime-mcp -transport=http -listen=:8080
 
 ### OAuth2 (stdio mode)
 
-In stdio mode, the server performs a browser-based OAuth2 PKCE flow on startup.
-Requires `-uptime-url` and `-client-id`. On launch, the server opens your browser to
-complete authorization, then automatically refreshes tokens in the background.
+In stdio mode, the server performs a browser-based OAuth2 PKCE flow on first tool
+call. Requires `-uptime-url` and `-client-id`. The MCP handshake completes without
+auth; on the first actual tool call the server opens your browser to complete
+authorization, then automatically refreshes tokens in the background.
 
 ```bash
 uptime-mcp -transport=stdio \
@@ -52,7 +53,7 @@ uptime-mcp -transport=http -listen=:8080 \
 
 ### Authentication precedence
 
-**Stdio mode** — token resolved once at startup:
+**Stdio mode** — token resolved once on first tool call:
 
 | Priority | Source                        | Behavior                                                             |
 |----------|-------------------------------|----------------------------------------------------------------------|
@@ -75,7 +76,7 @@ For direct integration with any MCP client (Claude Desktop, Cursor, etc.):
 
 ```bash
 uptime-mcp -transport=stdio \
-  -uptime-url=https://sandbox.upeks.net \
+  -uptime-url=https://uptime.com \
   -client-id=your-client-id
 ```
 
@@ -87,7 +88,7 @@ Run as an HTTP server:
 
 ```bash
 uptime-mcp -transport=http -listen=:8080 \
-  -uptime-url=https://sandbox.upeks.net \
+  -uptime-url=https://uptime.com \
   -client-id=your-client-id
 ```
 
@@ -110,34 +111,18 @@ See [Authentication](#authentication) for token resolution order and per-request
 
 ### Checks
 
-| Tool                     | Description                                     |
-|--------------------------|-------------------------------------------------|
-| `list_checks`            | List monitoring checks with optional filtering  |
-| `get_check`              | Get detailed information about a specific check |
-| `get_check_stats`        | Get uptime statistics for a check               |
-| `delete_check`           | Delete a monitoring check                       |
-| `create_http_check`      | Create an HTTP/HTTPS monitoring check           |
-| `create_dns_check`       | Create a DNS record monitoring check            |
-| `create_ssl_check`       | Create an SSL certificate expiry check          |
-| `create_icmp_check`      | Create an ICMP (ping) check                     |
-| `create_tcp_check`       | Create a TCP port connectivity check            |
-| `create_udp_check`       | Create a UDP service check                      |
-| `create_smtp_check`      | Create an SMTP mail server check                |
-| `create_imap_check`      | Create an IMAP mail server check                |
-| `create_pop_check`       | Create a POP3 mail server check                 |
-| `create_ssh_check`       | Create an SSH connectivity check                |
-| `create_ntp_check`       | Create an NTP time server check                 |
-| `create_dns_check`       | Create a DNS monitoring check                   |
-| `create_whois_check`     | Create a WHOIS domain expiry check              |
-| `create_rdap_check`      | Create an RDAP domain expiry check              |
-| `create_blacklist_check` | Create a blacklist monitoring check             |
-| `create_malware_check`   | Create a malware scanning check                 |
-| `create_heartbeat_check` | Create a heartbeat (push) check                 |
-| `create_webhook_check`   | Create a webhook (push) check                   |
-| `create_group_check`     | Create a group check aggregating other checks   |
-| `create_pagespeed_check` | Create a Lighthouse page speed check            |
-| `create_rum_check`       | Create a Real User Monitoring check             |
-| `create_rum2_check`      | Create a RUM v2 check                           |
+| Tool                       | Description                                     |
+|----------------------------|-------------------------------------------------|
+| `list_checks`              | List monitoring checks with optional filtering  |
+| `get_check`                | Get detailed information about a specific check |
+| `get_check_stats`          | Get uptime statistics for a check               |
+| `delete_check`             | Delete a monitoring check                       |
+| `create_<type>_check`      | Create a check (see types below)                |
+| `update_<type>_check`      | Update a check (see types below)                |
+
+Supported check types: `http`, `dns`, `ssl`, `icmp`, `tcp`, `udp`, `smtp`, `imap`,
+`pop`, `ssh`, `ntp`, `whois`, `rdap`, `blacklist`, `malware`, `heartbeat`, `webhook`,
+`group`, `pagespeed`, `rum`.
 
 ### Locations
 
@@ -148,12 +133,13 @@ See [Authentication](#authentication) for token resolution order and per-request
 
 ### Contacts
 
-| Tool             | Description                                 |
-|------------------|---------------------------------------------|
-| `list_contacts`  | List contact groups for alert notifications |
-| `get_contact`    | Get contact group details                   |
-| `create_contact` | Create a new contact group                  |
-| `delete_contact` | Delete a contact group                      |
+| Tool              | Description                                 |
+|-------------------|---------------------------------------------|
+| `list_contacts`   | List contact groups for alert notifications |
+| `get_contact`     | Get contact group details                   |
+| `create_contact`  | Create a new contact group                  |
+| `update_contact`  | Update a contact group                      |
+| `delete_contact`  | Delete a contact group                      |
 
 ### Tags
 
@@ -163,6 +149,37 @@ See [Authentication](#authentication) for token resolution order and per-request
 | `get_tag`    | Get tag details        |
 | `create_tag` | Create a new tag       |
 | `update_tag` | Update an existing tag |
+| `delete_tag` | Delete a tag           |
+
+### Dashboards
+
+| Tool               | Description          |
+|--------------------|----------------------|
+| `list_dashboards`  | List dashboards      |
+| `get_dashboard`    | Get dashboard details|
+| `create_dashboard` | Create a dashboard   |
+| `update_dashboard` | Update a dashboard   |
+| `delete_dashboard` | Delete a dashboard   |
+
+### Status Pages
+
+| Tool                             | Description                       |
+|----------------------------------|-----------------------------------|
+| `list_status_pages`              | List status pages                 |
+| `get_status_page`                | Get status page details           |
+| `create_status_page`             | Create a status page              |
+| `update_status_page`             | Update a status page              |
+| `delete_status_page`             | Delete a status page              |
+| `list_status_page_components`    | List components on a status page  |
+| `get_status_page_component`      | Get component details             |
+| `create_status_page_component`   | Create a status page component    |
+| `update_status_page_component`   | Update a status page component    |
+| `delete_status_page_component`   | Delete a status page component    |
+| `list_status_page_incidents`     | List incidents on a status page   |
+| `get_status_page_incident`       | Get incident details              |
+| `create_status_page_incident`    | Create a status page incident     |
+| `update_status_page_incident`    | Update a status page incident     |
+| `delete_status_page_incident`    | Delete a status page incident     |
 
 ### Alerts & Outages
 
