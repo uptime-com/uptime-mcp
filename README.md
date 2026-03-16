@@ -4,7 +4,87 @@ MCP server for [Uptime.com](https://uptime.com) monitoring integration.
 
 ## Authentication
 
-This server uses OAuth 2.1 authentication. Users authenticate via Uptime.com's OAuth2 provider.
+Multiple authentication methods are available, from simplest to most complete.
+
+### Bearer token (simplest)
+
+Set the `UPTIME_BEARER_TOKEN` environment variable to a pre-obtained Uptime.com API token.
+Works with both stdio and HTTP modes. No OAuth2 configuration required — the token is used
+as-is with no verification or refresh.
+
+**Stdio mode:**
+
+```bash
+UPTIME_BEARER_TOKEN=your-token uptime-mcp -transport=stdio
+```
+
+**HTTP mode:**
+
+```bash
+UPTIME_BEARER_TOKEN=your-token uptime-mcp -transport=http -listen=:8080
+```
+
+### OAuth2 (stdio mode)
+
+In stdio mode, the server performs a browser-based OAuth2 PKCE flow on startup.
+Requires `-uptime-url` and `-client-id`. On launch, the server opens your browser to
+complete authorization, then automatically refreshes tokens in the background.
+
+```bash
+uptime-mcp -transport=stdio \
+  -uptime-url=https://sandbox.upeks.net \
+  -client-id=your-client-id
+```
+
+### OAuth2 (HTTP mode)
+
+In HTTP mode with `-client-id` set, the server validates bearer tokens against the
+Uptime.com API and exposes `/.well-known/oauth-protected-resource`
+([RFC 9728](https://www.rfc-editor.org/rfc/rfc9728)) so MCP clients can discover
+the authorization server and perform the OAuth2 flow themselves.
+
+```bash
+uptime-mcp -transport=http -listen=:8080 \
+  -uptime-url=https://sandbox.upeks.net \
+  -client-id=your-client-id
+```
+
+### Per-request passthrough tokens (HTTP only)
+
+When `-client-id` is **not** set, HTTP mode accepts bearer tokens per-request without
+verification (passthrough mode):
+
+1. `Authorization: Bearer <token>` header
+2. `?token=<token>` query parameter
+3. `UPTIME_BEARER_TOKEN` environment variable
+
+When `-client-id` **is** set, passthrough is disabled by default. Add
+`-bearer-passthrough` to enable both passthrough and OAuth2 verification — passthrough
+tokens take precedence.
+
+### Authentication precedence
+
+**Stdio mode** — token resolved once at startup:
+
+| Priority | Source                        | Behavior                                                               |
+|----------|-------------------------------|------------------------------------------------------------------------|
+| 1        | `UPTIME_BEARER_TOKEN` env var | Static token, no browser, no refresh                                   |
+| 2        | OAuth2 PKCE flow              | Requires `-uptime-url` + `-client-id`, opens browser, auto-refreshes |
+
+**HTTP mode without `-client-id`** — passthrough, token resolved per-request:
+
+| Priority | Source                         | Behavior                     |
+|----------|--------------------------------|------------------------------|
+| 1        | `Authorization: Bearer` header | Passthrough, no verification |
+| 2        | `?token=` query parameter      | Passthrough, no verification |
+| 3        | `UPTIME_BEARER_TOKEN` env var  | Passthrough, no verification |
+
+**HTTP mode with `-client-id`** — OAuth2, token validated per-session:
+
+| Priority | Source                                     | Behavior                                |
+|----------|--------------------------------------------|-----------------------------------------|
+| 1        | Passthrough (if `-bearer-passthrough` set) | Header → query → env, no verification   |
+| 2        | OAuth2 session token                       | Validated against Uptime.com API        |
 
 ## Claude Code plugin
 
@@ -34,39 +114,37 @@ For direct integration with any MCP client (Claude Desktop, Cursor, etc.):
 
 ```bash
 uptime-mcp -transport=stdio \
-  -oauth-issuer=https://sandbox.upeks.net \
-  -client-id=MYH77e5qvqbYjKU01EBgIYU8ZQwhVGxpmfUKBUHU
+  -uptime-url=https://sandbox.upeks.net \
+  -client-id=your-client-id
 ```
 
-On startup, the server opens a browser for OAuth2 authorization. After completing the flow,
-the server starts accepting MCP requests. Tokens are automatically refreshed in the background.
+See [Authentication](#authentication) for all available auth methods.
 
 ### HTTP mode
 
-Run as an HTTP server with OAuth2 bearer token authentication:
+Run as an HTTP server:
 
 ```bash
 uptime-mcp -transport=http -listen=:8080 \
-  -oauth-issuer=https://sandbox.upeks.net
+  -uptime-url=https://sandbox.upeks.net \
+  -client-id=your-client-id
 ```
 
-Each request must include an `Authorization: Bearer <token>` header with a valid OAuth2 access token
-from Uptime.com.
-
-The server exposes `/.well-known/oauth-protected-resource` (RFC 9728) for OAuth2 client discovery.
+See [Authentication](#authentication) for token resolution order and per-request token options.
 
 ### CLI flags
 
-| Flag             | Default                   | Description                                          |
-|------------------|---------------------------|------------------------------------------------------|
-| `-transport`     | `stdio`                   | Transport mode: `stdio` or `http`                    |
-| `-listen`        | `:8080`                   | HTTP listen address (http mode only)                 |
-| `-oauth-issuer`  |                           | OAuth2 issuer URL                                    |
-| `-resource-url`  | `http://localhost:{port}` | Public URL of this server (for reverse proxy setups) |
-| `-client-id`     |                           | OAuth2 client ID                                     |
-| `-client-secret` |                           | OAuth2 client secret (confidential clients)          |
-| `-log-level`     | `info`                    | Log level: `debug`, `info`, `warn`, `error`          |
-| `-version`       |                           | Print version and exit                               |
+| Flag                  | Default                   | Description                                                 |
+|-----------------------|---------------------------|-------------------------------------------------------------|
+| `-transport`          | `stdio`                   | Transport mode: `stdio` or `http`                           |
+| `-listen`             | `:8080`                   | HTTP listen address (http mode only)                        |
+| `-uptime-url`         |                           | Uptime.com instance URL (e.g., `https://uptime.com`)        |
+| `-resource-url`       | `http://localhost:{port}` | Public URL of this server (for reverse proxy setups)        |
+| `-client-id`          |                           | OAuth2 client ID                                            |
+| `-client-secret`      |                           | OAuth2 client secret (confidential clients)                 |
+| `-bearer-passthrough` | `false`                   | Enable bearer token passthrough alongside OAuth2 (HTTP)     |
+| `-log-level`          | `info`                    | Log level: `debug`, `info`, `warn`, `error`                 |
+| `-version`            |                           | Print version and exit                                      |
 
 ## Tools
 
