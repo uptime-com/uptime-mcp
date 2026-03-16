@@ -7,54 +7,13 @@ import (
 	"os"
 	"strings"
 	"sync"
-	"time"
 
-	"github.com/modelcontextprotocol/go-sdk/auth"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
 	"golang.org/x/oauth2"
 
 	"github.com/uptime-com/uptime-mcp/internal/app"
 )
-
-// ---------------------------------------------------------------------------
-// Token verification
-// ---------------------------------------------------------------------------
-
-// uptimeTokenVerifier returns a TokenVerifier that validates bearer tokens
-// against the Uptime.com API by making a HEAD request to the API base URL.
-func uptimeTokenVerifier(apiBaseURL string) auth.TokenVerifier {
-	return func(ctx context.Context, token string, req *http.Request) (*auth.TokenInfo, error) {
-		url := apiBaseURL
-		if !strings.HasSuffix(url, "/") {
-			url += "/"
-		}
-
-		headReq, err := http.NewRequestWithContext(ctx, http.MethodHead, url, nil)
-		if err != nil {
-			return nil, err
-		}
-		headReq.Header.Set("Authorization", "Bearer "+token)
-
-		resp, err := http.DefaultClient.Do(headReq)
-		if err != nil {
-			return nil, err
-		}
-		_ = resp.Body.Close()
-
-		switch resp.StatusCode {
-		case http.StatusOK, http.StatusMethodNotAllowed:
-			return &auth.TokenInfo{
-				Expiration: time.Now().Add(5 * time.Minute),
-				Extra:      map[string]any{"token": token},
-			}, nil
-		case http.StatusUnauthorized:
-			return nil, auth.ErrInvalidToken
-		default:
-			return nil, errors.New("unexpected status: " + resp.Status)
-		}
-	}
-}
 
 // ---------------------------------------------------------------------------
 // Bearer passthrough (HTTP middleware)
@@ -102,19 +61,6 @@ func bearerPassthrough(next http.Handler) http.Handler {
 	})
 }
 
-// bearerPassthroughOptional is like bearerPassthrough but does not return 401
-// when no token is found. Used in combination with an OAuth2 fallback.
-func bearerPassthroughOptional(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := extractBearerToken(r)
-		if token != "" {
-			ctx := context.WithValue(r.Context(), passthroughTokenKey{}, token)
-			r = r.WithContext(ctx)
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
 // ---------------------------------------------------------------------------
 // MCP middleware — session injection
 // ---------------------------------------------------------------------------
@@ -132,33 +78,6 @@ func httpTokenMiddleware() mcp.Middleware {
 			token, _ := ctx.Value(passthroughTokenKey{}).(string)
 			if token == "" {
 				return nil, errors.New("authorization required")
-			}
-
-			session := &app.Session{Token: token}
-			ctx = app.ContextWithSession(ctx, session)
-			return next(ctx, method, req)
-		}
-	}
-}
-
-// oauthSessionMiddleware creates an MCP middleware that reads the verified
-// token from auth.TokenInfoFromContext (set by auth.RequireBearerToken) and
-// creates a session from it. Used with OAuth2 token verification.
-func oauthSessionMiddleware() mcp.Middleware {
-	return func(next mcp.MethodHandler) mcp.MethodHandler {
-		return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
-			if app.SessionFromContext(ctx) != nil {
-				return next(ctx, method, req)
-			}
-
-			tokenInfo := auth.TokenInfoFromContext(ctx)
-			if tokenInfo == nil {
-				return nil, errors.New("no verified token in context")
-			}
-
-			token, _ := tokenInfo.Extra["token"].(string)
-			if token == "" {
-				return nil, errors.New("verified token missing access token")
 			}
 
 			session := &app.Session{Token: token}

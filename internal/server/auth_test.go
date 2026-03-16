@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/auth"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -19,80 +18,6 @@ import (
 
 	"github.com/uptime-com/uptime-mcp/internal/app"
 )
-
-// ---------------------------------------------------------------------------
-// Token verification
-// ---------------------------------------------------------------------------
-
-func TestUptimeTokenVerifier(t *testing.T) {
-	tests := []struct {
-		name       string
-		statusCode int
-		wantErr    bool
-		wantToken  bool
-	}{
-		{
-			name:       "valid token - 200",
-			statusCode: http.StatusOK,
-			wantToken:  true,
-		},
-		{
-			name:       "valid token - 405",
-			statusCode: http.StatusMethodNotAllowed,
-			wantToken:  true,
-		},
-		{
-			name:       "invalid token - 401",
-			statusCode: http.StatusUnauthorized,
-			wantErr:    true,
-		},
-		{
-			name:       "server error - 500",
-			statusCode: http.StatusInternalServerError,
-			wantErr:    true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.Equal(t, http.MethodHead, r.Method)
-				assert.Equal(t, "Bearer test-token", r.Header.Get("Authorization"))
-				w.WriteHeader(tt.statusCode)
-			}))
-			defer ts.Close()
-
-			verifier := uptimeTokenVerifier(ts.URL)
-			info, err := verifier(context.Background(), "test-token", nil)
-
-			if tt.wantErr {
-				require.Error(t, err)
-				assert.Nil(t, info)
-			} else {
-				require.NoError(t, err)
-				require.NotNil(t, info)
-			}
-
-			if tt.wantToken {
-				token, ok := info.Extra["token"].(string)
-				assert.True(t, ok)
-				assert.Equal(t, "test-token", token)
-			}
-		})
-	}
-}
-
-func TestUptimeTokenVerifierInvalidReturnsErrInvalidToken(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusUnauthorized)
-	}))
-	defer ts.Close()
-
-	verifier := uptimeTokenVerifier(ts.URL)
-	_, err := verifier(context.Background(), "bad-token", nil)
-
-	require.ErrorIs(t, err, auth.ErrInvalidToken)
-}
 
 // ---------------------------------------------------------------------------
 // Protected resource metadata
@@ -116,53 +41,6 @@ func TestProtectedResourceMetadata(t *testing.T) {
 	require.NoError(t, json.Unmarshal(w.Body.Bytes(), &body))
 	assert.Equal(t, "http://localhost:8080", body["resource"])
 	assert.Contains(t, body["authorization_servers"], "https://uptime.com")
-}
-
-// ---------------------------------------------------------------------------
-// RequireBearerToken (SDK middleware)
-// ---------------------------------------------------------------------------
-
-func TestRequireBearerToken401(t *testing.T) {
-	verifier := func(ctx context.Context, token string, req *http.Request) (*auth.TokenInfo, error) {
-		return nil, auth.ErrInvalidToken
-	}
-
-	handler := auth.RequireBearerToken(verifier, &auth.RequireBearerTokenOptions{
-		ResourceMetadataURL: "https://mcp.example.com/.well-known/oauth-protected-resource",
-	})(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		t.Fatal("handler should not be called")
-	}))
-
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	w := httptest.NewRecorder()
-	handler.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
-	assert.Contains(t, w.Header().Get("WWW-Authenticate"), "Bearer")
-}
-
-func TestRequireBearerTokenSetsTokenInfo(t *testing.T) {
-	verifier := func(ctx context.Context, token string, req *http.Request) (*auth.TokenInfo, error) {
-		return &auth.TokenInfo{
-			Expiration: time.Now().Add(5 * time.Minute),
-			Extra:      map[string]any{"token": token},
-		}, nil
-	}
-
-	var capturedTokenInfo *auth.TokenInfo
-	handler := auth.RequireBearerToken(verifier, nil)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		capturedTokenInfo = auth.TokenInfoFromContext(r.Context())
-		w.WriteHeader(http.StatusOK)
-	}))
-
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	req.Header.Set("Authorization", "Bearer my-access-token")
-	w := httptest.NewRecorder()
-	handler.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-	require.NotNil(t, capturedTokenInfo)
-	assert.Equal(t, "my-access-token", capturedTokenInfo.Extra["token"])
 }
 
 // ---------------------------------------------------------------------------
@@ -243,48 +121,7 @@ func TestBearerPassthrough(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// bearerPassthroughOptional (HTTP middleware)
-// ---------------------------------------------------------------------------
-
-func TestBearerPassthroughOptional(t *testing.T) {
-	t.Run("injects token when present", func(t *testing.T) {
-		var capturedToken string
-		inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			capturedToken, _ = r.Context().Value(passthroughTokenKey{}).(string)
-			w.WriteHeader(http.StatusOK)
-		})
-
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
-		req.Header.Set("Authorization", "Bearer header-token")
-		w := httptest.NewRecorder()
-
-		bearerPassthroughOptional(inner).ServeHTTP(w, req)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Equal(t, "header-token", capturedToken)
-	})
-
-	t.Run("proceeds without token", func(t *testing.T) {
-		called := false
-		inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			called = true
-			token, _ := r.Context().Value(passthroughTokenKey{}).(string)
-			assert.Empty(t, token)
-			w.WriteHeader(http.StatusOK)
-		})
-
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
-		w := httptest.NewRecorder()
-
-		bearerPassthroughOptional(inner).ServeHTTP(w, req)
-
-		assert.True(t, called)
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
-}
-
-// ---------------------------------------------------------------------------
-// httpTokenMiddleware (MCP middleware — passthrough path)
+// httpTokenMiddleware (MCP middleware)
 // ---------------------------------------------------------------------------
 
 func TestHttpTokenMiddleware(t *testing.T) {
@@ -340,81 +177,6 @@ func TestHttpTokenMiddleware(t *testing.T) {
 		_, err := handler(context.Background(), "test/method", nil)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "authorization required")
-	})
-}
-
-// ---------------------------------------------------------------------------
-// oauthSessionMiddleware (MCP middleware — OAuth2 path)
-// ---------------------------------------------------------------------------
-
-func TestOAuthSessionMiddleware(t *testing.T) {
-	t.Run("preserves existing session", func(t *testing.T) {
-		existingSession := &app.Session{Token: "existing-token"}
-		ctx := app.ContextWithSession(context.Background(), existingSession)
-
-		var capturedCtx context.Context
-		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
-			capturedCtx = ctx
-			return nil, nil
-		}
-
-		handler := oauthSessionMiddleware()(next)
-
-		_, err := handler(ctx, "test/method", nil)
-		require.NoError(t, err)
-
-		session := app.SessionFromContext(capturedCtx)
-		assert.Equal(t, "existing-token", session.Token)
-	})
-
-	t.Run("creates session from verified token info", func(t *testing.T) {
-		// Simulate what auth.RequireBearerToken does: inject TokenInfo into context.
-		// We use the SDK's exported function to set it properly via a test helper.
-		tokenInfo := &auth.TokenInfo{
-			Expiration: time.Now().Add(5 * time.Minute),
-			Extra:      map[string]any{"token": "verified-token"},
-		}
-
-		// Use RequireBearerToken to inject TokenInfo, then extract context.
-		var capturedCtx context.Context
-		verifier := func(ctx context.Context, token string, req *http.Request) (*auth.TokenInfo, error) {
-			return tokenInfo, nil
-		}
-		httpHandler := auth.RequireBearerToken(verifier, nil)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Now we have a context with TokenInfo set by the SDK.
-			ctx := r.Context()
-
-			next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
-				capturedCtx = ctx
-				return nil, nil
-			}
-
-			handler := oauthSessionMiddleware()(next)
-			_, _ = handler(ctx, "test/method", nil)
-		}))
-
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
-		req.Header.Set("Authorization", "Bearer verified-token")
-		w := httptest.NewRecorder()
-		httpHandler.ServeHTTP(w, req)
-
-		require.NotNil(t, capturedCtx)
-		session := app.SessionFromContext(capturedCtx)
-		require.NotNil(t, session)
-		assert.Equal(t, "verified-token", session.Token)
-	})
-
-	t.Run("returns error without token info", func(t *testing.T) {
-		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
-			t.Fatal("next should not be called")
-			return nil, nil
-		}
-
-		handler := oauthSessionMiddleware()(next)
-
-		_, err := handler(context.Background(), "test/method", nil)
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "no verified token")
 	})
 }
 

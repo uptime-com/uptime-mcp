@@ -60,12 +60,12 @@ func stdioOAuthFlow(ctx context.Context, logger *slog.Logger, cfg stdioOAuthConf
 	state := base64.RawURLEncoding.EncodeToString(stateBytes)
 
 	// Start temporary local server on random port
-	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	listener, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
 		return nil, fmt.Errorf("starting callback server: %w", err)
 	}
 	port := listener.Addr().(*net.TCPAddr).Port
-	redirectURI := fmt.Sprintf("http://127.0.0.1:%d/callback", port)
+	redirectURI := fmt.Sprintf("http://localhost:%d/callback", port)
 	oauthCfg.RedirectURL = redirectURI
 
 	type callbackResult struct {

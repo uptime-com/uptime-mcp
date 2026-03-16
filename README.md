@@ -38,10 +38,11 @@ uptime-mcp -transport=stdio \
 
 ### OAuth2 (HTTP mode)
 
-In HTTP mode with `-client-id` set, the server validates bearer tokens against the
-Uptime.com API and exposes `/.well-known/oauth-protected-resource`
+In HTTP mode with `-client-id` set, the server exposes
+`/.well-known/oauth-protected-resource`
 ([RFC 9728](https://www.rfc-editor.org/rfc/rfc9728)) so MCP clients can discover
-the authorization server and perform the OAuth2 flow themselves.
+the authorization server and perform the OAuth2 flow themselves. Bearer tokens
+received from the client are forwarded to the Uptime.com API as-is.
 
 ```bash
 uptime-mcp -transport=http -listen=:8080 \
@@ -49,64 +50,24 @@ uptime-mcp -transport=http -listen=:8080 \
   -client-id=your-client-id
 ```
 
-### Per-request passthrough tokens (HTTP only)
-
-When `-client-id` is **not** set, HTTP mode accepts bearer tokens per-request without
-verification (passthrough mode):
-
-1. `Authorization: Bearer <token>` header
-2. `?token=<token>` query parameter
-3. `UPTIME_BEARER_TOKEN` environment variable
-
-When `-client-id` **is** set, passthrough is disabled by default. Add
-`-bearer-passthrough` to enable both passthrough and OAuth2 verification — passthrough
-tokens take precedence.
-
 ### Authentication precedence
 
 **Stdio mode** — token resolved once at startup:
 
-| Priority | Source                        | Behavior                                                               |
-|----------|-------------------------------|------------------------------------------------------------------------|
-| 1        | `UPTIME_BEARER_TOKEN` env var | Static token, no browser, no refresh                                   |
+| Priority | Source                        | Behavior                                                             |
+|----------|-------------------------------|----------------------------------------------------------------------|
+| 1        | `UPTIME_BEARER_TOKEN` env var | Static token, no browser, no refresh                                 |
 | 2        | OAuth2 PKCE flow              | Requires `-uptime-url` + `-client-id`, opens browser, auto-refreshes |
 
-**HTTP mode without `-client-id`** — passthrough, token resolved per-request:
+**HTTP mode** — token resolved per-request:
 
 | Priority | Source                         | Behavior                     |
 |----------|--------------------------------|------------------------------|
-| 1        | `Authorization: Bearer` header | Passthrough, no verification |
-| 2        | `?token=` query parameter      | Passthrough, no verification |
-| 3        | `UPTIME_BEARER_TOKEN` env var  | Passthrough, no verification |
+| 1        | `Authorization: Bearer` header | Forwarded to Uptime.com API  |
+| 2        | `?token=` query parameter      | Forwarded to Uptime.com API  |
+| 3        | `UPTIME_BEARER_TOKEN` env var  | Forwarded to Uptime.com API  |
 
-**HTTP mode with `-client-id`** — OAuth2, token validated per-session:
-
-| Priority | Source                                     | Behavior                                |
-|----------|--------------------------------------------|-----------------------------------------|
-| 1        | Passthrough (if `-bearer-passthrough` set) | Header → query → env, no verification   |
-| 2        | OAuth2 session token                       | Validated against Uptime.com API        |
-
-## Claude Code plugin
-
-### Quick start (ad-hoc)
-
-Run Claude Code with the plugin loaded for a single session, without modifying your config:
-
-```bash
-claude --plugin-dir /path/to/uptime-mcp
-```
-
-### Permanent install
-
-To add the plugin permanently:
-
-```bash
-claude plugin add --transport stdio https://github.com/uptime-com/uptime-mcp
-```
-
-The plugin automatically downloads the correct binary for your platform on first use.
-
-## Standalone usage
+## Usage
 
 ### Stdio mode
 
@@ -142,7 +103,6 @@ See [Authentication](#authentication) for token resolution order and per-request
 | `-resource-url`       | `http://localhost:{port}` | Public URL of this server (for reverse proxy setups)        |
 | `-client-id`          |                           | OAuth2 client ID                                            |
 | `-client-secret`      |                           | OAuth2 client secret (confidential clients)                 |
-| `-bearer-passthrough` | `false`                   | Enable bearer token passthrough alongside OAuth2 (HTTP)     |
 | `-log-level`          | `info`                    | Log level: `debug`, `info`, `warn`, `error`                 |
 | `-version`            |                           | Print version and exit                                      |
 

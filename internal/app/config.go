@@ -32,14 +32,6 @@ type Config struct {
 	// ClientSecret is the OAuth2 client secret (confidential clients).
 	ClientSecret string
 
-	// BearerPassthrough enables bearer token passthrough in HTTP mode.
-	// When enabled, tokens from Authorization header, query parameter, or
-	// UPTIME_BEARER_TOKEN env var are forwarded to the Uptime API without
-	// verification. This is the default behavior when no OAuth2 client is
-	// configured. When OAuth2 is configured, this flag must be set explicitly
-	// to enable passthrough alongside OAuth2 session auth.
-	BearerPassthrough bool
-
 	// LogLevel for application logger (debug, info, warn, error)
 	LogLevel *slog.LevelVar
 }
@@ -66,7 +58,6 @@ func provideConfig() (Config, error) {
 	flag.StringVar(&cfg.ResourceURL, "resource-url", "", "Public URL of this server (for OAuth2 resource metadata, defaults to http://localhost:{listen})")
 	flag.StringVar(&cfg.ClientID, "client-id", "", "OAuth2 client ID")
 	flag.StringVar(&cfg.ClientSecret, "client-secret", "", "OAuth2 client secret (confidential clients)")
-	flag.BoolVar(&cfg.BearerPassthrough, "bearer-passthrough", false, "Enable bearer token passthrough (HTTP mode, default when no OAuth2 client is configured)")
 	flag.TextVar(cfg.LogLevel, "log-level", cfg.LogLevel, "Log level: debug, info, warn, error")
 	flag.Parse()
 
