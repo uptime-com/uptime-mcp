@@ -118,6 +118,11 @@ func stdioTokenMiddleware(holder *tokenHolder) mcp.Middleware {
 func clientInitMiddleware(apiBaseURL string) mcp.Middleware {
 	return func(next mcp.MethodHandler) mcp.MethodHandler {
 		return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
+			// Protocol methods don't need an API client.
+			if !methodRequiresAuth(method) {
+				return next(ctx, method, req)
+			}
+
 			session := app.SessionFromContext(ctx)
 			if session == nil {
 				return nil, errors.New("no session in context")
