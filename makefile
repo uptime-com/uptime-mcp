@@ -17,9 +17,8 @@ run/http: ## Start HTTP server on :8080
 		-transport=http \
 		-listen=:8080 \
 		-uptime-url=$(UPTIME_URL) \
-		-client-id=$(UPTIME_OAUTH_CLIENT_ID) \
 		-log-level=debug
 
 run/claude: ## Launch Claude Code with stdio MCP
-	@printf '{"mcpServers":{"uptime":{"type":"stdio","command":"go","args":["run","./app/uptime-mcp","-transport=stdio","-uptime-url=$(UPTIME_URL)","-client-id=$(UPTIME_OAUTH_CLIENT_ID)","-log-level=debug"]}}}' > /tmp/claude-uptime-mcp.json
+	@printf '{"mcpServers":{"uptime":{"type":"stdio","command":"go","args":["run","./app/uptime-mcp","-transport=stdio","-uptime-url=$(UPTIME_URL)","-client-id=$(UPTIME_OAUTH_CLIENT_ID)","-log-level=debug"]}}}' >/tmp/claude-uptime-mcp.json
 	claude --mcp-config /tmp/claude-uptime-mcp.json
