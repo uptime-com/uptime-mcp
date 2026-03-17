@@ -13,9 +13,8 @@ var sessionKey sessionKeyType
 // Session holds per-session state including the authenticated Uptime client.
 // Client is created once per session by middleware and cached.
 type Session struct {
-	APIKey     string
-	AuthScheme string // "token" or "bearer"
-	Client     upapi.API
+	Token  string // OAuth2 bearer token
+	Client upapi.API
 }
 
 // ContextWithSession returns a context with session attached.
