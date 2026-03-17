@@ -57,4 +57,6 @@ var checksModule = fx.Module("tool.checks",
 	fx.Invoke(registerUpdatePageSpeedCheckTool),
 	fx.Invoke(registerUpdateRUMCheckTool),
 	fx.Invoke(registerUpdateRUM2CheckTool),
+	fx.Invoke(registerCreateCloudStatusCheckTool),
+	fx.Invoke(registerUpdateCloudStatusCheckTool),
 )
