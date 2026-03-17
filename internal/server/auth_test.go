@@ -2,246 +2,131 @@ package server
 
 import (
 	"context"
+	"encoding/json"
+	"io"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/modelcontextprotocol/go-sdk/auth"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/modelcontextprotocol/go-sdk/oauthex"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"golang.org/x/oauth2"
 
 	"github.com/uptime-com/uptime-mcp/internal/app"
 )
 
-func TestExtractAPIKey(t *testing.T) {
-	tests := []struct {
-		name         string
-		authHeader   string
-		queryKey     string
-		wantKey      string
-		wantScheme   string
-		wantAuthGone bool
-	}{
-		{
-			name:         "bearer header",
-			authHeader:   "Bearer test-api-key",
-			wantKey:      "test-api-key",
-			wantScheme:   "bearer",
-			wantAuthGone: true,
-		},
-		{
-			name:       "query parameter",
-			queryKey:   "query-api-key",
-			wantKey:    "query-api-key",
-			wantScheme: "token",
-		},
-		{
-			name:         "header takes precedence",
-			authHeader:   "Bearer header-key",
-			queryKey:     "query-key",
-			wantKey:      "header-key",
-			wantScheme:   "bearer",
-			wantAuthGone: true,
-		},
-		{
-			name:       "empty when neither present",
-			wantKey:    "",
-			wantScheme: "token",
-		},
-		{
-			name:         "token header",
-			authHeader:   "Token test-token-key",
-			wantKey:      "test-token-key",
-			wantScheme:   "token",
-			wantAuthGone: true,
-		},
-		{
-			name:         "non-bearer auth header ignored",
-			authHeader:   "Basic dXNlcjpwYXNz",
-			wantKey:      "",
-			wantScheme:   "token",
-			wantAuthGone: true,
-		},
-		{
-			name:         "bearer prefix only",
-			authHeader:   "Bearer ",
-			wantKey:      "",
-			wantScheme:   "bearer",
-			wantAuthGone: true,
-		},
-		{
-			name:         "bearer with extra spaces preserved",
-			authHeader:   "Bearer  key-with-space",
-			wantKey:      " key-with-space",
-			wantScheme:   "bearer",
-			wantAuthGone: true,
-		},
-	}
+// ---------------------------------------------------------------------------
+// Protected resource metadata
+// ---------------------------------------------------------------------------
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var capturedKey string
-			var capturedScheme string
-			var capturedAuthHeader string
-
-			handler := extractAPIKey(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				capturedKey = r.Header.Get(headerUptimeAPIKey)
-				capturedScheme = r.Header.Get(headerUptimeAuthScheme)
-				capturedAuthHeader = r.Header.Get("Authorization")
-			}))
-
-			url := "/"
-			if tt.queryKey != "" {
-				url = "/?key=" + tt.queryKey
-			}
-			req := httptest.NewRequest(http.MethodPost, url, nil)
-			if tt.authHeader != "" {
-				req.Header.Set("Authorization", tt.authHeader)
-			}
-
-			handler.ServeHTTP(httptest.NewRecorder(), req)
-
-			if capturedKey != tt.wantKey {
-				t.Errorf("got key %q, want %q", capturedKey, tt.wantKey)
-			}
-			if capturedScheme != tt.wantScheme {
-				t.Errorf("got scheme %q, want %q", capturedScheme, tt.wantScheme)
-			}
-			if tt.wantAuthGone && capturedAuthHeader != "" {
-				t.Errorf("Authorization header should be removed, got %q", capturedAuthHeader)
-			}
-		})
-	}
-}
-
-func TestValidateAPIKey(t *testing.T) {
-	tests := []struct {
-		name       string
-		statusCode int
-		wantErr    string
-	}{
-		{
-			name:       "valid key - 200",
-			statusCode: http.StatusOK,
-			wantErr:    "",
-		},
-		{
-			name:       "valid key - 405",
-			statusCode: http.StatusMethodNotAllowed,
-			wantErr:    "",
-		},
-		{
-			name:       "invalid key - 401",
-			statusCode: http.StatusUnauthorized,
-			wantErr:    "invalid API key",
-		},
-		{
-			name:       "server error - 500",
-			statusCode: http.StatusInternalServerError,
-			wantErr:    "unexpected status: 500 Internal Server Error",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.Method != http.MethodHead {
-					t.Errorf("expected HEAD request, got %s", r.Method)
-				}
-				if auth := r.Header.Get("Authorization"); auth != "Token test-key" {
-					t.Errorf("expected Authorization 'Token test-key', got %q", auth)
-				}
-				w.WriteHeader(tt.statusCode)
-			}))
-			defer ts.Close()
-
-			err := validateAPIKey(context.Background(), "test-key", "token", ts.URL)
-
-			if tt.wantErr == "" {
-				if err != nil {
-					t.Errorf("unexpected error: %v", err)
-				}
-			} else {
-				if err == nil {
-					t.Errorf("expected error containing %q, got nil", tt.wantErr)
-				} else if err.Error() != tt.wantErr {
-					t.Errorf("got error %q, want %q", err.Error(), tt.wantErr)
-				}
-			}
-		})
-	}
-}
-
-func TestValidateAPIKeyBearerScheme(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if auth := r.Header.Get("Authorization"); auth != "Bearer oauth2-token" {
-			t.Errorf("expected Authorization 'Bearer oauth2-token', got %q", auth)
-		}
-		w.WriteHeader(http.StatusOK)
-	}))
-	defer ts.Close()
-
-	err := validateAPIKey(context.Background(), "oauth2-token", "bearer", ts.URL)
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-}
-
-func TestStdioKeyMiddlewareBearerToken(t *testing.T) {
-	var capturedCtx context.Context
-	next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
-		capturedCtx = ctx
-		return nil, nil
-	}
-
-	middleware := stdioKeyMiddleware("", "bearer-token")
-	handler := middleware(next)
-
-	_, err := handler(context.Background(), "test/method", nil)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	session := app.SessionFromContext(capturedCtx)
-	if session == nil {
-		t.Fatal("expected session in context")
-	}
-	if session.APIKey != "bearer-token" {
-		t.Errorf("got APIKey %q, want %q", session.APIKey, "bearer-token")
-	}
-	if session.AuthScheme != "bearer" {
-		t.Errorf("got AuthScheme %q, want %q", session.AuthScheme, "bearer")
-	}
-}
-
-func TestStdioKeyMiddleware(t *testing.T) {
-	t.Run("creates session when none exists", func(t *testing.T) {
-		var capturedCtx context.Context
-		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
-			capturedCtx = ctx
-			return nil, nil
-		}
-
-		middleware := stdioKeyMiddleware("test-api-key", "")
-		handler := middleware(next)
-
-		_, err := handler(context.Background(), "test/method", nil)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-
-		session := app.SessionFromContext(capturedCtx)
-		if session == nil {
-			t.Fatal("expected session in context")
-		}
-		if session.APIKey != "test-api-key" {
-			t.Errorf("got APIKey %q, want %q", session.APIKey, "test-api-key")
-		}
-		if session.AuthScheme != "token" {
-			t.Errorf("got AuthScheme %q, want %q", session.AuthScheme, "token")
-		}
+func TestProtectedResourceMetadata(t *testing.T) {
+	handler := auth.ProtectedResourceMetadataHandler(&oauthex.ProtectedResourceMetadata{
+		Resource:               "http://localhost:8080",
+		AuthorizationServers:   []string{"https://uptime.com"},
+		ScopesSupported:        []string{"api/v1", "api/v1:read"},
+		BearerMethodsSupported: []string{"header"},
 	})
 
+	req := httptest.NewRequest(http.MethodGet, "/.well-known/oauth-protected-resource", nil)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var body map[string]any
+	require.NoError(t, json.Unmarshal(w.Body.Bytes(), &body))
+	assert.Equal(t, "http://localhost:8080", body["resource"])
+	assert.Contains(t, body["authorization_servers"], "https://uptime.com")
+}
+
+// ---------------------------------------------------------------------------
+// extractBearerToken
+// ---------------------------------------------------------------------------
+
+func TestExtractBearerToken(t *testing.T) {
+	t.Run("from Authorization header", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req.Header.Set("Authorization", "Bearer header-token")
+		assert.Equal(t, "header-token", extractBearerToken(req))
+	})
+
+	t.Run("from query param", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/?token=query-token", nil)
+		assert.Equal(t, "query-token", extractBearerToken(req))
+	})
+
+	t.Run("from env var", func(t *testing.T) {
+		t.Setenv("UPTIME_BEARER_TOKEN", "env-token")
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		assert.Equal(t, "env-token", extractBearerToken(req))
+	})
+
+	t.Run("header takes precedence over query", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/?token=query-token", nil)
+		req.Header.Set("Authorization", "Bearer header-token")
+		assert.Equal(t, "header-token", extractBearerToken(req))
+	})
+
+	t.Run("query takes precedence over env", func(t *testing.T) {
+		t.Setenv("UPTIME_BEARER_TOKEN", "env-token")
+		req := httptest.NewRequest(http.MethodGet, "/?token=query-token", nil)
+		assert.Equal(t, "query-token", extractBearerToken(req))
+	})
+
+	t.Run("empty when no token", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		assert.Equal(t, "", extractBearerToken(req))
+	})
+}
+
+// ---------------------------------------------------------------------------
+// bearerPassthrough (HTTP middleware)
+// ---------------------------------------------------------------------------
+
+func TestBearerPassthrough(t *testing.T) {
+	t.Run("injects token into context", func(t *testing.T) {
+		var capturedToken string
+		inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			capturedToken, _ = r.Context().Value(passthroughTokenKey{}).(string)
+			w.WriteHeader(http.StatusOK)
+		})
+
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req.Header.Set("Authorization", "Bearer header-token")
+		w := httptest.NewRecorder()
+
+		bearerPassthrough(inner).ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "header-token", capturedToken)
+	})
+
+	t.Run("returns 401 when no token", func(t *testing.T) {
+		inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			t.Fatal("handler should not be called")
+		})
+
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		w := httptest.NewRecorder()
+
+		bearerPassthrough(inner).ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		assert.Contains(t, w.Header().Get("WWW-Authenticate"), "Bearer")
+	})
+}
+
+// ---------------------------------------------------------------------------
+// httpTokenMiddleware (MCP middleware)
+// ---------------------------------------------------------------------------
+
+func TestHttpTokenMiddleware(t *testing.T) {
 	t.Run("preserves existing session", func(t *testing.T) {
-		existingSession := &app.Session{APIKey: "existing-key"}
+		existingSession := &app.Session{Token: "existing-token"}
 		ctx := app.ContextWithSession(context.Background(), existingSession)
 
 		var capturedCtx context.Context
@@ -250,80 +135,79 @@ func TestStdioKeyMiddleware(t *testing.T) {
 			return nil, nil
 		}
 
-		middleware := stdioKeyMiddleware("new-key", "")
+		middleware := httpTokenMiddleware()
 		handler := middleware(next)
 
 		_, err := handler(ctx, "test/method", nil)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
+		require.NoError(t, err)
 
 		session := app.SessionFromContext(capturedCtx)
-		if session.APIKey != "existing-key" {
-			t.Errorf("session should be preserved, got APIKey %q", session.APIKey)
-		}
+		assert.Equal(t, "existing-token", session.Token)
 	})
-}
 
-func TestHttpKeyMiddleware(t *testing.T) {
-	t.Run("extracts API key from header", func(t *testing.T) {
+	t.Run("creates session from passthrough token", func(t *testing.T) {
+		ctx := context.WithValue(context.Background(), passthroughTokenKey{}, "pass-token")
+
 		var capturedCtx context.Context
 		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 			capturedCtx = ctx
 			return nil, nil
 		}
 
-		middleware := httpKeyMiddleware()
+		middleware := httpTokenMiddleware()
 		handler := middleware(next)
 
-		header := make(http.Header)
-		header.Set(headerUptimeAPIKey, "test-api-key")
-		req := &mcp.ServerRequest[mcp.Params]{
-			Extra: &mcp.RequestExtra{
-				Header: header,
-			},
-		}
-
-		_, err := handler(context.Background(), "test/method", req)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
+		_, err := handler(ctx, "test/method", nil)
+		require.NoError(t, err)
 
 		session := app.SessionFromContext(capturedCtx)
-		if session == nil {
-			t.Fatal("expected session in context")
-		}
-		if session.APIKey != "test-api-key" {
-			t.Errorf("got APIKey %q, want %q", session.APIKey, "test-api-key")
-		}
+		require.NotNil(t, session)
+		assert.Equal(t, "pass-token", session.Token)
 	})
 
-	t.Run("returns error when header missing", func(t *testing.T) {
+	t.Run("returns error without token", func(t *testing.T) {
 		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 			t.Fatal("next should not be called")
 			return nil, nil
 		}
 
-		middleware := httpKeyMiddleware()
+		middleware := httpTokenMiddleware()
 		handler := middleware(next)
 
-		req := &mcp.ServerRequest[mcp.Params]{
-			Extra: &mcp.RequestExtra{
-				Header: http.Header{},
-			},
+		_, err := handler(context.Background(), "test/method", nil)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "authorization required")
+	})
+}
+
+// ---------------------------------------------------------------------------
+// stdioTokenMiddleware (MCP middleware — stdio path)
+// ---------------------------------------------------------------------------
+
+func TestStdioTokenMiddleware(t *testing.T) {
+	t.Run("injects token from holder", func(t *testing.T) {
+		holder := newTokenHolder(&oauth2.Token{AccessToken: "stdio-token"})
+
+		var capturedCtx context.Context
+		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
+			capturedCtx = ctx
+			return nil, nil
 		}
 
-		_, err := handler(context.Background(), "test/method", req)
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-		if err.Error() != "authorization required" {
-			t.Errorf("got error %q, want %q", err.Error(), "authorization required")
-		}
+		middleware := stdioTokenMiddleware(holder)
+		handler := middleware(next)
+
+		_, err := handler(context.Background(), "test/method", nil)
+		require.NoError(t, err)
+
+		session := app.SessionFromContext(capturedCtx)
+		require.NotNil(t, session)
+		assert.Equal(t, "stdio-token", session.Token)
 	})
 
 	t.Run("preserves existing session", func(t *testing.T) {
-		existingSession := &app.Session{APIKey: "existing-key"}
+		holder := newTokenHolder(&oauth2.Token{AccessToken: "new-token"})
+		existingSession := &app.Session{Token: "existing-token"}
 		ctx := app.ContextWithSession(context.Background(), existingSession)
 
 		var capturedCtx context.Context
@@ -332,28 +216,36 @@ func TestHttpKeyMiddleware(t *testing.T) {
 			return nil, nil
 		}
 
-		middleware := httpKeyMiddleware()
+		middleware := stdioTokenMiddleware(holder)
 		handler := middleware(next)
 
-		header := make(http.Header)
-		header.Set(headerUptimeAPIKey, "new-key")
-		req := &mcp.ServerRequest[mcp.Params]{
-			Extra: &mcp.RequestExtra{
-				Header: header,
-			},
-		}
-
-		_, err := handler(ctx, "test/method", req)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
+		_, err := handler(ctx, "test/method", nil)
+		require.NoError(t, err)
 
 		session := app.SessionFromContext(capturedCtx)
-		if session.APIKey != "existing-key" {
-			t.Errorf("session should be preserved, got APIKey %q", session.APIKey)
+		assert.Equal(t, "existing-token", session.Token)
+	})
+
+	t.Run("returns error when no token", func(t *testing.T) {
+		holder := newTokenHolder(nil)
+
+		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
+			t.Fatal("next should not be called")
+			return nil, nil
 		}
+
+		middleware := stdioTokenMiddleware(holder)
+		handler := middleware(next)
+
+		_, err := handler(context.Background(), "test/method", nil)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "no access token")
 	})
 }
+
+// ---------------------------------------------------------------------------
+// clientInitMiddleware (shared)
+// ---------------------------------------------------------------------------
 
 func TestClientInitMiddleware(t *testing.T) {
 	t.Run("error when no session", func(t *testing.T) {
@@ -366,22 +258,16 @@ func TestClientInitMiddleware(t *testing.T) {
 		handler := middleware(next)
 
 		_, err := handler(context.Background(), "test/method", nil)
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-		if err.Error() != "no session in context" {
-			t.Errorf("got error %q, want %q", err.Error(), "no session in context")
-		}
+		require.Error(t, err)
+		assert.Equal(t, "no session in context", err.Error())
 	})
 
 	t.Run("skips when client already initialized", func(t *testing.T) {
-		// Create a real client to test the "already initialized" path
-		client, err := createUptimeClient("test-key", "token", "http://example.com")
-		if err != nil {
-			t.Fatalf("failed to create test client: %v", err)
-		}
+		client, err := createUptimeClient("test-token", "http://example.com")
+		require.NoError(t, err)
+
 		session := &app.Session{
-			APIKey: "test-key",
+			Token:  "test-token",
 			Client: client,
 		}
 		ctx := app.ContextWithSession(context.Background(), session)
@@ -396,69 +282,119 @@ func TestClientInitMiddleware(t *testing.T) {
 		handler := middleware(next)
 
 		_, err = handler(ctx, "test/method", nil)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-		if !called {
-			t.Error("next handler should be called")
-		}
+		require.NoError(t, err)
+		assert.True(t, called)
 	})
 
-	t.Run("validates and creates client", func(t *testing.T) {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-		}))
-		defer ts.Close()
-
-		session := &app.Session{APIKey: "valid-key"}
+	t.Run("creates client from token", func(t *testing.T) {
+		session := &app.Session{Token: "valid-token"}
 		ctx := app.ContextWithSession(context.Background(), session)
 
 		called := false
 		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 			called = true
-			// Verify client was set
 			s := app.SessionFromContext(ctx)
-			if s.Client == nil {
-				t.Error("client should be initialized")
-			}
+			assert.NotNil(t, s.Client)
 			return nil, nil
 		}
 
-		middleware := clientInitMiddleware(ts.URL)
+		middleware := clientInitMiddleware("http://example.com")
 		handler := middleware(next)
 
 		_, err := handler(ctx, "test/method", nil)
+		require.NoError(t, err)
+		assert.True(t, called)
+	})
+}
+
+// ---------------------------------------------------------------------------
+// tokenHolder (stdio mode)
+// ---------------------------------------------------------------------------
+
+func TestTokenHolder(t *testing.T) {
+	t.Run("access token from holder", func(t *testing.T) {
+		holder := newTokenHolder(&oauth2.Token{AccessToken: "abc123"})
+		assert.Equal(t, "abc123", holder.AccessToken())
+	})
+
+	t.Run("empty when nil token", func(t *testing.T) {
+		holder := newTokenHolder(nil)
+		assert.Equal(t, "", holder.AccessToken())
+	})
+
+	t.Run("update replaces token", func(t *testing.T) {
+		holder := newTokenHolder(&oauth2.Token{AccessToken: "old"})
+		holder.Update(&oauth2.Token{AccessToken: "new"})
+		assert.Equal(t, "new", holder.AccessToken())
+	})
+}
+
+// ---------------------------------------------------------------------------
+// stdioOAuthFlow
+// ---------------------------------------------------------------------------
+
+func TestStdioOAuthFlow(t *testing.T) {
+	// Mock authorization server
+	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/o/authorize/":
+			redirectURI := r.URL.Query().Get("redirect_uri")
+			state := r.URL.Query().Get("state")
+			http.Redirect(w, r, redirectURI+"?code=test-auth-code&state="+state, http.StatusFound)
+
+		case "/o/token/":
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]any{
+				"access_token":  "test-access-token",
+				"refresh_token": "test-refresh-token",
+				"token_type":    "Bearer",
+				"expires_in":    3600,
+			})
+
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer authServer.Close()
+
+	origOpenBrowser := openBrowserFunc
+	openBrowserFunc = func(url string) error {
+		client := &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+		resp, err := client.Get(url)
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			return err
 		}
-		if !called {
-			t.Error("next handler should be called")
+		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusFound {
+			loc := resp.Header.Get("Location")
+			resp2, err := client.Get(loc)
+			if err != nil {
+				return err
+			}
+			resp2.Body.Close()
 		}
-	})
+		return nil
+	}
+	defer func() { openBrowserFunc = origOpenBrowser }()
 
-	t.Run("returns validation error", func(t *testing.T) {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusUnauthorized)
-		}))
-		defer ts.Close()
+	cfg := stdioOAuthConfig{
+		Issuer:   authServer.URL,
+		ClientID: "test-client-id",
+		Scopes:   []string{"api/v1"},
+	}
 
-		session := &app.Session{APIKey: "invalid-key"}
-		ctx := app.ContextWithSession(context.Background(), session)
+	token, err := stdioOAuthFlow(context.Background(), noopLogger(), cfg)
+	require.NoError(t, err)
+	require.NotNil(t, token)
+	assert.Equal(t, "test-access-token", token.AccessToken)
+	assert.Equal(t, "test-refresh-token", token.RefreshToken)
+}
 
-		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
-			t.Fatal("next should not be called on validation error")
-			return nil, nil
-		}
-
-		middleware := clientInitMiddleware(ts.URL)
-		handler := middleware(next)
-
-		_, err := handler(ctx, "test/method", nil)
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-		if err.Error() != "invalid API key" {
-			t.Errorf("got error %q, want %q", err.Error(), "invalid API key")
-		}
-	})
+func noopLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError}))
 }

@@ -22,5 +22,12 @@ func New(info Info) *mcp.Server {
 		Version: info.Version,
 	}, &mcp.ServerOptions{
 		Instructions: instructions,
+		// Disable list_changed notifications — our tool/resource sets are
+		// static, and the go-sdk fires these notifications before the client
+		// sends "initialize" in stdio mode, which breaks the protocol.
+		Capabilities: &mcp.ServerCapabilities{
+			Tools:     &mcp.ToolCapabilities{},
+			Resources: &mcp.ResourceCapabilities{},
+		},
 	})
 }

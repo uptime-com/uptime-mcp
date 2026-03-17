@@ -23,9 +23,9 @@ import (
 func makeClientSession(t *testing.T) *mcp.ClientSession {
 	t.Helper()
 
-	apiKey := os.Getenv("UPTIME_API_KEY")
-	if apiKey == "" {
-		t.Fatal("UPTIME_API_KEY environment variable is required for e2e tests")
+	bearerToken := os.Getenv("UPTIME_BEARER_TOKEN")
+	if bearerToken == "" {
+		t.Fatal("UPTIME_BEARER_TOKEN environment variable is required for e2e tests")
 	}
 
 	baseURL := os.Getenv("UPTIME_API_URL")
@@ -38,7 +38,7 @@ func makeClientSession(t *testing.T) *mcp.ClientSession {
 
 	// Create Uptime API client
 	opts := []upapi.Option{
-		upapi.WithToken(apiKey),
+		upapi.WithBearerToken(bearerToken),
 	}
 	if baseURL != "" {
 		opts = append(opts, upapi.WithBaseURL(baseURL))
