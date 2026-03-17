@@ -5,3 +5,4 @@ go.sum            linguist-generated=true
 mocks_test.go     linguist-generated=true
 *.pb.go           linguist-generated=true
 *.pb.validate.go  linguist-generated=true
+*.json.gz         binary linguist-generated=true
