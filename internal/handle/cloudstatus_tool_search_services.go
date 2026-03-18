@@ -28,11 +28,11 @@ func (h *cloudStatusHandler) HandleSearchCloudStatusServices(_ context.Context, 
 	}
 
 	page := in.Page
-	if page == 0 {
+	if page < 1 {
 		page = 1
 	}
 	pageSize := in.PageSize
-	if pageSize == 0 {
+	if pageSize < 1 {
 		pageSize = 25
 	}
 
