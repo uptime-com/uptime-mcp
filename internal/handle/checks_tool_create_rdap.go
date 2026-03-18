@@ -43,7 +43,6 @@ func (c *checksHandler) HandleCreateRDAPCheck(ctx context.Context, _ *mcp.CallTo
 	check := upapi.CheckRDAP{
 		Name:          in.Name,
 		Address:       in.Address,
-		Locations:     []string{"AUTO"},
 		ContactGroups: contactGroups,
 		Tags:          in.Tags,
 		Threshold:     in.Threshold,
