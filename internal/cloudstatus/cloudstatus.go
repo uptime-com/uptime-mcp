@@ -112,7 +112,7 @@ type SearchResult struct {
 
 // Search finds services matching the given criteria.
 // Provider filters by exact group name. Query does case-insensitive substring match on service name.
-// At least one must be non-empty.
+// If both provider and query are empty, all services are returned (subject to pagination).
 func (idx *Index) Search(provider, query string, page, pageSize int) SearchResult {
 	if page < 1 {
 		page = 1
