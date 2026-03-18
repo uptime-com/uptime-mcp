@@ -11,13 +11,13 @@ import (
 func registerCreateAPICheckTool(srv *mcp.Server, h *checksHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "create_api_check",
-		Description: "Create a new API monitoring check that executes multi-step HTTP request sequences. The script field is a JSON array of step objects with step_def and values. IMPORTANT: Do not guess the script format — only use this tool if you have precise knowledge of the API check scripting syntax from documentation or context. Use list_locations for valid probe locations and list_contacts for contact group names.",
+		Description: "Create a new API monitoring check that executes multi-step HTTP request sequences. Only provide a script if you have precise knowledge of the API check scripting syntax from documentation or context, do not guess. Use list_locations for valid probe locations and list_contacts for contact group names.",
 	}, h.HandleCreateAPICheck)
 }
 
 type createAPICheckInput struct {
 	Name            string   `json:"name" jsonschema:"display name for the check"`
-	Script          string   `json:"script" jsonschema:"JSON array of step objects — do not guess the format, refer to API check scripting documentation"`
+	Script          string   `json:"script" jsonschema:"check script, requires precise knowledge of the format, do not guess"`
 	Interval        int64    `json:"interval,omitempty" jsonschema:"check frequency in minutes, defaults to 5"`
 	Threshold       int64    `json:"threshold,omitempty" jsonschema:"timeout in seconds, defaults to 30"`
 	Locations       []string `json:"locations" jsonschema:"probe location identifiers, use list_locations tool to discover valid values"`

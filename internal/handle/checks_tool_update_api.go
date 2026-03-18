@@ -11,14 +11,14 @@ import (
 func registerUpdateAPICheckTool(srv *mcp.Server, h *checksHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name:        "update_api_check",
-		Description: "Update an existing API monitoring check by ID. Only provided fields are changed. IMPORTANT: Do not guess the script format — only modify the script if you have precise knowledge of the API check scripting syntax.",
+		Description: "Update an existing API monitoring check by ID. Only provided fields are changed. Only modify the script if you have precise knowledge of the API check scripting syntax, do not guess.",
 	}, h.HandleUpdateAPICheck)
 }
 
 type updateAPICheckInput struct {
 	ID            int64    `json:"id" jsonschema:"check ID"`
 	Name          string   `json:"name,omitempty" jsonschema:"display name for the check"`
-	Script        string   `json:"script,omitempty" jsonschema:"JSON array of step objects — do not guess the format, refer to API check scripting documentation"`
+	Script        string   `json:"script,omitempty" jsonschema:"check script, requires precise knowledge of the format, do not guess"`
 	Interval      int64    `json:"interval,omitempty" jsonschema:"check frequency in minutes"`
 	Threshold     int64    `json:"threshold,omitempty" jsonschema:"timeout in seconds"`
 	Locations     []string `json:"locations,omitempty" jsonschema:"probe location identifiers"`
