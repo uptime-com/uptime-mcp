@@ -6,6 +6,7 @@ import "go.uber.org/fx"
 var Module = fx.Module("tools",
 	alertsModule,
 	checksModule,
+	cloudStatusModule,
 	contactsModule,
 	dashboardsModule,
 	locationsModule,

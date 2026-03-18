@@ -937,6 +937,74 @@ func (_c *checksServiceMock_CreateBlacklist_Call) RunAndReturn(run func(context1
 	return _c
 }
 
+// CreateCloudStatus provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) CreateCloudStatus(context1 context.Context, checkCloudStatus upapi.CheckCloudStatus) (*upapi.Check, error) {
+	ret := _mock.Called(context1, checkCloudStatus)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateCloudStatus")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckCloudStatus) (*upapi.Check, error)); ok {
+		return returnFunc(context1, checkCloudStatus)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.CheckCloudStatus) *upapi.Check); ok {
+		r0 = returnFunc(context1, checkCloudStatus)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.CheckCloudStatus) error); ok {
+		r1 = returnFunc(context1, checkCloudStatus)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_CreateCloudStatus_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateCloudStatus'
+type checksServiceMock_CreateCloudStatus_Call struct {
+	*mock.Call
+}
+
+// CreateCloudStatus is a helper method to define mock.On call
+//   - context1 context.Context
+//   - checkCloudStatus upapi.CheckCloudStatus
+func (_e *checksServiceMock_Expecter) CreateCloudStatus(context1 interface{}, checkCloudStatus interface{}) *checksServiceMock_CreateCloudStatus_Call {
+	return &checksServiceMock_CreateCloudStatus_Call{Call: _e.mock.On("CreateCloudStatus", context1, checkCloudStatus)}
+}
+
+func (_c *checksServiceMock_CreateCloudStatus_Call) Run(run func(context1 context.Context, checkCloudStatus upapi.CheckCloudStatus)) *checksServiceMock_CreateCloudStatus_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.CheckCloudStatus
+		if args[1] != nil {
+			arg1 = args[1].(upapi.CheckCloudStatus)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_CreateCloudStatus_Call) Return(check *upapi.Check, err error) *checksServiceMock_CreateCloudStatus_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_CreateCloudStatus_Call) RunAndReturn(run func(context1 context.Context, checkCloudStatus upapi.CheckCloudStatus) (*upapi.Check, error)) *checksServiceMock_CreateCloudStatus_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreateDNS provides a mock function for the type checksServiceMock
 func (_mock *checksServiceMock) CreateDNS(context1 context.Context, checkDNS upapi.CheckDNS) (*upapi.Check, error) {
 	ret := _mock.Called(context1, checkDNS)
@@ -2906,6 +2974,80 @@ func (_c *checksServiceMock_UpdateBlacklist_Call) Return(check *upapi.Check, err
 }
 
 func (_c *checksServiceMock_UpdateBlacklist_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkBlacklist upapi.CheckBlacklist) (*upapi.Check, error)) *checksServiceMock_UpdateBlacklist_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateCloudStatus provides a mock function for the type checksServiceMock
+func (_mock *checksServiceMock) UpdateCloudStatus(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkCloudStatus upapi.CheckCloudStatus) (*upapi.Check, error) {
+	ret := _mock.Called(context1, primaryKeyable, checkCloudStatus)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateCloudStatus")
+	}
+
+	var r0 *upapi.Check
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckCloudStatus) (*upapi.Check, error)); ok {
+		return returnFunc(context1, primaryKeyable, checkCloudStatus)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckCloudStatus) *upapi.Check); ok {
+		r0 = returnFunc(context1, primaryKeyable, checkCloudStatus)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.Check)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckCloudStatus) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, checkCloudStatus)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// checksServiceMock_UpdateCloudStatus_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateCloudStatus'
+type checksServiceMock_UpdateCloudStatus_Call struct {
+	*mock.Call
+}
+
+// UpdateCloudStatus is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - checkCloudStatus upapi.CheckCloudStatus
+func (_e *checksServiceMock_Expecter) UpdateCloudStatus(context1 interface{}, primaryKeyable interface{}, checkCloudStatus interface{}) *checksServiceMock_UpdateCloudStatus_Call {
+	return &checksServiceMock_UpdateCloudStatus_Call{Call: _e.mock.On("UpdateCloudStatus", context1, primaryKeyable, checkCloudStatus)}
+}
+
+func (_c *checksServiceMock_UpdateCloudStatus_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkCloudStatus upapi.CheckCloudStatus)) *checksServiceMock_UpdateCloudStatus_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.CheckCloudStatus
+		if args[2] != nil {
+			arg2 = args[2].(upapi.CheckCloudStatus)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateCloudStatus_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateCloudStatus_Call {
+	_c.Call.Return(check, err)
+	return _c
+}
+
+func (_c *checksServiceMock_UpdateCloudStatus_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkCloudStatus upapi.CheckCloudStatus) (*upapi.Check, error)) *checksServiceMock_UpdateCloudStatus_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -6245,6 +6387,845 @@ func (_c *dashboardsServiceMock_Update_Call) Return(dashboard1 *upapi.Dashboard,
 }
 
 func (_c *dashboardsServiceMock_Update_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, dashboard upapi.Dashboard) (*upapi.Dashboard, error)) *dashboardsServiceMock_Update_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// newStatusPagesServiceMock creates a new instance of statusPagesServiceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func newStatusPagesServiceMock(t interface {
+	mock.TestingT
+	Cleanup(func())
+}) *statusPagesServiceMock {
+	mock := &statusPagesServiceMock{}
+	mock.Mock.Test(t)
+
+	t.Cleanup(func() { mock.AssertExpectations(t) })
+
+	return mock
+}
+
+// statusPagesServiceMock is an autogenerated mock type for the mockeryStatusPagesService type
+type statusPagesServiceMock struct {
+	mock.Mock
+}
+
+type statusPagesServiceMock_Expecter struct {
+	mock *mock.Mock
+}
+
+func (_m *statusPagesServiceMock) EXPECT() *statusPagesServiceMock_Expecter {
+	return &statusPagesServiceMock_Expecter{mock: &_m.Mock}
+}
+
+// Components provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Components(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageComponentEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Components")
+	}
+
+	var r0 upapi.StatusPageComponentEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageComponentEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageComponentEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_Components_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Components'
+type statusPagesServiceMock_Components_Call struct {
+	*mock.Call
+}
+
+// Components is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) Components(primaryKeyable interface{}) *statusPagesServiceMock_Components_Call {
+	return &statusPagesServiceMock_Components_Call{Call: _e.mock.On("Components", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_Components_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_Components_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Components_Call) Return(statusPageComponentEndpoint upapi.StatusPageComponentEndpoint) *statusPagesServiceMock_Components_Call {
+	_c.Call.Return(statusPageComponentEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Components_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageComponentEndpoint) *statusPagesServiceMock_Components_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Create provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Create(context1 context.Context, statusPage upapi.StatusPage) (*upapi.StatusPage, error) {
+	ret := _mock.Called(context1, statusPage)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Create")
+	}
+
+	var r0 *upapi.StatusPage
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.StatusPage) (*upapi.StatusPage, error)); ok {
+		return returnFunc(context1, statusPage)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.StatusPage) *upapi.StatusPage); ok {
+		r0 = returnFunc(context1, statusPage)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.StatusPage)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.StatusPage) error); ok {
+		r1 = returnFunc(context1, statusPage)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// statusPagesServiceMock_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
+type statusPagesServiceMock_Create_Call struct {
+	*mock.Call
+}
+
+// Create is a helper method to define mock.On call
+//   - context1 context.Context
+//   - statusPage upapi.StatusPage
+func (_e *statusPagesServiceMock_Expecter) Create(context1 interface{}, statusPage interface{}) *statusPagesServiceMock_Create_Call {
+	return &statusPagesServiceMock_Create_Call{Call: _e.mock.On("Create", context1, statusPage)}
+}
+
+func (_c *statusPagesServiceMock_Create_Call) Run(run func(context1 context.Context, statusPage upapi.StatusPage)) *statusPagesServiceMock_Create_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.StatusPage
+		if args[1] != nil {
+			arg1 = args[1].(upapi.StatusPage)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Create_Call) Return(statusPage1 *upapi.StatusPage, err error) *statusPagesServiceMock_Create_Call {
+	_c.Call.Return(statusPage1, err)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Create_Call) RunAndReturn(run func(context1 context.Context, statusPage upapi.StatusPage) (*upapi.StatusPage, error)) *statusPagesServiceMock_Create_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CurrentStatus provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) CurrentStatus(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageCurrentStatusEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CurrentStatus")
+	}
+
+	var r0 upapi.StatusPageCurrentStatusEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageCurrentStatusEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageCurrentStatusEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_CurrentStatus_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CurrentStatus'
+type statusPagesServiceMock_CurrentStatus_Call struct {
+	*mock.Call
+}
+
+// CurrentStatus is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) CurrentStatus(primaryKeyable interface{}) *statusPagesServiceMock_CurrentStatus_Call {
+	return &statusPagesServiceMock_CurrentStatus_Call{Call: _e.mock.On("CurrentStatus", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_CurrentStatus_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_CurrentStatus_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_CurrentStatus_Call) Return(statusPageCurrentStatusEndpoint upapi.StatusPageCurrentStatusEndpoint) *statusPagesServiceMock_CurrentStatus_Call {
+	_c.Call.Return(statusPageCurrentStatusEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_CurrentStatus_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageCurrentStatusEndpoint) *statusPagesServiceMock_CurrentStatus_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Delete provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Delete(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) error {
+	ret := _mock.Called(context1, primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Delete")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r0 = returnFunc(context1, primaryKeyable)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// statusPagesServiceMock_Delete_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Delete'
+type statusPagesServiceMock_Delete_Call struct {
+	*mock.Call
+}
+
+// Delete is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *statusPagesServiceMock_Delete_Call {
+	return &statusPagesServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_Delete_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_Delete_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Delete_Call) Return(err error) *statusPagesServiceMock_Delete_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Delete_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) error) *statusPagesServiceMock_Delete_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Get provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Get(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.StatusPage, error) {
+	ret := _mock.Called(context1, primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Get")
+	}
+
+	var r0 *upapi.StatusPage
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) (*upapi.StatusPage, error)); ok {
+		return returnFunc(context1, primaryKeyable)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable) *upapi.StatusPage); ok {
+		r0 = returnFunc(context1, primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.StatusPage)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable) error); ok {
+		r1 = returnFunc(context1, primaryKeyable)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// statusPagesServiceMock_Get_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Get'
+type statusPagesServiceMock_Get_Call struct {
+	*mock.Call
+}
+
+// Get is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *statusPagesServiceMock_Get_Call {
+	return &statusPagesServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_Get_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_Get_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Get_Call) Return(statusPage *upapi.StatusPage, err error) *statusPagesServiceMock_Get_Call {
+	_c.Call.Return(statusPage, err)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Get_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable) (*upapi.StatusPage, error)) *statusPagesServiceMock_Get_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Incidents provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Incidents(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageIncidentEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Incidents")
+	}
+
+	var r0 upapi.StatusPageIncidentEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageIncidentEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageIncidentEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_Incidents_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Incidents'
+type statusPagesServiceMock_Incidents_Call struct {
+	*mock.Call
+}
+
+// Incidents is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) Incidents(primaryKeyable interface{}) *statusPagesServiceMock_Incidents_Call {
+	return &statusPagesServiceMock_Incidents_Call{Call: _e.mock.On("Incidents", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_Incidents_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_Incidents_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Incidents_Call) Return(statusPageIncidentEndpoint upapi.StatusPageIncidentEndpoint) *statusPagesServiceMock_Incidents_Call {
+	_c.Call.Return(statusPageIncidentEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Incidents_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageIncidentEndpoint) *statusPagesServiceMock_Incidents_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// List provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) List(context1 context.Context, statusPageListOptions upapi.StatusPageListOptions) (*upapi.ListResult[upapi.StatusPage], error) {
+	ret := _mock.Called(context1, statusPageListOptions)
+
+	if len(ret) == 0 {
+		panic("no return value specified for List")
+	}
+
+	var r0 *upapi.ListResult[upapi.StatusPage]
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.StatusPageListOptions) (*upapi.ListResult[upapi.StatusPage], error)); ok {
+		return returnFunc(context1, statusPageListOptions)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.StatusPageListOptions) *upapi.ListResult[upapi.StatusPage]); ok {
+		r0 = returnFunc(context1, statusPageListOptions)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.ListResult[upapi.StatusPage])
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.StatusPageListOptions) error); ok {
+		r1 = returnFunc(context1, statusPageListOptions)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// statusPagesServiceMock_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
+type statusPagesServiceMock_List_Call struct {
+	*mock.Call
+}
+
+// List is a helper method to define mock.On call
+//   - context1 context.Context
+//   - statusPageListOptions upapi.StatusPageListOptions
+func (_e *statusPagesServiceMock_Expecter) List(context1 interface{}, statusPageListOptions interface{}) *statusPagesServiceMock_List_Call {
+	return &statusPagesServiceMock_List_Call{Call: _e.mock.On("List", context1, statusPageListOptions)}
+}
+
+func (_c *statusPagesServiceMock_List_Call) Run(run func(context1 context.Context, statusPageListOptions upapi.StatusPageListOptions)) *statusPagesServiceMock_List_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.StatusPageListOptions
+		if args[1] != nil {
+			arg1 = args[1].(upapi.StatusPageListOptions)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_List_Call) Return(listResult *upapi.ListResult[upapi.StatusPage], err error) *statusPagesServiceMock_List_Call {
+	_c.Call.Return(listResult, err)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_List_Call) RunAndReturn(run func(context1 context.Context, statusPageListOptions upapi.StatusPageListOptions) (*upapi.ListResult[upapi.StatusPage], error)) *statusPagesServiceMock_List_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Metrics provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Metrics(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageMetricEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Metrics")
+	}
+
+	var r0 upapi.StatusPageMetricEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageMetricEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageMetricEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_Metrics_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Metrics'
+type statusPagesServiceMock_Metrics_Call struct {
+	*mock.Call
+}
+
+// Metrics is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) Metrics(primaryKeyable interface{}) *statusPagesServiceMock_Metrics_Call {
+	return &statusPagesServiceMock_Metrics_Call{Call: _e.mock.On("Metrics", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_Metrics_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_Metrics_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Metrics_Call) Return(statusPageMetricEndpoint upapi.StatusPageMetricEndpoint) *statusPagesServiceMock_Metrics_Call {
+	_c.Call.Return(statusPageMetricEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Metrics_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageMetricEndpoint) *statusPagesServiceMock_Metrics_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// StatusHistory provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) StatusHistory(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageStatusHistoryEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for StatusHistory")
+	}
+
+	var r0 upapi.StatusPageStatusHistoryEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageStatusHistoryEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageStatusHistoryEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_StatusHistory_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StatusHistory'
+type statusPagesServiceMock_StatusHistory_Call struct {
+	*mock.Call
+}
+
+// StatusHistory is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) StatusHistory(primaryKeyable interface{}) *statusPagesServiceMock_StatusHistory_Call {
+	return &statusPagesServiceMock_StatusHistory_Call{Call: _e.mock.On("StatusHistory", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_StatusHistory_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_StatusHistory_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_StatusHistory_Call) Return(statusPageStatusHistoryEndpoint upapi.StatusPageStatusHistoryEndpoint) *statusPagesServiceMock_StatusHistory_Call {
+	_c.Call.Return(statusPageStatusHistoryEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_StatusHistory_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageStatusHistoryEndpoint) *statusPagesServiceMock_StatusHistory_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Subscribers provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Subscribers(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageSubscriberEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Subscribers")
+	}
+
+	var r0 upapi.StatusPageSubscriberEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageSubscriberEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageSubscriberEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_Subscribers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Subscribers'
+type statusPagesServiceMock_Subscribers_Call struct {
+	*mock.Call
+}
+
+// Subscribers is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) Subscribers(primaryKeyable interface{}) *statusPagesServiceMock_Subscribers_Call {
+	return &statusPagesServiceMock_Subscribers_Call{Call: _e.mock.On("Subscribers", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_Subscribers_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_Subscribers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Subscribers_Call) Return(statusPageSubscriberEndpoint upapi.StatusPageSubscriberEndpoint) *statusPagesServiceMock_Subscribers_Call {
+	_c.Call.Return(statusPageSubscriberEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Subscribers_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageSubscriberEndpoint) *statusPagesServiceMock_Subscribers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SubscriptionDomainAllowList provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) SubscriptionDomainAllowList(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageSubsDomainAllowListEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SubscriptionDomainAllowList")
+	}
+
+	var r0 upapi.StatusPageSubsDomainAllowListEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageSubsDomainAllowListEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageSubsDomainAllowListEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_SubscriptionDomainAllowList_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SubscriptionDomainAllowList'
+type statusPagesServiceMock_SubscriptionDomainAllowList_Call struct {
+	*mock.Call
+}
+
+// SubscriptionDomainAllowList is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) SubscriptionDomainAllowList(primaryKeyable interface{}) *statusPagesServiceMock_SubscriptionDomainAllowList_Call {
+	return &statusPagesServiceMock_SubscriptionDomainAllowList_Call{Call: _e.mock.On("SubscriptionDomainAllowList", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_SubscriptionDomainAllowList_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_SubscriptionDomainAllowList_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_SubscriptionDomainAllowList_Call) Return(statusPageSubsDomainAllowListEndpoint upapi.StatusPageSubsDomainAllowListEndpoint) *statusPagesServiceMock_SubscriptionDomainAllowList_Call {
+	_c.Call.Return(statusPageSubsDomainAllowListEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_SubscriptionDomainAllowList_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageSubsDomainAllowListEndpoint) *statusPagesServiceMock_SubscriptionDomainAllowList_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SubscriptionDomainBlockList provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) SubscriptionDomainBlockList(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageSubsDomainBlockListEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SubscriptionDomainBlockList")
+	}
+
+	var r0 upapi.StatusPageSubsDomainBlockListEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageSubsDomainBlockListEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageSubsDomainBlockListEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_SubscriptionDomainBlockList_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SubscriptionDomainBlockList'
+type statusPagesServiceMock_SubscriptionDomainBlockList_Call struct {
+	*mock.Call
+}
+
+// SubscriptionDomainBlockList is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) SubscriptionDomainBlockList(primaryKeyable interface{}) *statusPagesServiceMock_SubscriptionDomainBlockList_Call {
+	return &statusPagesServiceMock_SubscriptionDomainBlockList_Call{Call: _e.mock.On("SubscriptionDomainBlockList", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_SubscriptionDomainBlockList_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_SubscriptionDomainBlockList_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_SubscriptionDomainBlockList_Call) Return(statusPageSubsDomainBlockListEndpoint upapi.StatusPageSubsDomainBlockListEndpoint) *statusPagesServiceMock_SubscriptionDomainBlockList_Call {
+	_c.Call.Return(statusPageSubsDomainBlockListEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_SubscriptionDomainBlockList_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageSubsDomainBlockListEndpoint) *statusPagesServiceMock_SubscriptionDomainBlockList_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Update provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Update(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, statusPage upapi.StatusPage) (*upapi.StatusPage, error) {
+	ret := _mock.Called(context1, primaryKeyable, statusPage)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Update")
+	}
+
+	var r0 *upapi.StatusPage
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.StatusPage) (*upapi.StatusPage, error)); ok {
+		return returnFunc(context1, primaryKeyable, statusPage)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.StatusPage) *upapi.StatusPage); ok {
+		r0 = returnFunc(context1, primaryKeyable, statusPage)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*upapi.StatusPage)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.StatusPage) error); ok {
+		r1 = returnFunc(context1, primaryKeyable, statusPage)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// statusPagesServiceMock_Update_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Update'
+type statusPagesServiceMock_Update_Call struct {
+	*mock.Call
+}
+
+// Update is a helper method to define mock.On call
+//   - context1 context.Context
+//   - primaryKeyable upapi.PrimaryKeyable
+//   - statusPage upapi.StatusPage
+func (_e *statusPagesServiceMock_Expecter) Update(context1 interface{}, primaryKeyable interface{}, statusPage interface{}) *statusPagesServiceMock_Update_Call {
+	return &statusPagesServiceMock_Update_Call{Call: _e.mock.On("Update", context1, primaryKeyable, statusPage)}
+}
+
+func (_c *statusPagesServiceMock_Update_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, statusPage upapi.StatusPage)) *statusPagesServiceMock_Update_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 upapi.PrimaryKeyable
+		if args[1] != nil {
+			arg1 = args[1].(upapi.PrimaryKeyable)
+		}
+		var arg2 upapi.StatusPage
+		if args[2] != nil {
+			arg2 = args[2].(upapi.StatusPage)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Update_Call) Return(statusPage1 *upapi.StatusPage, err error) *statusPagesServiceMock_Update_Call {
+	_c.Call.Return(statusPage1, err)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Update_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, statusPage upapi.StatusPage) (*upapi.StatusPage, error)) *statusPagesServiceMock_Update_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Users provides a mock function for the type statusPagesServiceMock
+func (_mock *statusPagesServiceMock) Users(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageUserEndpoint {
+	ret := _mock.Called(primaryKeyable)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Users")
+	}
+
+	var r0 upapi.StatusPageUserEndpoint
+	if returnFunc, ok := ret.Get(0).(func(upapi.PrimaryKeyable) upapi.StatusPageUserEndpoint); ok {
+		r0 = returnFunc(primaryKeyable)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.StatusPageUserEndpoint)
+		}
+	}
+	return r0
+}
+
+// statusPagesServiceMock_Users_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Users'
+type statusPagesServiceMock_Users_Call struct {
+	*mock.Call
+}
+
+// Users is a helper method to define mock.On call
+//   - primaryKeyable upapi.PrimaryKeyable
+func (_e *statusPagesServiceMock_Expecter) Users(primaryKeyable interface{}) *statusPagesServiceMock_Users_Call {
+	return &statusPagesServiceMock_Users_Call{Call: _e.mock.On("Users", primaryKeyable)}
+}
+
+func (_c *statusPagesServiceMock_Users_Call) Run(run func(primaryKeyable upapi.PrimaryKeyable)) *statusPagesServiceMock_Users_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 upapi.PrimaryKeyable
+		if args[0] != nil {
+			arg0 = args[0].(upapi.PrimaryKeyable)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Users_Call) Return(statusPageUserEndpoint upapi.StatusPageUserEndpoint) *statusPagesServiceMock_Users_Call {
+	_c.Call.Return(statusPageUserEndpoint)
+	return _c
+}
+
+func (_c *statusPagesServiceMock_Users_Call) RunAndReturn(run func(primaryKeyable upapi.PrimaryKeyable) upapi.StatusPageUserEndpoint) *statusPagesServiceMock_Users_Call {
 	_c.Call.Return(run)
 	return _c
 }
