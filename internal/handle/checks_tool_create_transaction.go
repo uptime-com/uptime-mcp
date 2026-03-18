@@ -11,13 +11,13 @@ import (
 func registerCreateTransactionCheckTool(srv *mcp.Server, h *checksHandler) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "create_transaction_check",
-		Description: "Create a new Transaction monitoring check that executes multi-step browser interactions in Chromium (Puppeteer). The script field is a JSON array of step objects with step_def and values. IMPORTANT: Do not guess the script format — only use this tool if you have precise knowledge of the Transaction check scripting syntax from documentation or context. Use list_locations for valid probe locations and list_contacts for contact group names.",
+		Description: "Create a new Transaction monitoring check that executes multi-step browser interactions in Chromium (Puppeteer). Only provide a script if you have precise knowledge of the Transaction check scripting syntax from documentation or context, do not guess. Use list_locations for valid probe locations and list_contacts for contact group names.",
 	}, h.HandleCreateTransactionCheck)
 }
 
 type createTransactionCheckInput struct {
 	Name          string   `json:"name" jsonschema:"display name for the check"`
-	Script        string   `json:"script" jsonschema:"JSON array of step objects — do not guess the format, refer to Transaction check scripting documentation"`
+	Script        string   `json:"script" jsonschema:"check script, requires precise knowledge of the format, do not guess"`
 	Interval      int64    `json:"interval,omitempty" jsonschema:"check frequency in minutes, defaults to 5"`
 	Threshold     int64    `json:"threshold,omitempty" jsonschema:"timeout in seconds, defaults to 30"`
 	Locations     []string `json:"locations" jsonschema:"probe location identifiers, use list_locations tool to discover valid values"`
