@@ -1,0 +1,6 @@
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value: -uptime-url=https://eu.uptime.com
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value: -resource-url=https://mcp.eu.uptime.com

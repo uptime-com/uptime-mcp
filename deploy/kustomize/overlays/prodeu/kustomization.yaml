@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: uptime-mcp
+
+resources:
+  - ../../base
+  - ./resources/ingress.yaml
+
+patches:
+  - target:
+      kind: Deployment
+    path: patches/deployment.yaml
