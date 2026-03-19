@@ -18,6 +18,14 @@ jobs:
             aws_region: ${{ vars.updev_aws_region }}
             aws_assume_role_arn: ${{ vars.updev_aws_assume_role_arn }}
             push: true
+          - overlay: produs
+            aws_region: ${{ vars.upprodus_aws_region }}
+            aws_assume_role_arn: ${{ vars.upprodus_aws_assume_role_arn }}
+            push: true
+          - overlay: prodeu
+            aws_region: ${{ vars.upprodeu_aws_region }}
+            aws_assume_role_arn: ${{ vars.upprodeu_aws_assume_role_arn }}
+            push: true
     uses: uptime-com/upflows/.github/workflows/kustomize.yaml@v0.20
     with:
       aws_region: ${{ matrix.target.aws_region }}
