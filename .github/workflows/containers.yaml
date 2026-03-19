@@ -59,7 +59,7 @@ jobs:
       version: ${{ github.ref_name }}
       files: |
         deploy/kustomize/overlays/upeks-dev/VERSION
-        deploy/kustomize/overlays/produs/VERSION
-        deploy/kustomize/overlays/prodeu/VERSION
+        deploy/kustomize/overlays/upeks-produs/VERSION
+        deploy/kustomize/overlays/upeks-prodeu/VERSION
     secrets:
       ssh_key: ${{ secrets.up_machine_ssh_private_key }}
