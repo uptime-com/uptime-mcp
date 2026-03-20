@@ -50,4 +50,9 @@ type (
 	mockeryStatusPagesService interface {
 		upapi.StatusPagesEndpoint
 	}
+
+	// mockeryAccountUsageService wraps upapi.AccountUsageEndpoint for mock generation.
+	mockeryAccountUsageService interface {
+		upapi.AccountUsageEndpoint
+	}
 )
