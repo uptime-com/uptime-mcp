@@ -3,7 +3,7 @@ module github.com/uptime-com/uptime-mcp
 go 1.26
 
 require (
-	github.com/modelcontextprotocol/go-sdk v1.4.1
+	github.com/modelcontextprotocol/go-sdk v1.5.0
 	github.com/stretchr/testify v1.11.1
 	github.com/uptime-com/uptime-client-go/v2 v2.10.0
 	go.uber.org/fx v1.24.0
