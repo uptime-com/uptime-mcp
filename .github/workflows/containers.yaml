@@ -43,8 +43,6 @@ jobs:
             aws_assume_role_arn: ${{ vars.updev_aws_assume_role_arn }}
           - aws_region: ${{ vars.upprodus_aws_region }}
             aws_assume_role_arn: ${{ vars.upprodus_aws_assume_role_arn }}
-          - aws_region: ${{ vars.upprodeu_aws_region }}
-            aws_assume_role_arn: ${{ vars.upprodeu_aws_assume_role_arn }}
     uses: uptime-com/upflows/.github/workflows/push-ecr.yaml@v0.16
     with:
       image: ${{ github.repository }}/${{ matrix.package }}:${{ github.ref_name }}
@@ -60,6 +58,5 @@ jobs:
       files: |
         deploy/kustomize/overlays/upeks-dev/VERSION
         deploy/kustomize/overlays/upeks-produs/VERSION
-        deploy/kustomize/overlays/upeks-prodeu/VERSION
     secrets:
       ssh_key: ${{ secrets.up_machine_ssh_private_key }}
