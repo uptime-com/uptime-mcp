@@ -1,0 +1,125 @@
+# Default values for uptime-mcp.
+replicaCount: 1
+
+image:
+  repository: ghcr.io/uptime-com/uptime-mcp
+  pullPolicy: IfNotPresent
+  # Overrides the image tag (defaults to the chart appVersion).
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# uptime-mcp runtime configuration. Each value below is appended as a CLI flag
+# only when non-empty, so environment-specific URLs stay out of the chart
+# defaults (they belong in per-environment values).
+config:
+  # MCP transport. The chart deploys the server in http mode.
+  transport: http
+  # Container listen address.
+  listen: ":8080"
+  # Uptime.com instance URL (e.g. https://uptime.com).
+  uptimeUrl: ""
+  # Public URL of this server for OAuth2 protected-resource metadata.
+  resourceUrl: ""
+  # OAuth2 client ID.
+  clientId: ""
+  # Log level: debug, info, warn, error.
+  logLevel: ""
+  # Extra raw args appended verbatim to the container command.
+  extraArgs: []
+
+# Optional static bearer token exposed as UPTIME_BEARER_TOKEN. References a
+# pre-existing secret; the chart never creates one.
+auth:
+  existingSecret:
+    # Name of an existing secret holding the bearer token. Empty disables it.
+    name: ""
+    # Key within the secret.
+    key: token
+
+# Extra environment variables passed to the container.
+extraEnv: []
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext:
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: uptime-mcp.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: uptime-mcp-tls
+  #    hosts:
+  #      - uptime-mcp.example.com
+
+resources:
+  requests:
+    memory: 32Mi
+    cpu: 10m
+  limits:
+    memory: 128Mi
+    cpu: 100m
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: http
+  initialDelaySeconds: 2
+  periodSeconds: 5
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Gateway API HTTPRoute.
+httpRoute:
+  enabled: false
+  annotations: {}
+  parentRefs: []
+  # - name: gateway-name
+  #   namespace: gateway-namespace
+  hostnames: []
+  # - uptime-mcp.example.com
+  rules: []

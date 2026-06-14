@@ -1,0 +1,15 @@
+apiVersion: v2
+name: uptime-mcp
+description: A Helm chart for the Uptime.com MCP Server
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - mcp
+  - uptime
+  - monitoring
+home: https://github.com/uptime-com/uptime-mcp
+sources:
+  - https://github.com/uptime-com/uptime-mcp
+maintainers:
+  - name: uptime-com

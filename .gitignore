@@ -1,0 +1,9 @@
+.*
+!.gitignore
+!.gitattributes
+!.github/
+!.goreleaser.yaml
+!.helmignore
+!.ko.yaml
+!.mockery.yaml
+dist/

@@ -1,0 +1,11 @@
+#
+# Requires mockery >= v3.2.5
+#
+packages:
+  github.com/uptime-com/uptime-mcp:
+    config:
+      include-interface-regex: '^mockery.+$'
+      dir: '{{ .InterfaceDir }}'
+      structname: '{{ .InterfaceName | trimPrefix "mockery" | camelcase }}Mock'
+      template: testify
+      recursive: true

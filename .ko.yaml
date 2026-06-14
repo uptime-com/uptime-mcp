@@ -1,0 +1,11 @@
+defaultBaseImage: cgr.dev/chainguard/static:latest
+
+builds:
+  - id: uptime-mcp
+    main: .
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+      - -X main.Version={{.Env.VERSION}}
+      - -X main.Commit={{.Env.COMMIT}}
