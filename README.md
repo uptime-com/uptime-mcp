@@ -19,6 +19,31 @@ Desktop, Claude Code, and Cursor) and **streamable HTTP** (for hosted
 deployments). It authenticates with a static API bearer token or a
 browser-based OAuth2 PKCE flow.
 
+## Claude Code plugin
+
+If you use [Claude Code](https://claude.com/claude-code), the easiest way in is
+the [`uptime-skills`](https://github.com/uptime-com/uptime-skills) plugin. It
+bundles this MCP server with task-focused **skills** — curated context and
+workflows for Uptime.com (choosing probe locations, tuning outage sensitivity,
+picking the right check type for a target) — plus a sensible default permission
+set. The tools alone give Claude the ability to call the API; the skills give it
+the know-how to use them well, so you get sound monitoring decisions instead of
+raw API calls.
+
+```bash
+/plugin marketplace add uptime-com/uptime-skills
+/plugin install uptime@uptime-com
+```
+
+Then authenticate (browser OAuth, tokens stored and refreshed for you):
+
+```bash
+/mcp
+```
+
+See [uptime-com/uptime-skills](https://github.com/uptime-com/uptime-skills) for
+team and project-level setup.
+
 ## Hosted server
 
 Uptime.com runs an official hosted instance, so you do not have to run anything
