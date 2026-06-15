@@ -1,8 +1,12 @@
 # uptime-mcp
 
 [![CI](https://github.com/uptime-com/uptime-mcp/actions/workflows/ci.yaml/badge.svg)](https://github.com/uptime-com/uptime-mcp/actions/workflows/ci.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/uptime-com/uptime-mcp)](https://goreportcard.com/report/github.com/uptime-com/uptime-mcp)
 [![Go Reference](https://pkg.go.dev/badge/github.com/uptime-com/uptime-mcp.svg)](https://pkg.go.dev/github.com/uptime-com/uptime-mcp)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![GitHub License](https://img.shields.io/github/license/uptime-com/uptime-mcp)](LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/tag/uptime-com/uptime-mcp?label=release)](https://github.com/uptime-com/uptime-mcp/tags)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/uptime-com/uptime-mcp)](go.mod)
+[![GitHub Stars](https://img.shields.io/github/stars/uptime-com/uptime-mcp)](https://github.com/uptime-com/uptime-mcp/stargazers)
 
 A [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server for
 [Uptime.com](https://uptime.com). It exposes Uptime.com website, server, and
