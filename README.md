@@ -15,6 +15,39 @@ Desktop, Claude Code, and Cursor) and **streamable HTTP** (for hosted
 deployments). It authenticates with a static API bearer token or a
 browser-based OAuth2 PKCE flow.
 
+## Hosted server
+
+Uptime.com runs an official hosted instance, so you do not have to run anything
+yourself. Point any streamable-HTTP MCP client at:
+
+```
+https://mcp.uptime.com/mcp
+```
+
+Authenticate with your Uptime.com API token (generate one under **Settings → API
+& Integrations**). Example MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "uptime": {
+      "type": "http",
+      "url": "https://mcp.uptime.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <your-api-token>"
+      }
+    }
+  }
+}
+```
+
+The endpoint also advertises [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728)
+protected-resource metadata, so OAuth2-capable MCP clients can discover the
+authorization server (`https://uptime.com`) and obtain tokens themselves instead
+of supplying a static token.
+
+Prefer to run it yourself? Continue below.
+
 ## Quick start
 
 The fastest way to try it is with `go run` (Go 1.26+) and a personal Uptime.com
