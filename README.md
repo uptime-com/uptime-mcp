@@ -214,6 +214,8 @@ sensitive values.
 | `-transport`     | —                            | `stdio`                   | Transport mode: `stdio` or `http`.                                  |
 | `-listen`        | —                            | `:8080`                   | HTTP listen address (HTTP mode only).                               |
 | `-uptime-url`    | `UPTIME_URL`                 | _(required)_              | Uptime.com instance URL, e.g. `https://uptime.com`. The API base is `<uptime-url>/api/v1/`. |
+| `-api-url`       | `UPTIME_API_URL`             | _(from `-uptime-url`)_    | Full API base URL override, used verbatim (e.g. `http://uptime.svc.cluster.local/api/v1/`). |
+| `-oauth-url`     | `UPTIME_OAUTH_URL`           | _(from `-uptime-url`)_    | Full OAuth2 authorization server URL override, used verbatim as the issuer. |
 | `-resource-url`  | `UPTIME_RESOURCE_URL`        | `http://localhost:<port>` | Public URL of this server, for OAuth2 protected-resource metadata.  |
 | `-client-id`     | `UPTIME_OAUTH_CLIENT_ID`     | _(empty)_                 | OAuth2 client ID.                                                   |
 | `-client-secret` | `UPTIME_OAUTH_CLIENT_SECRET` | _(empty)_                 | OAuth2 client secret (confidential clients).                        |

@@ -93,13 +93,13 @@ func stdioLazyAuthMiddleware(p RunParams) mcp.Middleware {
 	// OAuth2 browser flow — validate config now, defer actual flow to first
 	// tool call so the server can complete MCP handshake without blocking.
 	cfg := stdioOAuthConfig{
-		Issuer:       p.Config.UptimeURL,
+		Issuer:       p.Config.OAuthIssuer(),
 		ClientID:     p.Config.ClientID,
 		ClientSecret: p.Config.ClientSecret,
 		Scopes:       []string{"api/v1"},
 	}
 	if cfg.Issuer == "" || cfg.ClientID == "" {
-		p.Logger.Error("-uptime-url and -client-id are required for stdio mode without UPTIME_BEARER_TOKEN")
+		p.Logger.Error("-uptime-url (or -oauth-url) and -client-id are required for stdio mode without UPTIME_BEARER_TOKEN")
 		os.Exit(1)
 	}
 
@@ -193,13 +193,14 @@ func runHTTP(p RunParams) {
 	mux := http.NewServeMux()
 
 	// RFC 9728: OAuth 2.0 Protected Resource Metadata.
-	// Registered when -uptime-url is set so that OAuth2-capable clients
-	// can discover the authorization server and obtain tokens.
-	if p.Config.UptimeURL != "" {
+	// Registered when an OAuth issuer is configured (via -oauth-url or
+	// -uptime-url) so that OAuth2-capable clients can discover the
+	// authorization server and obtain tokens.
+	if issuer := p.Config.OAuthIssuer(); issuer != "" {
 		mux.Handle("/.well-known/oauth-protected-resource",
 			auth.ProtectedResourceMetadataHandler(&oauthex.ProtectedResourceMetadata{
 				Resource:               p.Config.ResourceURL,
-				AuthorizationServers:   []string{p.Config.UptimeURL},
+				AuthorizationServers:   []string{issuer},
 				ScopesSupported:        []string{"api/v1", "api/v1:read"},
 				BearerMethodsSupported: []string{"header"},
 			}))
