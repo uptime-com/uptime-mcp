@@ -26,6 +26,10 @@ config:
   listen: ":8080"
   # Uptime.com instance URL (e.g. https://uptime.com).
   uptimeUrl: ""
+  # Optional full Uptime.com API base URL override (defaults to {uptimeUrl}/api/v1/).
+  apiUrl: ""
+  # Optional full OAuth2 authorization server URL override (defaults to {uptimeUrl}).
+  oauthUrl: ""
   # Public URL of this server for OAuth2 protected-resource metadata.
   resourceUrl: ""
   # OAuth2 client ID.
