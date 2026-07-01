@@ -19,8 +19,18 @@ type Config struct {
 
 	// UptimeURL is the Uptime.com instance URL (e.g., https://uptime.com).
 	// Used to derive both the API base URL (UptimeURL + "/api/v1/") and the
-	// OAuth2 authorization server endpoints.
+	// OAuth2 authorization server endpoints when APIURL / OAuthURL are unset.
 	UptimeURL string
+
+	// APIURL, when non-empty, is the full Uptime.com API base URL, used
+	// verbatim instead of deriving it from UptimeURL. Useful in split-horizon
+	// deployments where the API is reached over an internal address.
+	APIURL string
+
+	// OAuthURL, when non-empty, is the full OAuth2 authorization server base
+	// (issuer), used verbatim instead of UptimeURL. Useful when the client-facing
+	// authorization server differs from the internal API host.
+	OAuthURL string
 
 	// ResourceURL is this server's public URL for OAuth2 protected resource metadata.
 	// Defaults to http://localhost{ListenAddr} when not set.
@@ -36,13 +46,26 @@ type Config struct {
 	LogLevel *slog.LevelVar
 }
 
-// APIBaseURL returns the Uptime.com API base URL derived from UptimeURL.
+// APIBaseURL returns the Uptime.com API base URL. When APIURL is set it is used
+// verbatim; otherwise the base is derived from UptimeURL.
 func (c Config) APIBaseURL() string {
+	if c.APIURL != "" {
+		return c.APIURL
+	}
 	u := c.UptimeURL
 	if u == "" {
 		u = "https://uptime.com"
 	}
 	return strings.TrimRight(u, "/") + "/api/v1/"
+}
+
+// OAuthIssuer returns the OAuth2 authorization server base (issuer). When
+// OAuthURL is set it is used verbatim; otherwise it falls back to UptimeURL.
+func (c Config) OAuthIssuer() string {
+	if c.OAuthURL != "" {
+		return c.OAuthURL
+	}
+	return c.UptimeURL
 }
 
 // provideConfig parses CLI flags and returns application configuration.
@@ -55,6 +78,8 @@ func provideConfig() (Config, error) {
 	flag.StringVar(&cfg.Transport, "transport", "stdio", "Transport mode: stdio or http")
 	flag.StringVar(&cfg.ListenAddr, "listen", ":8080", "HTTP listen address (only used with -transport=http)")
 	flag.StringVar(&cfg.UptimeURL, "uptime-url", "", "Uptime.com instance URL (e.g., https://uptime.com)")
+	flag.StringVar(&cfg.APIURL, "api-url", "", "Full Uptime.com API base URL override (defaults to {uptime-url}/api/v1/)")
+	flag.StringVar(&cfg.OAuthURL, "oauth-url", "", "Full OAuth2 authorization server URL override (defaults to {uptime-url})")
 	flag.StringVar(&cfg.ResourceURL, "resource-url", "", "Public URL of this server (for OAuth2 resource metadata, defaults to http://localhost:{listen})")
 	flag.StringVar(&cfg.ClientID, "client-id", "", "OAuth2 client ID")
 	flag.StringVar(&cfg.ClientSecret, "client-secret", "", "OAuth2 client secret (confidential clients)")
@@ -67,6 +92,12 @@ func provideConfig() (Config, error) {
 
 	if cfg.UptimeURL == "" {
 		cfg.UptimeURL = os.Getenv("UPTIME_URL")
+	}
+	if cfg.APIURL == "" {
+		cfg.APIURL = os.Getenv("UPTIME_API_URL")
+	}
+	if cfg.OAuthURL == "" {
+		cfg.OAuthURL = os.Getenv("UPTIME_OAUTH_URL")
 	}
 	if cfg.ResourceURL == "" {
 		cfg.ResourceURL = os.Getenv("UPTIME_RESOURCE_URL")

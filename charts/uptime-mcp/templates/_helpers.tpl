@@ -68,6 +68,12 @@ Container args assembled from config values.
 {{- with .Values.config.uptimeUrl }}
 - -uptime-url={{ . }}
 {{- end }}
+{{- with .Values.config.apiUrl }}
+- -api-url={{ . }}
+{{- end }}
+{{- with .Values.config.oauthUrl }}
+- -oauth-url={{ . }}
+{{- end }}
 {{- with .Values.config.resourceUrl }}
 - -resource-url={{ . }}
 {{- end }}
