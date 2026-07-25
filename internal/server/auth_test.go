@@ -398,3 +398,40 @@ func TestStdioOAuthFlow(t *testing.T) {
 func noopLogger() *slog.Logger {
 	return slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError}))
 }
+
+// ---------------------------------------------------------------------------
+// createUptimeClient auth scheme selection
+// ---------------------------------------------------------------------------
+
+func TestCreateUptimeClientAuthScheme(t *testing.T) {
+	cases := []struct {
+		name   string
+		token  string
+		scheme string
+	}{
+		// Static API keys carry no dots and must use the API's "Token" scheme.
+		{"static api key", "0123456789abcdef0123456789abcdef01234567", "Token"},
+		// OAuth2 access tokens are JWTs (dotted) and use "Bearer".
+		{"oauth jwt", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4In0.sig", "Bearer"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var gotAuth string
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				gotAuth = r.Header.Get("Authorization")
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(`{}`))
+			}))
+			defer srv.Close()
+
+			client, err := createUptimeClient(tc.token, srv.URL)
+			require.NoError(t, err)
+
+			// Any API call works; we only care about the header it sends.
+			_, _ = client.AccountUsage().Get(context.Background())
+
+			require.NotEmpty(t, gotAuth, "no request reached the test server")
+			assert.Equal(t, tc.scheme+" "+tc.token, gotAuth)
+		})
+	}
+}

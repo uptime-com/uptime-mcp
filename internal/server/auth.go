@@ -143,9 +143,17 @@ func clientInitMiddleware(apiBaseURL string) mcp.Middleware {
 	}
 }
 
-// createUptimeClient creates an Uptime.com API client with bearer token auth.
+// createUptimeClient creates an Uptime.com API client authenticated with the
+// given token. OAuth2 access tokens (JWTs, always dotted) go upstream as
+// "Authorization: Bearer ..."; static API keys must use the API's
+// "Authorization: Token ..." scheme instead — forwarding them as Bearer makes
+// api/v1 reject the request with NOT_AUTHENTICATED.
 func createUptimeClient(token, baseURL string) (upapi.API, error) {
-	opts := []upapi.Option{upapi.WithBearerToken(token)}
+	authOpt := upapi.WithToken(token)
+	if strings.Contains(token, ".") {
+		authOpt = upapi.WithBearerToken(token)
+	}
+	opts := []upapi.Option{authOpt}
 	if baseURL != "" {
 		if !strings.HasSuffix(baseURL, "/") {
 			baseURL += "/"
