@@ -177,44 +177,15 @@ func methodRequiresAuth(method string) bool {
 // metadata so OAuth2-capable MCP clients can discover the authorization server
 // and obtain tokens themselves.
 func runHTTP(p RunParams) {
-	apiBaseURL := p.Config.APIBaseURL()
-
 	p.Server.AddReceivingMiddleware(
 		loggingMiddleware(os.Stderr),
 		httpTokenMiddleware(),
-		clientInitMiddleware(apiBaseURL),
+		clientInitMiddleware(p.Config.APIBaseURL()),
 	)
-
-	mcpHandler := mcp.NewStreamableHTTPHandler(
-		func(r *http.Request) *mcp.Server { return p.Server },
-		nil,
-	)
-
-	mux := http.NewServeMux()
-
-	// RFC 9728: OAuth 2.0 Protected Resource Metadata.
-	// Registered when an OAuth issuer is configured (via -oauth-url or
-	// -uptime-url) so that OAuth2-capable clients can discover the
-	// authorization server and obtain tokens.
-	if issuer := p.Config.OAuthIssuer(); issuer != "" {
-		mux.Handle("/.well-known/oauth-protected-resource",
-			auth.ProtectedResourceMetadataHandler(&oauthex.ProtectedResourceMetadata{
-				Resource:               p.Config.ResourceURL,
-				AuthorizationServers:   []string{issuer},
-				ScopesSupported:        []string{"api/v1", "api/v1:read"},
-				BearerMethodsSupported: []string{"header"},
-			}))
-	}
-
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNoContent)
-	})
-
-	mux.Handle("/", bearerPassthrough(mcpHandler))
 
 	httpServer := &http.Server{
 		Addr:    p.Config.ListenAddr,
-		Handler: mux,
+		Handler: newHTTPMux(p.Server, p.Config),
 	}
 
 	p.Lifecycle.Append(fx.Hook{
@@ -230,4 +201,43 @@ func runHTTP(p RunParams) {
 			return httpServer.Shutdown(ctx)
 		},
 	})
+}
+
+// newHTTPMux builds the HTTP routing for the streamable-HTTP transport.
+//
+// The MCP handler runs in stateless mode: every request carries its own bearer
+// token (see bearerPassthrough), so there is no per-session server state to
+// keep. Stateful mode would pin each MCP session to the pod that created it,
+// and a hosted deployment behind a load balancer with multiple replicas would
+// return "session not found" (404) whenever a follow-up request landed on a
+// different pod.
+func newHTTPMux(server *mcp.Server, cfg app.Config) http.Handler {
+	mcpHandler := mcp.NewStreamableHTTPHandler(
+		func(r *http.Request) *mcp.Server { return server },
+		&mcp.StreamableHTTPOptions{Stateless: true},
+	)
+
+	mux := http.NewServeMux()
+
+	// RFC 9728: OAuth 2.0 Protected Resource Metadata.
+	// Registered when an OAuth issuer is configured (via -oauth-url or
+	// -uptime-url) so that OAuth2-capable clients can discover the
+	// authorization server and obtain tokens.
+	if issuer := cfg.OAuthIssuer(); issuer != "" {
+		mux.Handle("/.well-known/oauth-protected-resource",
+			auth.ProtectedResourceMetadataHandler(&oauthex.ProtectedResourceMetadata{
+				Resource:               cfg.ResourceURL,
+				AuthorizationServers:   []string{issuer},
+				ScopesSupported:        []string{"api/v1", "api/v1:read"},
+				BearerMethodsSupported: []string{"header"},
+			}))
+	}
+
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	mux.Handle("/", bearerPassthrough(mcpHandler))
+
+	return mux
 }

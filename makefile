@@ -1,6 +1,7 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help build image package test e2e lint clean run/http run/claude
+.PHONY: help build image package test e2e lint clean run/http run/claude \
+        tag/minor tag/patch release/minor release/patch
 
 # Version derived from git tags (e.g. v0.16.0 -> 0.16.0). Without a tag, fall
 # back to a SemVer-valid pre-release (0.0.0-<sha>) so `helm package --version`
@@ -70,3 +71,57 @@ run/claude: ## Launch Claude Code with stdio MCP (needs UPTIME_OAUTH_CLIENT_ID o
 	fi
 	@printf '{"mcpServers":{"uptime":{"type":"stdio","command":"go","args":["run",".","-transport=stdio","-uptime-url=$(UPTIME_URL)","-client-id=$(UPTIME_OAUTH_CLIENT_ID)","-log-level=debug"]}}}' >"$${TMPDIR:-/tmp}/claude-uptime-mcp.json"
 	claude --mcp-config "$${TMPDIR:-/tmp}/claude-uptime-mcp.json"
+
+# --- release: bump version -> tag -> push -> CI builds ------------------------
+# tag/<level> bumps the chosen component (minor|patch) via caarlos0/svu and
+# creates a LOCAL annotated tag. You pick the level explicitly; svu does not infer
+# it from commit history. On main a clean worktree is required; off main it
+# produces a prerelease tagged with the short HEAD hash (-dirty on a dirty tree).
+# RELEASE=vX.Y.Z forces an exact version and skips svu.
+#
+# release/<level> also pushes the tag to origin, which triggers the build workflow
+# (.github/workflows/build.yaml runs on 'v*.*.*'): goreleaser + image + chart.
+RELEASE ?=
+REMOTE  ?= origin
+
+# svu_rev,<level>: resolve the version string for the given bump level. On main a
+# clean worktree is required; off main it emits a prerelease tagged with the short
+# HEAD hash (-dirty on a dirty tree). RELEASE=vX.Y.Z forces an exact version.
+define svu_rev
+	branch=$$(git branch --show-current); \
+	dirty=$$(git status --porcelain); \
+	hash=$$(git rev-parse --short=7 HEAD); \
+	if [ "$$branch" = main ] && [ -n "$$dirty" ]; then \
+		echo 'worktree dirty; commit or stash before tagging on main' >&2; exit 1; \
+	fi; \
+	if [ -n '$(RELEASE)' ]; then rel='$(RELEASE)'; \
+	elif [ "$$branch" = main ]; then rel=$$(svu $(1)); \
+	else rel=$$(svu $(1) --prerelease "$$hash$$([ -n "$$dirty" ] && printf -- -dirty)"); \
+	fi
+endef
+
+define do_tag
+	@set -e; $(call svu_rev,$(1)); \
+	printf 'tag %s on branch %s? [y/N] ' "$$rel" "$$branch"; \
+	read ans; [ "$$ans" = y ] || [ "$$ans" = Y ] || { echo aborted; exit 1; }; \
+	git tag -a "$$rel" -m "$$rel"
+endef
+
+tag/minor: ## Bump minor, create a local git tag (RELEASE=vX.Y.Z to force)
+	$(call do_tag,minor)
+tag/patch: ## Bump patch, create a local git tag (RELEASE=vX.Y.Z to force)
+	$(call do_tag,patch)
+
+# release/<level>: tag then push the tag to origin so CI builds and releases.
+define do_release
+	@set -e; $(call svu_rev,$(1)); \
+	printf 'tag %s on branch %s and push to %s (triggers CI release)? [y/N] ' "$$rel" "$$branch" '$(REMOTE)'; \
+	read ans; [ "$$ans" = y ] || [ "$$ans" = Y ] || { echo aborted; exit 1; }; \
+	git tag -a "$$rel" -m "$$rel"; \
+	git push $(REMOTE) "$$rel"
+endef
+
+release/minor: ## Bump minor, tag, push -> CI release
+	$(call do_release,minor)
+release/patch: ## Bump patch, tag, push -> CI release
+	$(call do_release,patch)
