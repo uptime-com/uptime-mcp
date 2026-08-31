@@ -19,29 +19,44 @@ import (
 // Bearer passthrough (HTTP middleware)
 // ---------------------------------------------------------------------------
 
-// passthroughTokenKey is the context key for bearer tokens injected by
+// passthroughCredentialKey is the context key for credentials injected by
 // the passthrough middleware.
-type passthroughTokenKey struct{}
+type passthroughCredentialKey struct{}
 
-// extractBearerToken extracts a bearer token from the request using the
-// passthrough priority order: Authorization header → query param → env var.
-// Returns empty string if no token is found.
-func extractBearerToken(r *http.Request) string {
-	if v := r.Header.Get("Authorization"); strings.HasPrefix(v, "Bearer ") {
-		return strings.TrimPrefix(v, "Bearer ")
-	}
-	if v := r.URL.Query().Get("token"); v != "" {
-		return v
-	}
-	if v := os.Getenv("UPTIME_BEARER_TOKEN"); v != "" {
-		return v
-	}
-	return ""
+// credential is an api/v1 credential together with the scheme its source
+// implies.
+type credential struct {
+	token  string
+	scheme app.AuthScheme
 }
 
-// bearerPassthrough is HTTP middleware that extracts a bearer token from
+// extractCredential extracts a credential from the request using the
+// passthrough priority order: Authorization header → query param → env var.
+// The zero credential means the request carries none.
+//
+// The scheme is the likelier of the two for that source rather than a reading
+// of the credential: an Authorization header is what a client that walked the
+// protected-resource metadata sends, and the query parameter and environment
+// variable are where an operator puts an account API key. Every source carries
+// either credential in practice, so the scheme is corrected against api/v1
+// itself when it is wrong, and the guess costs a round trip rather than a
+// refusal.
+func extractCredential(r *http.Request) credential {
+	if v := r.Header.Get("Authorization"); strings.HasPrefix(v, "Bearer ") {
+		return credential{strings.TrimPrefix(v, "Bearer "), app.SchemeBearer}
+	}
+	if v := r.URL.Query().Get("token"); v != "" {
+		return credential{v, app.SchemeToken}
+	}
+	if v := os.Getenv("UPTIME_BEARER_TOKEN"); v != "" {
+		return credential{v, app.SchemeToken}
+	}
+	return credential{}
+}
+
+// bearerPassthrough is HTTP middleware that extracts a credential from
 // multiple sources and injects it into the request context. Returns 401
-// if no token is found.
+// if no credential is found.
 //
 // Sources are checked in order (first match wins):
 //  1. Authorization: Bearer header
@@ -49,14 +64,14 @@ func extractBearerToken(r *http.Request) string {
 //  3. UPTIME_BEARER_TOKEN environment variable
 func bearerPassthrough(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := extractBearerToken(r)
-		if token == "" {
+		cred := extractCredential(r)
+		if cred.token == "" {
 			w.Header().Set("WWW-Authenticate", "Bearer")
 			http.Error(w, "authorization required", http.StatusUnauthorized)
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), passthroughTokenKey{}, token)
+		ctx := context.WithValue(r.Context(), passthroughCredentialKey{}, cred)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -65,7 +80,7 @@ func bearerPassthrough(next http.Handler) http.Handler {
 // MCP middleware — session injection
 // ---------------------------------------------------------------------------
 
-// httpTokenMiddleware creates an MCP middleware that reads the bearer token
+// httpTokenMiddleware creates an MCP middleware that reads the credential
 // from the passthrough context key and creates a session from it.
 // Used with bearerPassthrough HTTP middleware.
 func httpTokenMiddleware() mcp.Middleware {
@@ -75,12 +90,12 @@ func httpTokenMiddleware() mcp.Middleware {
 				return next(ctx, method, req)
 			}
 
-			token, _ := ctx.Value(passthroughTokenKey{}).(string)
-			if token == "" {
+			cred, _ := ctx.Value(passthroughCredentialKey{}).(credential)
+			if cred.token == "" {
 				return nil, errors.New("authorization required")
 			}
 
-			session := &app.Session{Token: token}
+			session := &app.Session{Token: cred.token, Scheme: cred.scheme}
 			ctx = app.ContextWithSession(ctx, session)
 			return next(ctx, method, req)
 		}
@@ -102,7 +117,7 @@ func stdioTokenMiddleware(holder *tokenHolder) mcp.Middleware {
 				return nil, errors.New("no access token available")
 			}
 
-			session := &app.Session{Token: token}
+			session := &app.Session{Token: token, Scheme: app.SchemeBearer}
 			ctx = app.ContextWithSession(ctx, session)
 			return next(ctx, method, req)
 		}
@@ -132,7 +147,7 @@ func clientInitMiddleware(apiBaseURL string) mcp.Middleware {
 				return next(ctx, method, req)
 			}
 
-			client, err := createUptimeClient(session.Token, apiBaseURL)
+			client, err := createUptimeClient(session.Token, session.Scheme, apiBaseURL)
 			if err != nil {
 				return nil, err
 			}
@@ -143,17 +158,10 @@ func clientInitMiddleware(apiBaseURL string) mcp.Middleware {
 	}
 }
 
-// createUptimeClient creates an Uptime.com API client authenticated with the
-// given token. OAuth2 access tokens (JWTs, always dotted) go upstream as
-// "Authorization: Bearer ..."; static API keys must use the API's
-// "Authorization: Token ..." scheme instead — forwarding them as Bearer makes
-// api/v1 reject the request with NOT_AUTHENTICATED.
-func createUptimeClient(token, baseURL string) (upapi.API, error) {
-	authOpt := upapi.WithToken(token)
-	if strings.Contains(token, ".") {
-		authOpt = upapi.WithBearerToken(token)
-	}
-	opts := []upapi.Option{authOpt}
+// createUptimeClient creates an Uptime.com API client that authenticates with
+// token under scheme, falling back to the other scheme if api/v1 refuses it.
+func createUptimeClient(token string, scheme app.AuthScheme, baseURL string) (upapi.API, error) {
+	opts := []upapi.Option{withUpstreamAuth(token, scheme)}
 	if baseURL != "" {
 		if !strings.HasSuffix(baseURL, "/") {
 			baseURL += "/"

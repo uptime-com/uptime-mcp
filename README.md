@@ -266,6 +266,13 @@ token in this order and forwards it to the Uptime.com API:
 | 2        | `?token=<token>` query parameter |
 | 3        | `UPTIME_BEARER_TOKEN` env var    |
 
+An OAuth2 access token and an account API key are both accepted in any of those
+slots. The Uptime.com API authenticates the first as `Authorization: Bearer` and
+the second as `Authorization: Token` and rejects either under the other scheme,
+so the server sends whichever the source implies and switches once if the API
+refuses it. Neither credential can be told from the other by looking at it, so
+there is nothing to configure and a wrong guess costs one round trip.
+
 When `-uptime-url` is set, the server also serves
 [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) protected-resource metadata at
 `/.well-known/oauth-protected-resource`, advertising the Uptime.com
