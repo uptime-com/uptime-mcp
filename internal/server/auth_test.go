@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/modelcontextprotocol/go-sdk/auth"
@@ -44,42 +45,42 @@ func TestProtectedResourceMetadata(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// extractBearerToken
+// extractCredential
 // ---------------------------------------------------------------------------
 
-func TestExtractBearerToken(t *testing.T) {
-	t.Run("from Authorization header", func(t *testing.T) {
+func TestExtractCredential(t *testing.T) {
+	t.Run("from Authorization header, as an OAuth2 access token", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
 		req.Header.Set("Authorization", "Bearer header-token")
-		assert.Equal(t, "header-token", extractBearerToken(req))
+		assert.Equal(t, credential{"header-token", app.SchemeBearer}, extractCredential(req))
 	})
 
-	t.Run("from query param", func(t *testing.T) {
+	t.Run("from query param, as an API key", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/?token=query-token", nil)
-		assert.Equal(t, "query-token", extractBearerToken(req))
+		assert.Equal(t, credential{"query-token", app.SchemeToken}, extractCredential(req))
 	})
 
-	t.Run("from env var", func(t *testing.T) {
+	t.Run("from env var, as an API key", func(t *testing.T) {
 		t.Setenv("UPTIME_BEARER_TOKEN", "env-token")
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
-		assert.Equal(t, "env-token", extractBearerToken(req))
+		assert.Equal(t, credential{"env-token", app.SchemeToken}, extractCredential(req))
 	})
 
 	t.Run("header takes precedence over query", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/?token=query-token", nil)
 		req.Header.Set("Authorization", "Bearer header-token")
-		assert.Equal(t, "header-token", extractBearerToken(req))
+		assert.Equal(t, credential{"header-token", app.SchemeBearer}, extractCredential(req))
 	})
 
 	t.Run("query takes precedence over env", func(t *testing.T) {
 		t.Setenv("UPTIME_BEARER_TOKEN", "env-token")
 		req := httptest.NewRequest(http.MethodGet, "/?token=query-token", nil)
-		assert.Equal(t, "query-token", extractBearerToken(req))
+		assert.Equal(t, credential{"query-token", app.SchemeToken}, extractCredential(req))
 	})
 
-	t.Run("empty when no token", func(t *testing.T) {
+	t.Run("empty when no credential", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
-		assert.Equal(t, "", extractBearerToken(req))
+		assert.Equal(t, credential{}, extractCredential(req))
 	})
 }
 
@@ -88,10 +89,10 @@ func TestExtractBearerToken(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestBearerPassthrough(t *testing.T) {
-	t.Run("injects token into context", func(t *testing.T) {
-		var capturedToken string
+	t.Run("injects credential into context", func(t *testing.T) {
+		var captured credential
 		inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			capturedToken, _ = r.Context().Value(passthroughTokenKey{}).(string)
+			captured, _ = r.Context().Value(passthroughCredentialKey{}).(credential)
 			w.WriteHeader(http.StatusOK)
 		})
 
@@ -102,7 +103,7 @@ func TestBearerPassthrough(t *testing.T) {
 		bearerPassthrough(inner).ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Equal(t, "header-token", capturedToken)
+		assert.Equal(t, credential{"header-token", app.SchemeBearer}, captured)
 	})
 
 	t.Run("returns 401 when no token", func(t *testing.T) {
@@ -145,8 +146,9 @@ func TestHttpTokenMiddleware(t *testing.T) {
 		assert.Equal(t, "existing-token", session.Token)
 	})
 
-	t.Run("creates session from passthrough token", func(t *testing.T) {
-		ctx := context.WithValue(context.Background(), passthroughTokenKey{}, "pass-token")
+	t.Run("creates session from passthrough credential", func(t *testing.T) {
+		ctx := context.WithValue(context.Background(), passthroughCredentialKey{},
+			credential{"pass-token", app.SchemeBearer})
 
 		var capturedCtx context.Context
 		next := func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
@@ -163,6 +165,7 @@ func TestHttpTokenMiddleware(t *testing.T) {
 		session := app.SessionFromContext(capturedCtx)
 		require.NotNil(t, session)
 		assert.Equal(t, "pass-token", session.Token)
+		assert.Equal(t, app.SchemeBearer, session.Scheme)
 	})
 
 	t.Run("returns error without token", func(t *testing.T) {
@@ -263,11 +266,12 @@ func TestClientInitMiddleware(t *testing.T) {
 	})
 
 	t.Run("skips when client already initialized", func(t *testing.T) {
-		client, err := createUptimeClient("test-token", "http://example.com")
+		client, err := createUptimeClient("test-token", app.SchemeBearer, "http://example.com")
 		require.NoError(t, err)
 
 		session := &app.Session{
 			Token:  "test-token",
+			Scheme: app.SchemeBearer,
 			Client: client,
 		}
 		ctx := app.ContextWithSession(context.Background(), session)
@@ -403,35 +407,82 @@ func noopLogger() *slog.Logger {
 // createUptimeClient auth scheme selection
 // ---------------------------------------------------------------------------
 
+// authRecorder is an api/v1 stand-in that accepts exactly one Authorization
+// scheme and records every header offered to it.
+type authRecorder struct {
+	accepts app.AuthScheme
+	seen    []string
+}
+
+func (a *authRecorder) server(t *testing.T) *httptest.Server {
+	t.Helper()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got := r.Header.Get("Authorization")
+		a.seen = append(a.seen, got)
+		if !strings.HasPrefix(got, string(a.accepts)+" ") {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`[]`))
+	}))
+	t.Cleanup(srv.Close)
+	return srv
+}
+
 func TestCreateUptimeClientAuthScheme(t *testing.T) {
-	cases := []struct {
-		name   string
-		token  string
-		scheme string
-	}{
-		// Static API keys carry no dots and must use the API's "Token" scheme.
-		{"static api key", "0123456789abcdef0123456789abcdef01234567", "Token"},
-		// OAuth2 access tokens are JWTs (dotted) and use "Bearer".
-		{"oauth jwt", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4In0.sig", "Bearer"},
-	}
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			var gotAuth string
-			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				gotAuth = r.Header.Get("Authorization")
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write([]byte(`{}`))
-			}))
-			defer srv.Close()
+	// An opaque credential carries no evidence of which scheme it belongs to,
+	// so both cases below use one and differ only in where it came from.
+	const opaque = "IqQOoxTFmvT8ONWtdA3sc9wbAzc0rE"
 
-			client, err := createUptimeClient(tc.token, srv.URL)
-			require.NoError(t, err)
+	t.Run("sends the scheme the caller named", func(t *testing.T) {
+		cases := []struct {
+			name   string
+			scheme app.AuthScheme
+		}{
+			{"oauth access token", app.SchemeBearer},
+			{"account api key", app.SchemeToken},
+		}
+		for _, tc := range cases {
+			t.Run(tc.name, func(t *testing.T) {
+				api := &authRecorder{accepts: tc.scheme}
 
-			// Any API call works; we only care about the header it sends.
-			_, _ = client.AccountUsage().Get(context.Background())
+				client, err := createUptimeClient(opaque, tc.scheme, api.server(t).URL)
+				require.NoError(t, err)
 
-			require.NotEmpty(t, gotAuth, "no request reached the test server")
-			assert.Equal(t, tc.scheme+" "+tc.token, gotAuth)
-		})
-	}
+				_, err = client.AccountUsage().Get(context.Background())
+				require.NoError(t, err)
+
+				assert.Equal(t, []string{string(tc.scheme) + " " + opaque}, api.seen,
+					"the named scheme should be offered first and alone")
+			})
+		}
+	})
+
+	t.Run("corrects the scheme when api/v1 refuses it, once", func(t *testing.T) {
+		api := &authRecorder{accepts: app.SchemeToken}
+
+		client, err := createUptimeClient(opaque, app.SchemeBearer, api.server(t).URL)
+		require.NoError(t, err)
+
+		_, err = client.AccountUsage().Get(context.Background())
+		require.NoError(t, err)
+		assert.Equal(t, []string{"Bearer " + opaque, "Token " + opaque}, api.seen)
+
+		// The accepted scheme is kept, so the refusal is not paid again.
+		_, err = client.AccountUsage().Get(context.Background())
+		require.NoError(t, err)
+		assert.Equal(t, []string{"Bearer " + opaque, "Token " + opaque, "Token " + opaque}, api.seen)
+	})
+
+	t.Run("offers each scheme at most once for a credential api/v1 refuses", func(t *testing.T) {
+		api := &authRecorder{accepts: "Neither"}
+
+		client, err := createUptimeClient(opaque, app.SchemeBearer, api.server(t).URL)
+		require.NoError(t, err)
+
+		_, err = client.AccountUsage().Get(context.Background())
+		require.Error(t, err)
+		assert.Equal(t, []string{"Bearer " + opaque, "Token " + opaque}, api.seen)
+	})
 }
