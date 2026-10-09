@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-10-09
+
 ### Added
 
 - In stdio mode without `-client-id`, the browser login registers its own OAuth2 client with the authorization server.
@@ -50,7 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release.
 
-[Unreleased]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.3...HEAD
+[Unreleased]: https://github.com/uptime-com/uptime-mcp/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.3...v0.18.0
 [0.17.3]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.2...v0.17.3
 [0.17.2]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.0...v0.17.1
