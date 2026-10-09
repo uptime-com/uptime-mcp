@@ -56,7 +56,7 @@ func (c *checksHandler) HandleUpdateAPICheck(ctx context.Context, _ *mcp.CallToo
 		Tags:          in.Tags,
 		Sensitivity:   in.Sensitivity,
 		NumRetries:    in.NumRetries,
-		UseIPVersion:  in.UseIPVersion,
+		UseIPVersion:  optString(in.UseIPVersion),
 		Notes:         in.Notes,
 		IsPaused:      in.IsPaused,
 	}

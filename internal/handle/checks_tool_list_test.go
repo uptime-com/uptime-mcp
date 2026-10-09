@@ -72,6 +72,23 @@ func TestHandleListChecks(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("passes an explicit unpaused filter", func(t *testing.T) {
+		unpaused := false
+		svc := newChecksServiceMock(t)
+		svc.EXPECT().List(mock.Anything, upapi.CheckListOptions{
+			IsPaused: &unpaused,
+		}).Return(&upapi.ListResult[upapi.Check]{TotalCount: 0, Items: []upapi.Check{}}, nil)
+
+		client := newClientMock(t)
+		client.EXPECT().Checks().Return(svc)
+
+		h := &checksHandler{}
+		ctx := testContext(t, client)
+		_, _, err := h.HandleListChecks(ctx, nil, listChecksInput{IsPaused: &unpaused})
+
+		assert.NoError(t, err)
+	})
+
 	t.Run("returns error on service failure", func(t *testing.T) {
 		svc := newChecksServiceMock(t)
 		svc.EXPECT().List(mock.Anything, mock.Anything).Return((*upapi.ListResult[upapi.Check])(nil), assert.AnError)
