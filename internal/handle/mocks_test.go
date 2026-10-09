@@ -17,10 +17,19 @@ func newClientMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *clientMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &clientMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -356,6 +365,98 @@ func (_c *clientMock_Integrations_Call) Return(integrationsEndpoint upapi.Integr
 }
 
 func (_c *clientMock_Integrations_Call) RunAndReturn(run func() upapi.IntegrationsEndpoint) *clientMock_Integrations_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// MaintenanceNotifications provides a mock function for the type clientMock
+func (_mock *clientMock) MaintenanceNotifications() upapi.MaintenanceNotificationsEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for MaintenanceNotifications")
+	}
+
+	var r0 upapi.MaintenanceNotificationsEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.MaintenanceNotificationsEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.MaintenanceNotificationsEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_MaintenanceNotifications_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'MaintenanceNotifications'
+type clientMock_MaintenanceNotifications_Call struct {
+	*mock.Call
+}
+
+// MaintenanceNotifications is a helper method to define mock.On call
+func (_e *clientMock_Expecter) MaintenanceNotifications() *clientMock_MaintenanceNotifications_Call {
+	return &clientMock_MaintenanceNotifications_Call{Call: _e.mock.On("MaintenanceNotifications")}
+}
+
+func (_c *clientMock_MaintenanceNotifications_Call) Run(run func()) *clientMock_MaintenanceNotifications_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_MaintenanceNotifications_Call) Return(maintenanceNotificationsEndpoint upapi.MaintenanceNotificationsEndpoint) *clientMock_MaintenanceNotifications_Call {
+	_c.Call.Return(maintenanceNotificationsEndpoint)
+	return _c
+}
+
+func (_c *clientMock_MaintenanceNotifications_Call) RunAndReturn(run func() upapi.MaintenanceNotificationsEndpoint) *clientMock_MaintenanceNotifications_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// MaintenanceSchedules provides a mock function for the type clientMock
+func (_mock *clientMock) MaintenanceSchedules() upapi.MaintenanceSchedulesEndpoint {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for MaintenanceSchedules")
+	}
+
+	var r0 upapi.MaintenanceSchedulesEndpoint
+	if returnFunc, ok := ret.Get(0).(func() upapi.MaintenanceSchedulesEndpoint); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(upapi.MaintenanceSchedulesEndpoint)
+		}
+	}
+	return r0
+}
+
+// clientMock_MaintenanceSchedules_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'MaintenanceSchedules'
+type clientMock_MaintenanceSchedules_Call struct {
+	*mock.Call
+}
+
+// MaintenanceSchedules is a helper method to define mock.On call
+func (_e *clientMock_Expecter) MaintenanceSchedules() *clientMock_MaintenanceSchedules_Call {
+	return &clientMock_MaintenanceSchedules_Call{Call: _e.mock.On("MaintenanceSchedules")}
+}
+
+func (_c *clientMock_MaintenanceSchedules_Call) Run(run func()) *clientMock_MaintenanceSchedules_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *clientMock_MaintenanceSchedules_Call) Return(maintenanceSchedulesEndpoint upapi.MaintenanceSchedulesEndpoint) *clientMock_MaintenanceSchedules_Call {
+	_c.Call.Return(maintenanceSchedulesEndpoint)
+	return _c
+}
+
+func (_c *clientMock_MaintenanceSchedules_Call) RunAndReturn(run func() upapi.MaintenanceSchedulesEndpoint) *clientMock_MaintenanceSchedules_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -826,10 +927,19 @@ func newChecksServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *checksServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &checksServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -883,7 +993,7 @@ type checksServiceMock_CreateAPI_Call struct {
 // CreateAPI is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkAPI upapi.CheckAPI
-func (_e *checksServiceMock_Expecter) CreateAPI(context1 interface{}, checkAPI interface{}) *checksServiceMock_CreateAPI_Call {
+func (_e *checksServiceMock_Expecter) CreateAPI(context1 any, checkAPI any) *checksServiceMock_CreateAPI_Call {
 	return &checksServiceMock_CreateAPI_Call{Call: _e.mock.On("CreateAPI", context1, checkAPI)}
 }
 
@@ -951,7 +1061,7 @@ type checksServiceMock_CreateBlacklist_Call struct {
 // CreateBlacklist is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkBlacklist upapi.CheckBlacklist
-func (_e *checksServiceMock_Expecter) CreateBlacklist(context1 interface{}, checkBlacklist interface{}) *checksServiceMock_CreateBlacklist_Call {
+func (_e *checksServiceMock_Expecter) CreateBlacklist(context1 any, checkBlacklist any) *checksServiceMock_CreateBlacklist_Call {
 	return &checksServiceMock_CreateBlacklist_Call{Call: _e.mock.On("CreateBlacklist", context1, checkBlacklist)}
 }
 
@@ -1019,7 +1129,7 @@ type checksServiceMock_CreateCloudStatus_Call struct {
 // CreateCloudStatus is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkCloudStatus upapi.CheckCloudStatus
-func (_e *checksServiceMock_Expecter) CreateCloudStatus(context1 interface{}, checkCloudStatus interface{}) *checksServiceMock_CreateCloudStatus_Call {
+func (_e *checksServiceMock_Expecter) CreateCloudStatus(context1 any, checkCloudStatus any) *checksServiceMock_CreateCloudStatus_Call {
 	return &checksServiceMock_CreateCloudStatus_Call{Call: _e.mock.On("CreateCloudStatus", context1, checkCloudStatus)}
 }
 
@@ -1087,7 +1197,7 @@ type checksServiceMock_CreateDNS_Call struct {
 // CreateDNS is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkDNS upapi.CheckDNS
-func (_e *checksServiceMock_Expecter) CreateDNS(context1 interface{}, checkDNS interface{}) *checksServiceMock_CreateDNS_Call {
+func (_e *checksServiceMock_Expecter) CreateDNS(context1 any, checkDNS any) *checksServiceMock_CreateDNS_Call {
 	return &checksServiceMock_CreateDNS_Call{Call: _e.mock.On("CreateDNS", context1, checkDNS)}
 }
 
@@ -1155,7 +1265,7 @@ type checksServiceMock_CreateGroup_Call struct {
 // CreateGroup is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkGroup upapi.CheckGroup
-func (_e *checksServiceMock_Expecter) CreateGroup(context1 interface{}, checkGroup interface{}) *checksServiceMock_CreateGroup_Call {
+func (_e *checksServiceMock_Expecter) CreateGroup(context1 any, checkGroup any) *checksServiceMock_CreateGroup_Call {
 	return &checksServiceMock_CreateGroup_Call{Call: _e.mock.On("CreateGroup", context1, checkGroup)}
 }
 
@@ -1223,7 +1333,7 @@ type checksServiceMock_CreateHTTP_Call struct {
 // CreateHTTP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkHTTP upapi.CheckHTTP
-func (_e *checksServiceMock_Expecter) CreateHTTP(context1 interface{}, checkHTTP interface{}) *checksServiceMock_CreateHTTP_Call {
+func (_e *checksServiceMock_Expecter) CreateHTTP(context1 any, checkHTTP any) *checksServiceMock_CreateHTTP_Call {
 	return &checksServiceMock_CreateHTTP_Call{Call: _e.mock.On("CreateHTTP", context1, checkHTTP)}
 }
 
@@ -1291,7 +1401,7 @@ type checksServiceMock_CreateHeartbeat_Call struct {
 // CreateHeartbeat is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkHeartbeat upapi.CheckHeartbeat
-func (_e *checksServiceMock_Expecter) CreateHeartbeat(context1 interface{}, checkHeartbeat interface{}) *checksServiceMock_CreateHeartbeat_Call {
+func (_e *checksServiceMock_Expecter) CreateHeartbeat(context1 any, checkHeartbeat any) *checksServiceMock_CreateHeartbeat_Call {
 	return &checksServiceMock_CreateHeartbeat_Call{Call: _e.mock.On("CreateHeartbeat", context1, checkHeartbeat)}
 }
 
@@ -1359,7 +1469,7 @@ type checksServiceMock_CreateICMP_Call struct {
 // CreateICMP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkICMP upapi.CheckICMP
-func (_e *checksServiceMock_Expecter) CreateICMP(context1 interface{}, checkICMP interface{}) *checksServiceMock_CreateICMP_Call {
+func (_e *checksServiceMock_Expecter) CreateICMP(context1 any, checkICMP any) *checksServiceMock_CreateICMP_Call {
 	return &checksServiceMock_CreateICMP_Call{Call: _e.mock.On("CreateICMP", context1, checkICMP)}
 }
 
@@ -1427,7 +1537,7 @@ type checksServiceMock_CreateIMAP_Call struct {
 // CreateIMAP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkIMAP upapi.CheckIMAP
-func (_e *checksServiceMock_Expecter) CreateIMAP(context1 interface{}, checkIMAP interface{}) *checksServiceMock_CreateIMAP_Call {
+func (_e *checksServiceMock_Expecter) CreateIMAP(context1 any, checkIMAP any) *checksServiceMock_CreateIMAP_Call {
 	return &checksServiceMock_CreateIMAP_Call{Call: _e.mock.On("CreateIMAP", context1, checkIMAP)}
 }
 
@@ -1495,7 +1605,7 @@ type checksServiceMock_CreateMalware_Call struct {
 // CreateMalware is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkMalware upapi.CheckMalware
-func (_e *checksServiceMock_Expecter) CreateMalware(context1 interface{}, checkMalware interface{}) *checksServiceMock_CreateMalware_Call {
+func (_e *checksServiceMock_Expecter) CreateMalware(context1 any, checkMalware any) *checksServiceMock_CreateMalware_Call {
 	return &checksServiceMock_CreateMalware_Call{Call: _e.mock.On("CreateMalware", context1, checkMalware)}
 }
 
@@ -1563,7 +1673,7 @@ type checksServiceMock_CreateNTP_Call struct {
 // CreateNTP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkNTP upapi.CheckNTP
-func (_e *checksServiceMock_Expecter) CreateNTP(context1 interface{}, checkNTP interface{}) *checksServiceMock_CreateNTP_Call {
+func (_e *checksServiceMock_Expecter) CreateNTP(context1 any, checkNTP any) *checksServiceMock_CreateNTP_Call {
 	return &checksServiceMock_CreateNTP_Call{Call: _e.mock.On("CreateNTP", context1, checkNTP)}
 }
 
@@ -1631,7 +1741,7 @@ type checksServiceMock_CreatePOP_Call struct {
 // CreatePOP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkPOP upapi.CheckPOP
-func (_e *checksServiceMock_Expecter) CreatePOP(context1 interface{}, checkPOP interface{}) *checksServiceMock_CreatePOP_Call {
+func (_e *checksServiceMock_Expecter) CreatePOP(context1 any, checkPOP any) *checksServiceMock_CreatePOP_Call {
 	return &checksServiceMock_CreatePOP_Call{Call: _e.mock.On("CreatePOP", context1, checkPOP)}
 }
 
@@ -1699,7 +1809,7 @@ type checksServiceMock_CreatePageSpeed_Call struct {
 // CreatePageSpeed is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkPageSpeed upapi.CheckPageSpeed
-func (_e *checksServiceMock_Expecter) CreatePageSpeed(context1 interface{}, checkPageSpeed interface{}) *checksServiceMock_CreatePageSpeed_Call {
+func (_e *checksServiceMock_Expecter) CreatePageSpeed(context1 any, checkPageSpeed any) *checksServiceMock_CreatePageSpeed_Call {
 	return &checksServiceMock_CreatePageSpeed_Call{Call: _e.mock.On("CreatePageSpeed", context1, checkPageSpeed)}
 }
 
@@ -1767,7 +1877,7 @@ type checksServiceMock_CreateRDAP_Call struct {
 // CreateRDAP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkRDAP upapi.CheckRDAP
-func (_e *checksServiceMock_Expecter) CreateRDAP(context1 interface{}, checkRDAP interface{}) *checksServiceMock_CreateRDAP_Call {
+func (_e *checksServiceMock_Expecter) CreateRDAP(context1 any, checkRDAP any) *checksServiceMock_CreateRDAP_Call {
 	return &checksServiceMock_CreateRDAP_Call{Call: _e.mock.On("CreateRDAP", context1, checkRDAP)}
 }
 
@@ -1835,7 +1945,7 @@ type checksServiceMock_CreateRUM_Call struct {
 // CreateRUM is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkRUM upapi.CheckRUM
-func (_e *checksServiceMock_Expecter) CreateRUM(context1 interface{}, checkRUM interface{}) *checksServiceMock_CreateRUM_Call {
+func (_e *checksServiceMock_Expecter) CreateRUM(context1 any, checkRUM any) *checksServiceMock_CreateRUM_Call {
 	return &checksServiceMock_CreateRUM_Call{Call: _e.mock.On("CreateRUM", context1, checkRUM)}
 }
 
@@ -1903,7 +2013,7 @@ type checksServiceMock_CreateRUM2_Call struct {
 // CreateRUM2 is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkRUM2 upapi.CheckRUM2
-func (_e *checksServiceMock_Expecter) CreateRUM2(context1 interface{}, checkRUM2 interface{}) *checksServiceMock_CreateRUM2_Call {
+func (_e *checksServiceMock_Expecter) CreateRUM2(context1 any, checkRUM2 any) *checksServiceMock_CreateRUM2_Call {
 	return &checksServiceMock_CreateRUM2_Call{Call: _e.mock.On("CreateRUM2", context1, checkRUM2)}
 }
 
@@ -1971,7 +2081,7 @@ type checksServiceMock_CreateSMTP_Call struct {
 // CreateSMTP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkSMTP upapi.CheckSMTP
-func (_e *checksServiceMock_Expecter) CreateSMTP(context1 interface{}, checkSMTP interface{}) *checksServiceMock_CreateSMTP_Call {
+func (_e *checksServiceMock_Expecter) CreateSMTP(context1 any, checkSMTP any) *checksServiceMock_CreateSMTP_Call {
 	return &checksServiceMock_CreateSMTP_Call{Call: _e.mock.On("CreateSMTP", context1, checkSMTP)}
 }
 
@@ -2039,7 +2149,7 @@ type checksServiceMock_CreateSSH_Call struct {
 // CreateSSH is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkSSH upapi.CheckSSH
-func (_e *checksServiceMock_Expecter) CreateSSH(context1 interface{}, checkSSH interface{}) *checksServiceMock_CreateSSH_Call {
+func (_e *checksServiceMock_Expecter) CreateSSH(context1 any, checkSSH any) *checksServiceMock_CreateSSH_Call {
 	return &checksServiceMock_CreateSSH_Call{Call: _e.mock.On("CreateSSH", context1, checkSSH)}
 }
 
@@ -2107,7 +2217,7 @@ type checksServiceMock_CreateSSLCert_Call struct {
 // CreateSSLCert is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkSSLCert upapi.CheckSSLCert
-func (_e *checksServiceMock_Expecter) CreateSSLCert(context1 interface{}, checkSSLCert interface{}) *checksServiceMock_CreateSSLCert_Call {
+func (_e *checksServiceMock_Expecter) CreateSSLCert(context1 any, checkSSLCert any) *checksServiceMock_CreateSSLCert_Call {
 	return &checksServiceMock_CreateSSLCert_Call{Call: _e.mock.On("CreateSSLCert", context1, checkSSLCert)}
 }
 
@@ -2175,7 +2285,7 @@ type checksServiceMock_CreateTCP_Call struct {
 // CreateTCP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkTCP upapi.CheckTCP
-func (_e *checksServiceMock_Expecter) CreateTCP(context1 interface{}, checkTCP interface{}) *checksServiceMock_CreateTCP_Call {
+func (_e *checksServiceMock_Expecter) CreateTCP(context1 any, checkTCP any) *checksServiceMock_CreateTCP_Call {
 	return &checksServiceMock_CreateTCP_Call{Call: _e.mock.On("CreateTCP", context1, checkTCP)}
 }
 
@@ -2243,7 +2353,7 @@ type checksServiceMock_CreateTransaction_Call struct {
 // CreateTransaction is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkTransaction upapi.CheckTransaction
-func (_e *checksServiceMock_Expecter) CreateTransaction(context1 interface{}, checkTransaction interface{}) *checksServiceMock_CreateTransaction_Call {
+func (_e *checksServiceMock_Expecter) CreateTransaction(context1 any, checkTransaction any) *checksServiceMock_CreateTransaction_Call {
 	return &checksServiceMock_CreateTransaction_Call{Call: _e.mock.On("CreateTransaction", context1, checkTransaction)}
 }
 
@@ -2311,7 +2421,7 @@ type checksServiceMock_CreateUDP_Call struct {
 // CreateUDP is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkUDP upapi.CheckUDP
-func (_e *checksServiceMock_Expecter) CreateUDP(context1 interface{}, checkUDP interface{}) *checksServiceMock_CreateUDP_Call {
+func (_e *checksServiceMock_Expecter) CreateUDP(context1 any, checkUDP any) *checksServiceMock_CreateUDP_Call {
 	return &checksServiceMock_CreateUDP_Call{Call: _e.mock.On("CreateUDP", context1, checkUDP)}
 }
 
@@ -2379,7 +2489,7 @@ type checksServiceMock_CreateWHOIS_Call struct {
 // CreateWHOIS is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkWHOIS upapi.CheckWHOIS
-func (_e *checksServiceMock_Expecter) CreateWHOIS(context1 interface{}, checkWHOIS interface{}) *checksServiceMock_CreateWHOIS_Call {
+func (_e *checksServiceMock_Expecter) CreateWHOIS(context1 any, checkWHOIS any) *checksServiceMock_CreateWHOIS_Call {
 	return &checksServiceMock_CreateWHOIS_Call{Call: _e.mock.On("CreateWHOIS", context1, checkWHOIS)}
 }
 
@@ -2447,7 +2557,7 @@ type checksServiceMock_CreateWebhook_Call struct {
 // CreateWebhook is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkWebhook upapi.CheckWebhook
-func (_e *checksServiceMock_Expecter) CreateWebhook(context1 interface{}, checkWebhook interface{}) *checksServiceMock_CreateWebhook_Call {
+func (_e *checksServiceMock_Expecter) CreateWebhook(context1 any, checkWebhook any) *checksServiceMock_CreateWebhook_Call {
 	return &checksServiceMock_CreateWebhook_Call{Call: _e.mock.On("CreateWebhook", context1, checkWebhook)}
 }
 
@@ -2504,7 +2614,7 @@ type checksServiceMock_Delete_Call struct {
 // Delete is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *checksServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *checksServiceMock_Delete_Call {
+func (_e *checksServiceMock_Expecter) Delete(context1 any, primaryKeyable any) *checksServiceMock_Delete_Call {
 	return &checksServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
 }
 
@@ -2572,7 +2682,7 @@ type checksServiceMock_Get_Call struct {
 // Get is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *checksServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *checksServiceMock_Get_Call {
+func (_e *checksServiceMock_Expecter) Get(context1 any, primaryKeyable any) *checksServiceMock_Get_Call {
 	return &checksServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
@@ -2640,7 +2750,7 @@ type checksServiceMock_GetEscalations_Call struct {
 // GetEscalations is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *checksServiceMock_Expecter) GetEscalations(context1 interface{}, primaryKeyable interface{}) *checksServiceMock_GetEscalations_Call {
+func (_e *checksServiceMock_Expecter) GetEscalations(context1 any, primaryKeyable any) *checksServiceMock_GetEscalations_Call {
 	return &checksServiceMock_GetEscalations_Call{Call: _e.mock.On("GetEscalations", context1, primaryKeyable)}
 }
 
@@ -2708,7 +2818,7 @@ type checksServiceMock_List_Call struct {
 // List is a helper method to define mock.On call
 //   - context1 context.Context
 //   - checkListOptions upapi.CheckListOptions
-func (_e *checksServiceMock_Expecter) List(context1 interface{}, checkListOptions interface{}) *checksServiceMock_List_Call {
+func (_e *checksServiceMock_Expecter) List(context1 any, checkListOptions any) *checksServiceMock_List_Call {
 	return &checksServiceMock_List_Call{Call: _e.mock.On("List", context1, checkListOptions)}
 }
 
@@ -2776,7 +2886,7 @@ type checksServiceMock_ListCloudStatusGroups_Call struct {
 // ListCloudStatusGroups is a helper method to define mock.On call
 //   - context1 context.Context
 //   - cloudStatusGroupListOptions upapi.CloudStatusGroupListOptions
-func (_e *checksServiceMock_Expecter) ListCloudStatusGroups(context1 interface{}, cloudStatusGroupListOptions interface{}) *checksServiceMock_ListCloudStatusGroups_Call {
+func (_e *checksServiceMock_Expecter) ListCloudStatusGroups(context1 any, cloudStatusGroupListOptions any) *checksServiceMock_ListCloudStatusGroups_Call {
 	return &checksServiceMock_ListCloudStatusGroups_Call{Call: _e.mock.On("ListCloudStatusGroups", context1, cloudStatusGroupListOptions)}
 }
 
@@ -2844,7 +2954,7 @@ type checksServiceMock_ListCloudStatusServices_Call struct {
 // ListCloudStatusServices is a helper method to define mock.On call
 //   - context1 context.Context
 //   - cloudStatusServiceListOptions upapi.CloudStatusServiceListOptions
-func (_e *checksServiceMock_Expecter) ListCloudStatusServices(context1 interface{}, cloudStatusServiceListOptions interface{}) *checksServiceMock_ListCloudStatusServices_Call {
+func (_e *checksServiceMock_Expecter) ListCloudStatusServices(context1 any, cloudStatusServiceListOptions any) *checksServiceMock_ListCloudStatusServices_Call {
 	return &checksServiceMock_ListCloudStatusServices_Call{Call: _e.mock.On("ListCloudStatusServices", context1, cloudStatusServiceListOptions)}
 }
 
@@ -2911,7 +3021,7 @@ type checksServiceMock_ListLocations_Call struct {
 
 // ListLocations is a helper method to define mock.On call
 //   - context1 context.Context
-func (_e *checksServiceMock_Expecter) ListLocations(context1 interface{}) *checksServiceMock_ListLocations_Call {
+func (_e *checksServiceMock_Expecter) ListLocations(context1 any) *checksServiceMock_ListLocations_Call {
 	return &checksServiceMock_ListLocations_Call{Call: _e.mock.On("ListLocations", context1)}
 }
 
@@ -2975,7 +3085,7 @@ type checksServiceMock_Stats_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkStatsOptions upapi.CheckStatsOptions
-func (_e *checksServiceMock_Expecter) Stats(context1 interface{}, primaryKeyable interface{}, checkStatsOptions interface{}) *checksServiceMock_Stats_Call {
+func (_e *checksServiceMock_Expecter) Stats(context1 any, primaryKeyable any, checkStatsOptions any) *checksServiceMock_Stats_Call {
 	return &checksServiceMock_Stats_Call{Call: _e.mock.On("Stats", context1, primaryKeyable, checkStatsOptions)}
 }
 
@@ -3049,7 +3159,7 @@ type checksServiceMock_UpdateAPI_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkAPI upapi.CheckAPI
-func (_e *checksServiceMock_Expecter) UpdateAPI(context1 interface{}, primaryKeyable interface{}, checkAPI interface{}) *checksServiceMock_UpdateAPI_Call {
+func (_e *checksServiceMock_Expecter) UpdateAPI(context1 any, primaryKeyable any, checkAPI any) *checksServiceMock_UpdateAPI_Call {
 	return &checksServiceMock_UpdateAPI_Call{Call: _e.mock.On("UpdateAPI", context1, primaryKeyable, checkAPI)}
 }
 
@@ -3123,7 +3233,7 @@ type checksServiceMock_UpdateBlacklist_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkBlacklist upapi.CheckBlacklist
-func (_e *checksServiceMock_Expecter) UpdateBlacklist(context1 interface{}, primaryKeyable interface{}, checkBlacklist interface{}) *checksServiceMock_UpdateBlacklist_Call {
+func (_e *checksServiceMock_Expecter) UpdateBlacklist(context1 any, primaryKeyable any, checkBlacklist any) *checksServiceMock_UpdateBlacklist_Call {
 	return &checksServiceMock_UpdateBlacklist_Call{Call: _e.mock.On("UpdateBlacklist", context1, primaryKeyable, checkBlacklist)}
 }
 
@@ -3197,7 +3307,7 @@ type checksServiceMock_UpdateCloudStatus_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkCloudStatus upapi.CheckCloudStatus
-func (_e *checksServiceMock_Expecter) UpdateCloudStatus(context1 interface{}, primaryKeyable interface{}, checkCloudStatus interface{}) *checksServiceMock_UpdateCloudStatus_Call {
+func (_e *checksServiceMock_Expecter) UpdateCloudStatus(context1 any, primaryKeyable any, checkCloudStatus any) *checksServiceMock_UpdateCloudStatus_Call {
 	return &checksServiceMock_UpdateCloudStatus_Call{Call: _e.mock.On("UpdateCloudStatus", context1, primaryKeyable, checkCloudStatus)}
 }
 
@@ -3271,7 +3381,7 @@ type checksServiceMock_UpdateDNS_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkDNS upapi.CheckDNS
-func (_e *checksServiceMock_Expecter) UpdateDNS(context1 interface{}, primaryKeyable interface{}, checkDNS interface{}) *checksServiceMock_UpdateDNS_Call {
+func (_e *checksServiceMock_Expecter) UpdateDNS(context1 any, primaryKeyable any, checkDNS any) *checksServiceMock_UpdateDNS_Call {
 	return &checksServiceMock_UpdateDNS_Call{Call: _e.mock.On("UpdateDNS", context1, primaryKeyable, checkDNS)}
 }
 
@@ -3345,7 +3455,7 @@ type checksServiceMock_UpdateEscalations_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkEscalations upapi.CheckEscalations
-func (_e *checksServiceMock_Expecter) UpdateEscalations(context1 interface{}, primaryKeyable interface{}, checkEscalations interface{}) *checksServiceMock_UpdateEscalations_Call {
+func (_e *checksServiceMock_Expecter) UpdateEscalations(context1 any, primaryKeyable any, checkEscalations any) *checksServiceMock_UpdateEscalations_Call {
 	return &checksServiceMock_UpdateEscalations_Call{Call: _e.mock.On("UpdateEscalations", context1, primaryKeyable, checkEscalations)}
 }
 
@@ -3419,7 +3529,7 @@ type checksServiceMock_UpdateGroup_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkGroup upapi.CheckGroup
-func (_e *checksServiceMock_Expecter) UpdateGroup(context1 interface{}, primaryKeyable interface{}, checkGroup interface{}) *checksServiceMock_UpdateGroup_Call {
+func (_e *checksServiceMock_Expecter) UpdateGroup(context1 any, primaryKeyable any, checkGroup any) *checksServiceMock_UpdateGroup_Call {
 	return &checksServiceMock_UpdateGroup_Call{Call: _e.mock.On("UpdateGroup", context1, primaryKeyable, checkGroup)}
 }
 
@@ -3493,7 +3603,7 @@ type checksServiceMock_UpdateHTTP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkHTTP upapi.CheckHTTP
-func (_e *checksServiceMock_Expecter) UpdateHTTP(context1 interface{}, primaryKeyable interface{}, checkHTTP interface{}) *checksServiceMock_UpdateHTTP_Call {
+func (_e *checksServiceMock_Expecter) UpdateHTTP(context1 any, primaryKeyable any, checkHTTP any) *checksServiceMock_UpdateHTTP_Call {
 	return &checksServiceMock_UpdateHTTP_Call{Call: _e.mock.On("UpdateHTTP", context1, primaryKeyable, checkHTTP)}
 }
 
@@ -3567,7 +3677,7 @@ type checksServiceMock_UpdateHeartbeat_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkHeartbeat upapi.CheckHeartbeat
-func (_e *checksServiceMock_Expecter) UpdateHeartbeat(context1 interface{}, primaryKeyable interface{}, checkHeartbeat interface{}) *checksServiceMock_UpdateHeartbeat_Call {
+func (_e *checksServiceMock_Expecter) UpdateHeartbeat(context1 any, primaryKeyable any, checkHeartbeat any) *checksServiceMock_UpdateHeartbeat_Call {
 	return &checksServiceMock_UpdateHeartbeat_Call{Call: _e.mock.On("UpdateHeartbeat", context1, primaryKeyable, checkHeartbeat)}
 }
 
@@ -3641,7 +3751,7 @@ type checksServiceMock_UpdateICMP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkICMP upapi.CheckICMP
-func (_e *checksServiceMock_Expecter) UpdateICMP(context1 interface{}, primaryKeyable interface{}, checkICMP interface{}) *checksServiceMock_UpdateICMP_Call {
+func (_e *checksServiceMock_Expecter) UpdateICMP(context1 any, primaryKeyable any, checkICMP any) *checksServiceMock_UpdateICMP_Call {
 	return &checksServiceMock_UpdateICMP_Call{Call: _e.mock.On("UpdateICMP", context1, primaryKeyable, checkICMP)}
 }
 
@@ -3715,7 +3825,7 @@ type checksServiceMock_UpdateIMAP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkIMAP upapi.CheckIMAP
-func (_e *checksServiceMock_Expecter) UpdateIMAP(context1 interface{}, primaryKeyable interface{}, checkIMAP interface{}) *checksServiceMock_UpdateIMAP_Call {
+func (_e *checksServiceMock_Expecter) UpdateIMAP(context1 any, primaryKeyable any, checkIMAP any) *checksServiceMock_UpdateIMAP_Call {
 	return &checksServiceMock_UpdateIMAP_Call{Call: _e.mock.On("UpdateIMAP", context1, primaryKeyable, checkIMAP)}
 }
 
@@ -3748,80 +3858,6 @@ func (_c *checksServiceMock_UpdateIMAP_Call) Return(check *upapi.Check, err erro
 }
 
 func (_c *checksServiceMock_UpdateIMAP_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkIMAP upapi.CheckIMAP) (*upapi.Check, error)) *checksServiceMock_UpdateIMAP_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// UpdateMaintenance provides a mock function for the type checksServiceMock
-func (_mock *checksServiceMock) UpdateMaintenance(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMaintenance upapi.CheckMaintenance) (*upapi.Check, error) {
-	ret := _mock.Called(context1, primaryKeyable, checkMaintenance)
-
-	if len(ret) == 0 {
-		panic("no return value specified for UpdateMaintenance")
-	}
-
-	var r0 *upapi.Check
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMaintenance) (*upapi.Check, error)); ok {
-		return returnFunc(context1, primaryKeyable, checkMaintenance)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMaintenance) *upapi.Check); ok {
-		r0 = returnFunc(context1, primaryKeyable, checkMaintenance)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*upapi.Check)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, upapi.PrimaryKeyable, upapi.CheckMaintenance) error); ok {
-		r1 = returnFunc(context1, primaryKeyable, checkMaintenance)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// checksServiceMock_UpdateMaintenance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateMaintenance'
-type checksServiceMock_UpdateMaintenance_Call struct {
-	*mock.Call
-}
-
-// UpdateMaintenance is a helper method to define mock.On call
-//   - context1 context.Context
-//   - primaryKeyable upapi.PrimaryKeyable
-//   - checkMaintenance upapi.CheckMaintenance
-func (_e *checksServiceMock_Expecter) UpdateMaintenance(context1 interface{}, primaryKeyable interface{}, checkMaintenance interface{}) *checksServiceMock_UpdateMaintenance_Call {
-	return &checksServiceMock_UpdateMaintenance_Call{Call: _e.mock.On("UpdateMaintenance", context1, primaryKeyable, checkMaintenance)}
-}
-
-func (_c *checksServiceMock_UpdateMaintenance_Call) Run(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMaintenance upapi.CheckMaintenance)) *checksServiceMock_UpdateMaintenance_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 context.Context
-		if args[0] != nil {
-			arg0 = args[0].(context.Context)
-		}
-		var arg1 upapi.PrimaryKeyable
-		if args[1] != nil {
-			arg1 = args[1].(upapi.PrimaryKeyable)
-		}
-		var arg2 upapi.CheckMaintenance
-		if args[2] != nil {
-			arg2 = args[2].(upapi.CheckMaintenance)
-		}
-		run(
-			arg0,
-			arg1,
-			arg2,
-		)
-	})
-	return _c
-}
-
-func (_c *checksServiceMock_UpdateMaintenance_Call) Return(check *upapi.Check, err error) *checksServiceMock_UpdateMaintenance_Call {
-	_c.Call.Return(check, err)
-	return _c
-}
-
-func (_c *checksServiceMock_UpdateMaintenance_Call) RunAndReturn(run func(context1 context.Context, primaryKeyable upapi.PrimaryKeyable, checkMaintenance upapi.CheckMaintenance) (*upapi.Check, error)) *checksServiceMock_UpdateMaintenance_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3863,7 +3899,7 @@ type checksServiceMock_UpdateMalware_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkMalware upapi.CheckMalware
-func (_e *checksServiceMock_Expecter) UpdateMalware(context1 interface{}, primaryKeyable interface{}, checkMalware interface{}) *checksServiceMock_UpdateMalware_Call {
+func (_e *checksServiceMock_Expecter) UpdateMalware(context1 any, primaryKeyable any, checkMalware any) *checksServiceMock_UpdateMalware_Call {
 	return &checksServiceMock_UpdateMalware_Call{Call: _e.mock.On("UpdateMalware", context1, primaryKeyable, checkMalware)}
 }
 
@@ -3937,7 +3973,7 @@ type checksServiceMock_UpdateNTP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkNTP upapi.CheckNTP
-func (_e *checksServiceMock_Expecter) UpdateNTP(context1 interface{}, primaryKeyable interface{}, checkNTP interface{}) *checksServiceMock_UpdateNTP_Call {
+func (_e *checksServiceMock_Expecter) UpdateNTP(context1 any, primaryKeyable any, checkNTP any) *checksServiceMock_UpdateNTP_Call {
 	return &checksServiceMock_UpdateNTP_Call{Call: _e.mock.On("UpdateNTP", context1, primaryKeyable, checkNTP)}
 }
 
@@ -4011,7 +4047,7 @@ type checksServiceMock_UpdatePOP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkPOP upapi.CheckPOP
-func (_e *checksServiceMock_Expecter) UpdatePOP(context1 interface{}, primaryKeyable interface{}, checkPOP interface{}) *checksServiceMock_UpdatePOP_Call {
+func (_e *checksServiceMock_Expecter) UpdatePOP(context1 any, primaryKeyable any, checkPOP any) *checksServiceMock_UpdatePOP_Call {
 	return &checksServiceMock_UpdatePOP_Call{Call: _e.mock.On("UpdatePOP", context1, primaryKeyable, checkPOP)}
 }
 
@@ -4085,7 +4121,7 @@ type checksServiceMock_UpdatePageSpeed_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkPageSpeed upapi.CheckPageSpeed
-func (_e *checksServiceMock_Expecter) UpdatePageSpeed(context1 interface{}, primaryKeyable interface{}, checkPageSpeed interface{}) *checksServiceMock_UpdatePageSpeed_Call {
+func (_e *checksServiceMock_Expecter) UpdatePageSpeed(context1 any, primaryKeyable any, checkPageSpeed any) *checksServiceMock_UpdatePageSpeed_Call {
 	return &checksServiceMock_UpdatePageSpeed_Call{Call: _e.mock.On("UpdatePageSpeed", context1, primaryKeyable, checkPageSpeed)}
 }
 
@@ -4159,7 +4195,7 @@ type checksServiceMock_UpdateRDAP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkRDAP upapi.CheckRDAP
-func (_e *checksServiceMock_Expecter) UpdateRDAP(context1 interface{}, primaryKeyable interface{}, checkRDAP interface{}) *checksServiceMock_UpdateRDAP_Call {
+func (_e *checksServiceMock_Expecter) UpdateRDAP(context1 any, primaryKeyable any, checkRDAP any) *checksServiceMock_UpdateRDAP_Call {
 	return &checksServiceMock_UpdateRDAP_Call{Call: _e.mock.On("UpdateRDAP", context1, primaryKeyable, checkRDAP)}
 }
 
@@ -4233,7 +4269,7 @@ type checksServiceMock_UpdateRUM_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkRUM upapi.CheckRUM
-func (_e *checksServiceMock_Expecter) UpdateRUM(context1 interface{}, primaryKeyable interface{}, checkRUM interface{}) *checksServiceMock_UpdateRUM_Call {
+func (_e *checksServiceMock_Expecter) UpdateRUM(context1 any, primaryKeyable any, checkRUM any) *checksServiceMock_UpdateRUM_Call {
 	return &checksServiceMock_UpdateRUM_Call{Call: _e.mock.On("UpdateRUM", context1, primaryKeyable, checkRUM)}
 }
 
@@ -4307,7 +4343,7 @@ type checksServiceMock_UpdateRUM2_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkRUM2 upapi.CheckRUM2
-func (_e *checksServiceMock_Expecter) UpdateRUM2(context1 interface{}, primaryKeyable interface{}, checkRUM2 interface{}) *checksServiceMock_UpdateRUM2_Call {
+func (_e *checksServiceMock_Expecter) UpdateRUM2(context1 any, primaryKeyable any, checkRUM2 any) *checksServiceMock_UpdateRUM2_Call {
 	return &checksServiceMock_UpdateRUM2_Call{Call: _e.mock.On("UpdateRUM2", context1, primaryKeyable, checkRUM2)}
 }
 
@@ -4381,7 +4417,7 @@ type checksServiceMock_UpdateSMTP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkSMTP upapi.CheckSMTP
-func (_e *checksServiceMock_Expecter) UpdateSMTP(context1 interface{}, primaryKeyable interface{}, checkSMTP interface{}) *checksServiceMock_UpdateSMTP_Call {
+func (_e *checksServiceMock_Expecter) UpdateSMTP(context1 any, primaryKeyable any, checkSMTP any) *checksServiceMock_UpdateSMTP_Call {
 	return &checksServiceMock_UpdateSMTP_Call{Call: _e.mock.On("UpdateSMTP", context1, primaryKeyable, checkSMTP)}
 }
 
@@ -4455,7 +4491,7 @@ type checksServiceMock_UpdateSSH_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkSSH upapi.CheckSSH
-func (_e *checksServiceMock_Expecter) UpdateSSH(context1 interface{}, primaryKeyable interface{}, checkSSH interface{}) *checksServiceMock_UpdateSSH_Call {
+func (_e *checksServiceMock_Expecter) UpdateSSH(context1 any, primaryKeyable any, checkSSH any) *checksServiceMock_UpdateSSH_Call {
 	return &checksServiceMock_UpdateSSH_Call{Call: _e.mock.On("UpdateSSH", context1, primaryKeyable, checkSSH)}
 }
 
@@ -4529,7 +4565,7 @@ type checksServiceMock_UpdateSSLCert_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkSSLCert upapi.CheckSSLCert
-func (_e *checksServiceMock_Expecter) UpdateSSLCert(context1 interface{}, primaryKeyable interface{}, checkSSLCert interface{}) *checksServiceMock_UpdateSSLCert_Call {
+func (_e *checksServiceMock_Expecter) UpdateSSLCert(context1 any, primaryKeyable any, checkSSLCert any) *checksServiceMock_UpdateSSLCert_Call {
 	return &checksServiceMock_UpdateSSLCert_Call{Call: _e.mock.On("UpdateSSLCert", context1, primaryKeyable, checkSSLCert)}
 }
 
@@ -4603,7 +4639,7 @@ type checksServiceMock_UpdateTCP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkTCP upapi.CheckTCP
-func (_e *checksServiceMock_Expecter) UpdateTCP(context1 interface{}, primaryKeyable interface{}, checkTCP interface{}) *checksServiceMock_UpdateTCP_Call {
+func (_e *checksServiceMock_Expecter) UpdateTCP(context1 any, primaryKeyable any, checkTCP any) *checksServiceMock_UpdateTCP_Call {
 	return &checksServiceMock_UpdateTCP_Call{Call: _e.mock.On("UpdateTCP", context1, primaryKeyable, checkTCP)}
 }
 
@@ -4677,7 +4713,7 @@ type checksServiceMock_UpdateTransaction_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkTransaction upapi.CheckTransaction
-func (_e *checksServiceMock_Expecter) UpdateTransaction(context1 interface{}, primaryKeyable interface{}, checkTransaction interface{}) *checksServiceMock_UpdateTransaction_Call {
+func (_e *checksServiceMock_Expecter) UpdateTransaction(context1 any, primaryKeyable any, checkTransaction any) *checksServiceMock_UpdateTransaction_Call {
 	return &checksServiceMock_UpdateTransaction_Call{Call: _e.mock.On("UpdateTransaction", context1, primaryKeyable, checkTransaction)}
 }
 
@@ -4751,7 +4787,7 @@ type checksServiceMock_UpdateUDP_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkUDP upapi.CheckUDP
-func (_e *checksServiceMock_Expecter) UpdateUDP(context1 interface{}, primaryKeyable interface{}, checkUDP interface{}) *checksServiceMock_UpdateUDP_Call {
+func (_e *checksServiceMock_Expecter) UpdateUDP(context1 any, primaryKeyable any, checkUDP any) *checksServiceMock_UpdateUDP_Call {
 	return &checksServiceMock_UpdateUDP_Call{Call: _e.mock.On("UpdateUDP", context1, primaryKeyable, checkUDP)}
 }
 
@@ -4825,7 +4861,7 @@ type checksServiceMock_UpdateWHOIS_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkWHOIS upapi.CheckWHOIS
-func (_e *checksServiceMock_Expecter) UpdateWHOIS(context1 interface{}, primaryKeyable interface{}, checkWHOIS interface{}) *checksServiceMock_UpdateWHOIS_Call {
+func (_e *checksServiceMock_Expecter) UpdateWHOIS(context1 any, primaryKeyable any, checkWHOIS any) *checksServiceMock_UpdateWHOIS_Call {
 	return &checksServiceMock_UpdateWHOIS_Call{Call: _e.mock.On("UpdateWHOIS", context1, primaryKeyable, checkWHOIS)}
 }
 
@@ -4899,7 +4935,7 @@ type checksServiceMock_UpdateWebhook_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - checkWebhook upapi.CheckWebhook
-func (_e *checksServiceMock_Expecter) UpdateWebhook(context1 interface{}, primaryKeyable interface{}, checkWebhook interface{}) *checksServiceMock_UpdateWebhook_Call {
+func (_e *checksServiceMock_Expecter) UpdateWebhook(context1 any, primaryKeyable any, checkWebhook any) *checksServiceMock_UpdateWebhook_Call {
 	return &checksServiceMock_UpdateWebhook_Call{Call: _e.mock.On("UpdateWebhook", context1, primaryKeyable, checkWebhook)}
 }
 
@@ -4942,10 +4978,19 @@ func newTagsServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *tagsServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &tagsServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -4999,7 +5044,7 @@ type tagsServiceMock_Create_Call struct {
 // Create is a helper method to define mock.On call
 //   - context1 context.Context
 //   - tag upapi.Tag
-func (_e *tagsServiceMock_Expecter) Create(context1 interface{}, tag interface{}) *tagsServiceMock_Create_Call {
+func (_e *tagsServiceMock_Expecter) Create(context1 any, tag any) *tagsServiceMock_Create_Call {
 	return &tagsServiceMock_Create_Call{Call: _e.mock.On("Create", context1, tag)}
 }
 
@@ -5056,7 +5101,7 @@ type tagsServiceMock_Delete_Call struct {
 // Delete is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *tagsServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *tagsServiceMock_Delete_Call {
+func (_e *tagsServiceMock_Expecter) Delete(context1 any, primaryKeyable any) *tagsServiceMock_Delete_Call {
 	return &tagsServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
 }
 
@@ -5124,7 +5169,7 @@ type tagsServiceMock_Get_Call struct {
 // Get is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *tagsServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *tagsServiceMock_Get_Call {
+func (_e *tagsServiceMock_Expecter) Get(context1 any, primaryKeyable any) *tagsServiceMock_Get_Call {
 	return &tagsServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
@@ -5192,7 +5237,7 @@ type tagsServiceMock_List_Call struct {
 // List is a helper method to define mock.On call
 //   - context1 context.Context
 //   - tagListOptions upapi.TagListOptions
-func (_e *tagsServiceMock_Expecter) List(context1 interface{}, tagListOptions interface{}) *tagsServiceMock_List_Call {
+func (_e *tagsServiceMock_Expecter) List(context1 any, tagListOptions any) *tagsServiceMock_List_Call {
 	return &tagsServiceMock_List_Call{Call: _e.mock.On("List", context1, tagListOptions)}
 }
 
@@ -5261,7 +5306,7 @@ type tagsServiceMock_Update_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - tag upapi.Tag
-func (_e *tagsServiceMock_Expecter) Update(context1 interface{}, primaryKeyable interface{}, tag interface{}) *tagsServiceMock_Update_Call {
+func (_e *tagsServiceMock_Expecter) Update(context1 any, primaryKeyable any, tag any) *tagsServiceMock_Update_Call {
 	return &tagsServiceMock_Update_Call{Call: _e.mock.On("Update", context1, primaryKeyable, tag)}
 }
 
@@ -5304,10 +5349,19 @@ func newOutagesServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *outagesServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &outagesServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -5361,7 +5415,7 @@ type outagesServiceMock_Get_Call struct {
 // Get is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *outagesServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *outagesServiceMock_Get_Call {
+func (_e *outagesServiceMock_Expecter) Get(context1 any, primaryKeyable any) *outagesServiceMock_Get_Call {
 	return &outagesServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
@@ -5429,7 +5483,7 @@ type outagesServiceMock_List_Call struct {
 // List is a helper method to define mock.On call
 //   - context1 context.Context
 //   - outageListOptions upapi.OutageListOptions
-func (_e *outagesServiceMock_Expecter) List(context1 interface{}, outageListOptions interface{}) *outagesServiceMock_List_Call {
+func (_e *outagesServiceMock_Expecter) List(context1 any, outageListOptions any) *outagesServiceMock_List_Call {
 	return &outagesServiceMock_List_Call{Call: _e.mock.On("List", context1, outageListOptions)}
 }
 
@@ -5467,10 +5521,19 @@ func newContactsServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *contactsServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &contactsServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -5524,7 +5587,7 @@ type contactsServiceMock_Create_Call struct {
 // Create is a helper method to define mock.On call
 //   - context1 context.Context
 //   - contact upapi.Contact
-func (_e *contactsServiceMock_Expecter) Create(context1 interface{}, contact interface{}) *contactsServiceMock_Create_Call {
+func (_e *contactsServiceMock_Expecter) Create(context1 any, contact any) *contactsServiceMock_Create_Call {
 	return &contactsServiceMock_Create_Call{Call: _e.mock.On("Create", context1, contact)}
 }
 
@@ -5581,7 +5644,7 @@ type contactsServiceMock_Delete_Call struct {
 // Delete is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *contactsServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *contactsServiceMock_Delete_Call {
+func (_e *contactsServiceMock_Expecter) Delete(context1 any, primaryKeyable any) *contactsServiceMock_Delete_Call {
 	return &contactsServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
 }
 
@@ -5649,7 +5712,7 @@ type contactsServiceMock_Get_Call struct {
 // Get is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *contactsServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *contactsServiceMock_Get_Call {
+func (_e *contactsServiceMock_Expecter) Get(context1 any, primaryKeyable any) *contactsServiceMock_Get_Call {
 	return &contactsServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
@@ -5717,7 +5780,7 @@ type contactsServiceMock_List_Call struct {
 // List is a helper method to define mock.On call
 //   - context1 context.Context
 //   - contactListOptions upapi.ContactListOptions
-func (_e *contactsServiceMock_Expecter) List(context1 interface{}, contactListOptions interface{}) *contactsServiceMock_List_Call {
+func (_e *contactsServiceMock_Expecter) List(context1 any, contactListOptions any) *contactsServiceMock_List_Call {
 	return &contactsServiceMock_List_Call{Call: _e.mock.On("List", context1, contactListOptions)}
 }
 
@@ -5786,7 +5849,7 @@ type contactsServiceMock_Update_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - contact upapi.Contact
-func (_e *contactsServiceMock_Expecter) Update(context1 interface{}, primaryKeyable interface{}, contact interface{}) *contactsServiceMock_Update_Call {
+func (_e *contactsServiceMock_Expecter) Update(context1 any, primaryKeyable any, contact any) *contactsServiceMock_Update_Call {
 	return &contactsServiceMock_Update_Call{Call: _e.mock.On("Update", context1, primaryKeyable, contact)}
 }
 
@@ -5829,10 +5892,19 @@ func newProbeServersServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *probeServersServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &probeServersServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -5885,7 +5957,7 @@ type probeServersServiceMock_List_Call struct {
 
 // List is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *probeServersServiceMock_Expecter) List(ctx interface{}) *probeServersServiceMock_List_Call {
+func (_e *probeServersServiceMock_Expecter) List(ctx any) *probeServersServiceMock_List_Call {
 	return &probeServersServiceMock_List_Call{Call: _e.mock.On("List", ctx)}
 }
 
@@ -5918,10 +5990,19 @@ func newAlertsServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *alertsServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &alertsServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -5975,7 +6056,7 @@ type alertsServiceMock_Get_Call struct {
 // Get is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *alertsServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *alertsServiceMock_Get_Call {
+func (_e *alertsServiceMock_Expecter) Get(context1 any, primaryKeyable any) *alertsServiceMock_Get_Call {
 	return &alertsServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
@@ -6043,7 +6124,7 @@ type alertsServiceMock_Ignore_Call struct {
 // Ignore is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *alertsServiceMock_Expecter) Ignore(context1 interface{}, primaryKeyable interface{}) *alertsServiceMock_Ignore_Call {
+func (_e *alertsServiceMock_Expecter) Ignore(context1 any, primaryKeyable any) *alertsServiceMock_Ignore_Call {
 	return &alertsServiceMock_Ignore_Call{Call: _e.mock.On("Ignore", context1, primaryKeyable)}
 }
 
@@ -6111,7 +6192,7 @@ type alertsServiceMock_List_Call struct {
 // List is a helper method to define mock.On call
 //   - context1 context.Context
 //   - alertListOptions upapi.AlertListOptions
-func (_e *alertsServiceMock_Expecter) List(context1 interface{}, alertListOptions interface{}) *alertsServiceMock_List_Call {
+func (_e *alertsServiceMock_Expecter) List(context1 any, alertListOptions any) *alertsServiceMock_List_Call {
 	return &alertsServiceMock_List_Call{Call: _e.mock.On("List", context1, alertListOptions)}
 }
 
@@ -6179,7 +6260,7 @@ type alertsServiceMock_RootCause_Call struct {
 // RootCause is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *alertsServiceMock_Expecter) RootCause(context1 interface{}, primaryKeyable interface{}) *alertsServiceMock_RootCause_Call {
+func (_e *alertsServiceMock_Expecter) RootCause(context1 any, primaryKeyable any) *alertsServiceMock_RootCause_Call {
 	return &alertsServiceMock_RootCause_Call{Call: _e.mock.On("RootCause", context1, primaryKeyable)}
 }
 
@@ -6217,10 +6298,19 @@ func newDashboardsServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *dashboardsServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &dashboardsServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -6274,7 +6364,7 @@ type dashboardsServiceMock_Create_Call struct {
 // Create is a helper method to define mock.On call
 //   - context1 context.Context
 //   - dashboard upapi.Dashboard
-func (_e *dashboardsServiceMock_Expecter) Create(context1 interface{}, dashboard interface{}) *dashboardsServiceMock_Create_Call {
+func (_e *dashboardsServiceMock_Expecter) Create(context1 any, dashboard any) *dashboardsServiceMock_Create_Call {
 	return &dashboardsServiceMock_Create_Call{Call: _e.mock.On("Create", context1, dashboard)}
 }
 
@@ -6331,7 +6421,7 @@ type dashboardsServiceMock_Delete_Call struct {
 // Delete is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *dashboardsServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *dashboardsServiceMock_Delete_Call {
+func (_e *dashboardsServiceMock_Expecter) Delete(context1 any, primaryKeyable any) *dashboardsServiceMock_Delete_Call {
 	return &dashboardsServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
 }
 
@@ -6399,7 +6489,7 @@ type dashboardsServiceMock_Get_Call struct {
 // Get is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *dashboardsServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *dashboardsServiceMock_Get_Call {
+func (_e *dashboardsServiceMock_Expecter) Get(context1 any, primaryKeyable any) *dashboardsServiceMock_Get_Call {
 	return &dashboardsServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
@@ -6467,7 +6557,7 @@ type dashboardsServiceMock_List_Call struct {
 // List is a helper method to define mock.On call
 //   - context1 context.Context
 //   - dashboardListOptions upapi.DashboardListOptions
-func (_e *dashboardsServiceMock_Expecter) List(context1 interface{}, dashboardListOptions interface{}) *dashboardsServiceMock_List_Call {
+func (_e *dashboardsServiceMock_Expecter) List(context1 any, dashboardListOptions any) *dashboardsServiceMock_List_Call {
 	return &dashboardsServiceMock_List_Call{Call: _e.mock.On("List", context1, dashboardListOptions)}
 }
 
@@ -6536,7 +6626,7 @@ type dashboardsServiceMock_Update_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - dashboard upapi.Dashboard
-func (_e *dashboardsServiceMock_Expecter) Update(context1 interface{}, primaryKeyable interface{}, dashboard interface{}) *dashboardsServiceMock_Update_Call {
+func (_e *dashboardsServiceMock_Expecter) Update(context1 any, primaryKeyable any, dashboard any) *dashboardsServiceMock_Update_Call {
 	return &dashboardsServiceMock_Update_Call{Call: _e.mock.On("Update", context1, primaryKeyable, dashboard)}
 }
 
@@ -6579,10 +6669,19 @@ func newStatusPagesServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *statusPagesServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &statusPagesServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -6626,7 +6725,7 @@ type statusPagesServiceMock_Components_Call struct {
 
 // Components is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) Components(primaryKeyable interface{}) *statusPagesServiceMock_Components_Call {
+func (_e *statusPagesServiceMock_Expecter) Components(primaryKeyable any) *statusPagesServiceMock_Components_Call {
 	return &statusPagesServiceMock_Components_Call{Call: _e.mock.On("Components", primaryKeyable)}
 }
 
@@ -6689,7 +6788,7 @@ type statusPagesServiceMock_Create_Call struct {
 // Create is a helper method to define mock.On call
 //   - context1 context.Context
 //   - statusPage upapi.StatusPage
-func (_e *statusPagesServiceMock_Expecter) Create(context1 interface{}, statusPage interface{}) *statusPagesServiceMock_Create_Call {
+func (_e *statusPagesServiceMock_Expecter) Create(context1 any, statusPage any) *statusPagesServiceMock_Create_Call {
 	return &statusPagesServiceMock_Create_Call{Call: _e.mock.On("Create", context1, statusPage)}
 }
 
@@ -6747,7 +6846,7 @@ type statusPagesServiceMock_CurrentStatus_Call struct {
 
 // CurrentStatus is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) CurrentStatus(primaryKeyable interface{}) *statusPagesServiceMock_CurrentStatus_Call {
+func (_e *statusPagesServiceMock_Expecter) CurrentStatus(primaryKeyable any) *statusPagesServiceMock_CurrentStatus_Call {
 	return &statusPagesServiceMock_CurrentStatus_Call{Call: _e.mock.On("CurrentStatus", primaryKeyable)}
 }
 
@@ -6799,7 +6898,7 @@ type statusPagesServiceMock_Delete_Call struct {
 // Delete is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) Delete(context1 interface{}, primaryKeyable interface{}) *statusPagesServiceMock_Delete_Call {
+func (_e *statusPagesServiceMock_Expecter) Delete(context1 any, primaryKeyable any) *statusPagesServiceMock_Delete_Call {
 	return &statusPagesServiceMock_Delete_Call{Call: _e.mock.On("Delete", context1, primaryKeyable)}
 }
 
@@ -6867,7 +6966,7 @@ type statusPagesServiceMock_Get_Call struct {
 // Get is a helper method to define mock.On call
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) Get(context1 interface{}, primaryKeyable interface{}) *statusPagesServiceMock_Get_Call {
+func (_e *statusPagesServiceMock_Expecter) Get(context1 any, primaryKeyable any) *statusPagesServiceMock_Get_Call {
 	return &statusPagesServiceMock_Get_Call{Call: _e.mock.On("Get", context1, primaryKeyable)}
 }
 
@@ -6925,7 +7024,7 @@ type statusPagesServiceMock_Incidents_Call struct {
 
 // Incidents is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) Incidents(primaryKeyable interface{}) *statusPagesServiceMock_Incidents_Call {
+func (_e *statusPagesServiceMock_Expecter) Incidents(primaryKeyable any) *statusPagesServiceMock_Incidents_Call {
 	return &statusPagesServiceMock_Incidents_Call{Call: _e.mock.On("Incidents", primaryKeyable)}
 }
 
@@ -6988,7 +7087,7 @@ type statusPagesServiceMock_List_Call struct {
 // List is a helper method to define mock.On call
 //   - context1 context.Context
 //   - statusPageListOptions upapi.StatusPageListOptions
-func (_e *statusPagesServiceMock_Expecter) List(context1 interface{}, statusPageListOptions interface{}) *statusPagesServiceMock_List_Call {
+func (_e *statusPagesServiceMock_Expecter) List(context1 any, statusPageListOptions any) *statusPagesServiceMock_List_Call {
 	return &statusPagesServiceMock_List_Call{Call: _e.mock.On("List", context1, statusPageListOptions)}
 }
 
@@ -7046,7 +7145,7 @@ type statusPagesServiceMock_Metrics_Call struct {
 
 // Metrics is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) Metrics(primaryKeyable interface{}) *statusPagesServiceMock_Metrics_Call {
+func (_e *statusPagesServiceMock_Expecter) Metrics(primaryKeyable any) *statusPagesServiceMock_Metrics_Call {
 	return &statusPagesServiceMock_Metrics_Call{Call: _e.mock.On("Metrics", primaryKeyable)}
 }
 
@@ -7099,7 +7198,7 @@ type statusPagesServiceMock_StatusHistory_Call struct {
 
 // StatusHistory is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) StatusHistory(primaryKeyable interface{}) *statusPagesServiceMock_StatusHistory_Call {
+func (_e *statusPagesServiceMock_Expecter) StatusHistory(primaryKeyable any) *statusPagesServiceMock_StatusHistory_Call {
 	return &statusPagesServiceMock_StatusHistory_Call{Call: _e.mock.On("StatusHistory", primaryKeyable)}
 }
 
@@ -7152,7 +7251,7 @@ type statusPagesServiceMock_Subscribers_Call struct {
 
 // Subscribers is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) Subscribers(primaryKeyable interface{}) *statusPagesServiceMock_Subscribers_Call {
+func (_e *statusPagesServiceMock_Expecter) Subscribers(primaryKeyable any) *statusPagesServiceMock_Subscribers_Call {
 	return &statusPagesServiceMock_Subscribers_Call{Call: _e.mock.On("Subscribers", primaryKeyable)}
 }
 
@@ -7205,7 +7304,7 @@ type statusPagesServiceMock_SubscriptionDomainAllowList_Call struct {
 
 // SubscriptionDomainAllowList is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) SubscriptionDomainAllowList(primaryKeyable interface{}) *statusPagesServiceMock_SubscriptionDomainAllowList_Call {
+func (_e *statusPagesServiceMock_Expecter) SubscriptionDomainAllowList(primaryKeyable any) *statusPagesServiceMock_SubscriptionDomainAllowList_Call {
 	return &statusPagesServiceMock_SubscriptionDomainAllowList_Call{Call: _e.mock.On("SubscriptionDomainAllowList", primaryKeyable)}
 }
 
@@ -7258,7 +7357,7 @@ type statusPagesServiceMock_SubscriptionDomainBlockList_Call struct {
 
 // SubscriptionDomainBlockList is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) SubscriptionDomainBlockList(primaryKeyable interface{}) *statusPagesServiceMock_SubscriptionDomainBlockList_Call {
+func (_e *statusPagesServiceMock_Expecter) SubscriptionDomainBlockList(primaryKeyable any) *statusPagesServiceMock_SubscriptionDomainBlockList_Call {
 	return &statusPagesServiceMock_SubscriptionDomainBlockList_Call{Call: _e.mock.On("SubscriptionDomainBlockList", primaryKeyable)}
 }
 
@@ -7322,7 +7421,7 @@ type statusPagesServiceMock_Update_Call struct {
 //   - context1 context.Context
 //   - primaryKeyable upapi.PrimaryKeyable
 //   - statusPage upapi.StatusPage
-func (_e *statusPagesServiceMock_Expecter) Update(context1 interface{}, primaryKeyable interface{}, statusPage interface{}) *statusPagesServiceMock_Update_Call {
+func (_e *statusPagesServiceMock_Expecter) Update(context1 any, primaryKeyable any, statusPage any) *statusPagesServiceMock_Update_Call {
 	return &statusPagesServiceMock_Update_Call{Call: _e.mock.On("Update", context1, primaryKeyable, statusPage)}
 }
 
@@ -7385,7 +7484,7 @@ type statusPagesServiceMock_Users_Call struct {
 
 // Users is a helper method to define mock.On call
 //   - primaryKeyable upapi.PrimaryKeyable
-func (_e *statusPagesServiceMock_Expecter) Users(primaryKeyable interface{}) *statusPagesServiceMock_Users_Call {
+func (_e *statusPagesServiceMock_Expecter) Users(primaryKeyable any) *statusPagesServiceMock_Users_Call {
 	return &statusPagesServiceMock_Users_Call{Call: _e.mock.On("Users", primaryKeyable)}
 }
 
@@ -7418,10 +7517,19 @@ func newAccountUsageServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *accountUsageServiceMock {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &accountUsageServiceMock{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -7474,7 +7582,7 @@ type accountUsageServiceMock_Get_Call struct {
 
 // Get is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *accountUsageServiceMock_Expecter) Get(ctx interface{}) *accountUsageServiceMock_Get_Call {
+func (_e *accountUsageServiceMock_Expecter) Get(ctx any) *accountUsageServiceMock_Get_Call {
 	return &accountUsageServiceMock_Get_Call{Call: _e.mock.On("Get", ctx)}
 }
 

@@ -22,7 +22,7 @@ type listChecksInput struct {
 	Search   string `json:"search,omitempty" jsonschema:"filter checks by name or address"`
 	Tag      string `json:"tag,omitempty" jsonschema:"filter by tag name"`
 	Type     string `json:"type,omitempty" jsonschema:"filter by check type, e.g. HTTP, DNS, SSL_CERT, TCP, ICMP, IMAP, POP, SMTP"`
-	IsPaused bool   `json:"is_paused,omitempty" jsonschema:"filter by paused state"`
+	IsPaused *bool  `json:"is_paused,omitempty" jsonschema:"filter by paused state; omit for both"`
 	Page     int64  `json:"page,omitempty" jsonschema:"page number, defaults to 1"`
 	PageSize int64  `json:"page_size,omitempty" jsonschema:"results per page, defaults to 25"`
 }
