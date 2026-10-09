@@ -2,28 +2,45 @@
 name: ci
 run-name: "🧪 CI"
 
+# What a change is checked against: the changelog and the Go suite.
+# release.yaml calls this before it cuts a tag, so the trunk is checked against
+# the tree that merged rather than the one each branch was reviewed on.
+
 on:
   pull_request:
-    branches:
-      - main
+  workflow_call:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Not github.workflow: in a call it resolves to the caller's name, and the
+  # group would cancel the release run waiting on this one.
+  group: ci/${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          # The tag-dependent checks read the tag history.
+          fetch-depth: 0
+
+      - uses: mikluko/action-changelog@v1
+
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
-          cache: true
 
       - name: go vet
         run: go vet ./...

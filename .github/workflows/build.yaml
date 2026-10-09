@@ -2,54 +2,80 @@
 name: build
 run-name: "🐳 Build ${{ github.ref_name }}"
 
+# What a tag publishes: the image, the chart, and the GitHub Release carrying
+# the binaries, whose notes are the changelog's newest entry. release.yaml cuts
+# the final tags this runs on, and prerelease.yaml the prerelease ones.
+
 on:
   push:
     tags:
       - 'v*.*.*'
-      - 'v*.*.*-*.*.*'
+
+permissions:
+  contents: read
 
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  release:
+  # A tag must name the version the changelog's newest entry names, or a
+  # prerelease of it: anything else has no notes to publish.
+  plan:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    outputs:
+      version: ${{ steps.plan.outputs.version }}
+      prerelease: ${{ steps.plan.outputs.prerelease }}
+      notes: ${{ steps.changelog.outputs.notes }}
     steps:
       - uses: actions/checkout@v7
         with:
+          persist-credentials: false
           fetch-depth: 0
 
-      - uses: actions/setup-go@v7
+      - id: changelog
+        uses: mikluko/action-changelog@v1
         with:
-          go-version-file: go.mod
+          # A prerelease is cut before its entry is dated.
+          "off": undated-entry
 
-      - uses: goreleaser/goreleaser-action@v7
-        with:
-          version: "~> v2"
-          args: release --clean
+      - id: plan
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          NEWEST: ${{ steps.changelog.outputs.version }}
+        run: |
+          if [ -z "$NEWEST" ]; then
+            echo "::error::CHANGELOG.md's newest entry names no version"
+            exit 1
+          fi
+          version=${TAG#v}
+          case "$version" in
+            "$NEWEST") prerelease=false ;;
+            "$NEWEST"-*) prerelease=true ;;
+            *)
+              echo "::error::tag $TAG is not the version CHANGELOG.md's newest entry names, $NEWEST"
+              exit 1
+              ;;
+          esac
+          echo "version=$version" >>"$GITHUB_OUTPUT"
+          echo "prerelease=$prerelease" >>"$GITHUB_OUTPUT"
 
   container:
-    needs: [release]
+    needs: [plan]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      id-token: write
     steps:
       - uses: actions/checkout@v7
         with:
+          persist-credentials: false
           fetch-depth: 0
           fetch-tags: true
 
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
-          cache: true
 
       - uses: ko-build/setup-ko@v0.10
 
@@ -60,18 +86,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Compute image tags
-        id: tags
-        run: |
-          version="${GITHUB_REF_NAME#v}"
-          if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
-            echo "tags=${version}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tags=${version},latest" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Build and push image
-        run: make image TAGS=${{ steps.tags.outputs.tags }}
+        env:
+          VERSION: ${{ needs.plan.outputs.version }}
+          PRERELEASE: ${{ needs.plan.outputs.prerelease }}
+        run: |
+          tags=$VERSION
+          [ "$PRERELEASE" = true ] || tags="$tags,latest"
+          make image TAGS="$tags"
 
   chart:
     needs: [container]
@@ -82,17 +104,45 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          persist-credentials: false
           fetch-depth: 0
           fetch-tags: true
 
       - uses: azure/setup-helm@v5
 
       - name: Log in to GHCR
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | \
-            helm registry login ghcr.io \
-              --username ${{ github.actor }} \
-              --password-stdin
+        env:
+          ACTOR: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "$TOKEN" | helm registry login ghcr.io --username "$ACTOR" --password-stdin
 
       - name: Package and push chart
         run: make package
+
+  # Last, so a release exists only once every artifact it names does.
+  release:
+    needs: [plan, container, chart]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Notes
+        env:
+          NOTES: ${{ needs.plan.outputs.notes }}
+        run: printf '%s\n' "$NOTES" >"$RUNNER_TEMP/notes.md"
+
+      - uses: goreleaser/goreleaser-action@v7
+        with:
+          version: "~> v2"
+          args: release --clean --release-notes ${{ runner.temp }}/notes.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

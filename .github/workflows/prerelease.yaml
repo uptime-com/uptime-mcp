@@ -1,0 +1,78 @@
+---
+name: prerelease
+run-name: "🏷️ Prerelease"
+
+# Cuts vX.Y.Z-pre.N on the head of a pull request labelled `prerelease`, where
+# X.Y.Z is the version its changelog names, so the change can be built and
+# exercised before it merges. The tag runs build.yaml like any other.
+#
+# It cuts nothing while the newest entry is `## [Unreleased]`, which names no
+# version. `labeled` is listed because the default triggers would not fire on a
+# label applied to an open pull request.
+#
+# The tag is pushed as the Uptime Release Bot App; release.yaml says why.
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+
+permissions:
+  contents: read
+
+concurrency:
+  # One cut at a time, so two runs cannot read the same ordinal.
+  group: prerelease
+  cancel-in-progress: false
+
+jobs:
+  cut:
+    if: contains(github.event.pull_request.labels.*.name, 'prerelease')
+    runs-on: ubuntu-latest
+    steps:
+      - id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.UPTIME_RELEASE_BOT_APP_CLIENT_ID }}
+          private-key: ${{ secrets.UPTIME_RELEASE_BOT_APP_CERT }}
+          permission-contents: write
+
+      - uses: actions/checkout@v7
+        with: # zizmor: ignore[artipacked] the Cut step pushes with this token, and the job uploads no artifact
+          # The head commit, not the merge commit a pull_request run checks out:
+          # that one is on no branch and is gone once the pull request closes.
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - id: changelog
+        uses: mikluko/action-changelog@v1
+        with:
+          # The release is not dated while its work is in flight.
+          "off": undated-entry
+
+      - name: Cut
+        env:
+          VERSION: ${{ steps.changelog.outputs.version }}
+          TAGGED: ${{ steps.changelog.outputs.already-tagged }}
+          PRERELEASE: ${{ steps.changelog.outputs.prerelease }}
+        run: |
+          skip() {
+            echo "$1" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          }
+          [ -n "$VERSION" ] || skip "No prerelease: the changelog names no version."
+          [ "$PRERELEASE" = false ] || skip "No prerelease: $VERSION already carries a prerelease part."
+          [ "$TAGGED" = false ] || skip "No prerelease: v$VERSION is already tagged."
+
+          prev=$(git tag --list "v$VERSION-pre.*" \
+                 | sed "s|^v$VERSION-pre\.||" \
+                 | grep -E '^[0-9]+$' | sort -n | tail -1)
+          tag="v$VERSION-pre.$(( ${prev:-0} + 1 ))"
+
+          git tag "$tag"
+          git push origin "refs/tags/$tag"
+          echo "Cut **$tag**." >>"$GITHUB_STEP_SUMMARY"
