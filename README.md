@@ -19,6 +19,19 @@ Desktop, Claude Code, and Cursor) and **streamable HTTP** (for hosted
 deployments). It authenticates with a static API bearer token or a
 browser-based OAuth2 PKCE flow.
 
+## Get started
+
+To connect Claude Code to the hosted server and sign in to Uptime.com in the
+browser:
+
+```bash
+claude mcp add --transport http uptime https://mcp.uptime.com/mcp
+claude mcp login uptime
+```
+
+For other MCP clients, see [Hosted server](#hosted-server). To run the server
+yourself, see [Run locally](#run-locally).
+
 ## Claude Code plugin
 
 For [Claude Code](https://claude.com/claude-code), the
@@ -71,7 +84,7 @@ endpoint publishes [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728)
 protected-resource metadata naming the authorization server,
 `https://uptime.com`, and the client signs in there itself.
 
-## Quick start
+## Run locally
 
 To run the server locally with Go 1.26 or later and an Uptime.com API token
 from **Settings > API & Integrations**:
