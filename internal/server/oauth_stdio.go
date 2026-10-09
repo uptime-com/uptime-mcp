@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -14,12 +15,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/modelcontextprotocol/go-sdk/oauthex"
 	"golang.org/x/oauth2"
 )
 
 // stdioOAuthConfig holds the parameters for the stdio OAuth2 browser flow.
 type stdioOAuthConfig struct {
-	Issuer       string
+	Issuer string
+	// ClientID is a pre-registered client; empty registers one per flow.
 	ClientID     string
 	ClientSecret string
 	Scopes       []string
@@ -28,23 +31,15 @@ type stdioOAuthConfig struct {
 // stdioOAuthFlow performs a full OAuth2 authorization code flow with PKCE via the browser.
 // It starts a temporary local HTTP server to receive the callback, opens the browser to
 // the authorization URL, and exchanges the code for tokens.
-func stdioOAuthFlow(ctx context.Context, logger *slog.Logger, cfg stdioOAuthConfig) (*oauth2.Token, error) {
-	issuer := strings.TrimRight(cfg.Issuer, "/")
-
-	oauthCfg := &oauth2.Config{
-		ClientID:     cfg.ClientID,
-		ClientSecret: cfg.ClientSecret,
-		Scopes:       cfg.Scopes,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  issuer + "/o/authorize/",
-			TokenURL: issuer + "/o/token/",
-		},
-	}
-
+//
+// When cfg.ClientID is empty, the client registers itself for this run's redirect URI
+// (see registerStdioClient). The returned config is the client that obtained the token;
+// refreshing must use it.
+func stdioOAuthFlow(ctx context.Context, logger *slog.Logger, cfg stdioOAuthConfig) (*oauth2.Token, *oauth2.Config, error) {
 	// Generate PKCE code verifier (43-128 chars of unreserved characters)
 	verifierBytes := make([]byte, 32)
 	if _, err := rand.Read(verifierBytes); err != nil {
-		return nil, fmt.Errorf("generating code verifier: %w", err)
+		return nil, nil, fmt.Errorf("generating code verifier: %w", err)
 	}
 	codeVerifier := base64.RawURLEncoding.EncodeToString(verifierBytes)
 
@@ -55,18 +50,30 @@ func stdioOAuthFlow(ctx context.Context, logger *slog.Logger, cfg stdioOAuthConf
 	// Generate state parameter for CSRF protection
 	stateBytes := make([]byte, 16)
 	if _, err := rand.Read(stateBytes); err != nil {
-		return nil, fmt.Errorf("generating state: %w", err)
+		return nil, nil, fmt.Errorf("generating state: %w", err)
 	}
 	state := base64.RawURLEncoding.EncodeToString(stateBytes)
 
 	// Start temporary local server on random port
 	listener, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
-		return nil, fmt.Errorf("starting callback server: %w", err)
+		return nil, nil, fmt.Errorf("starting callback server: %w", err)
 	}
+	defer listener.Close()
 	port := listener.Addr().(*net.TCPAddr).Port
 	redirectURI := fmt.Sprintf("http://localhost:%d/callback", port)
-	oauthCfg.RedirectURL = redirectURI
+
+	var oauthCfg *oauth2.Config
+	if cfg.ClientID != "" {
+		oauthCfg = cfg.oauth2Config()
+		oauthCfg.RedirectURL = redirectURI
+	} else {
+		oauthCfg, err = registerStdioClient(ctx, cfg, redirectURI)
+		if err != nil {
+			return nil, nil, err
+		}
+		logger.Info("registered OAuth2 client", "client_id", oauthCfg.ClientID)
+	}
 
 	type callbackResult struct {
 		code string
@@ -127,10 +134,10 @@ func stdioOAuthFlow(ctx context.Context, logger *slog.Logger, cfg stdioOAuthConf
 	// Wait for callback
 	select {
 	case <-ctx.Done():
-		return nil, ctx.Err()
+		return nil, nil, ctx.Err()
 	case result := <-resultCh:
 		if result.err != nil {
-			return nil, result.err
+			return nil, nil, result.err
 		}
 
 		// Exchange code for tokens
@@ -138,19 +145,19 @@ func stdioOAuthFlow(ctx context.Context, logger *slog.Logger, cfg stdioOAuthConf
 			oauth2.SetAuthURLParam("code_verifier", codeVerifier),
 		)
 		if err != nil {
-			return nil, fmt.Errorf("exchanging authorization code: %w", err)
+			return nil, nil, fmt.Errorf("exchanging authorization code: %w", err)
 		}
 
 		logger.Info("authorization successful")
-		return token, nil
+		return token, oauthCfg, nil
 	}
 }
 
-// startTokenRefresh starts a background goroutine that refreshes the OAuth2 token
-// before it expires. It updates the tokenHolder with the new token.
-func startTokenRefresh(ctx context.Context, logger *slog.Logger, holder *tokenHolder, cfg stdioOAuthConfig) {
+// oauth2Config returns the client for a pre-registered client ID, whose
+// endpoints are the authorization server's fixed django-oauth-toolkit paths.
+func (cfg stdioOAuthConfig) oauth2Config() *oauth2.Config {
 	issuer := strings.TrimRight(cfg.Issuer, "/")
-	oauthCfg := &oauth2.Config{
+	return &oauth2.Config{
 		ClientID:     cfg.ClientID,
 		ClientSecret: cfg.ClientSecret,
 		Scopes:       cfg.Scopes,
@@ -159,7 +166,73 @@ func startTokenRefresh(ctx context.Context, logger *slog.Logger, holder *tokenHo
 			TokenURL: issuer + "/o/token/",
 		},
 	}
+}
 
+// registerStdioClient registers a public client for redirectURI at the
+// registration endpoint the issuer advertises in its RFC 8414 metadata
+// (RFC 7591), and returns it with the advertised endpoints.
+//
+// The registration is not persisted: every process that runs the browser flow
+// registers a new client, and the authorization server rate-limits
+// registration per address.
+func registerStdioClient(ctx context.Context, cfg stdioOAuthConfig, redirectURI string) (*oauth2.Config, error) {
+	meta, err := discoverAuthServer(ctx, cfg.Issuer)
+	if err != nil {
+		return nil, err
+	}
+	if meta.RegistrationEndpoint == "" {
+		return nil, fmt.Errorf("authorization server %s does not offer client registration; set -client-id", cfg.Issuer)
+	}
+
+	reg, err := oauthex.RegisterClient(ctx, meta.RegistrationEndpoint, &oauthex.ClientRegistrationMetadata{
+		RedirectURIs:            []string{redirectURI},
+		TokenEndpointAuthMethod: "none",
+		GrantTypes:              []string{"authorization_code", "refresh_token"},
+		ResponseTypes:           []string{"code"},
+		ClientName:              "Uptime.com MCP Server",
+	}, nil)
+	if err != nil {
+		return nil, fmt.Errorf("registering OAuth2 client: %w", err)
+	}
+
+	return &oauth2.Config{
+		ClientID:     reg.ClientID,
+		ClientSecret: reg.ClientSecret,
+		Scopes:       cfg.Scopes,
+		RedirectURL:  redirectURI,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:   meta.AuthorizationEndpoint,
+			TokenURL:  meta.TokenEndpoint,
+			AuthStyle: oauth2.AuthStyleInParams,
+		},
+	}, nil
+}
+
+// discoverAuthServer fetches the issuer's RFC 8414 metadata. The issuer it
+// names may differ from the configured one by a trailing slash: uptime.com
+// publishes "https://uptime.com/" while -uptime-url is written without one.
+func discoverAuthServer(ctx context.Context, issuer string) (*oauthex.AuthServerMeta, error) {
+	base := strings.TrimRight(issuer, "/")
+	metadataURL := base + "/.well-known/oauth-authorization-server"
+
+	var errs []error
+	for _, candidate := range []string{base + "/", base} {
+		meta, err := oauthex.GetAuthServerMeta(ctx, metadataURL, candidate, nil)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		if meta == nil {
+			return nil, fmt.Errorf("authorization server %s publishes no metadata at %s; set -client-id", issuer, metadataURL)
+		}
+		return meta, nil
+	}
+	return nil, fmt.Errorf("discovering authorization server: %w", errors.Join(errs...))
+}
+
+// startTokenRefresh starts a background goroutine that refreshes the OAuth2 token
+// before it expires. It updates the tokenHolder with the new token.
+func startTokenRefresh(ctx context.Context, logger *slog.Logger, holder *tokenHolder, oauthCfg *oauth2.Config) {
 	go func() {
 		for {
 			token := holder.Token()

@@ -47,7 +47,8 @@ func Run(p RunParams) {
 //
 // Token sources (checked in order on first request):
 //   - UPTIME_BEARER_TOKEN env var — static token, no browser, no refresh
-//   - OAuth2 PKCE browser flow — requires -uptime-url + -client-id
+//   - OAuth2 PKCE browser flow — requires -uptime-url; without -client-id
+//     the client registers itself with the authorization server (RFC 7591)
 func runStdio(p RunParams) {
 	apiBaseURL := p.Config.APIBaseURL()
 
@@ -98,9 +99,12 @@ func stdioLazyAuthMiddleware(p RunParams) mcp.Middleware {
 		ClientSecret: p.Config.ClientSecret,
 		Scopes:       []string{"api/v1"},
 	}
-	if cfg.Issuer == "" || cfg.ClientID == "" {
-		p.Logger.Error("-uptime-url (or -oauth-url) and -client-id are required for stdio mode without UPTIME_BEARER_TOKEN")
+	if cfg.Issuer == "" {
+		p.Logger.Error("-uptime-url (or -oauth-url) is required for stdio mode without UPTIME_BEARER_TOKEN")
 		os.Exit(1)
+	}
+	if cfg.ClientID != "" {
+		p.Logger.Warn("-client-id is deprecated: omit it and the server registers its own OAuth2 client")
 	}
 
 	var (
@@ -125,14 +129,14 @@ func stdioLazyAuthMiddleware(p RunParams) mcp.Middleware {
 			// Perform OAuth2 browser flow on first tool call only.
 			once.Do(func() {
 				p.Logger.Info("first tool call received, starting OAuth2 browser flow")
-				token, err := stdioOAuthFlow(ctx, p.Logger, cfg)
+				token, oauthCfg, err := stdioOAuthFlow(ctx, p.Logger, cfg)
 				if err != nil {
 					authErr = fmt.Errorf("OAuth2 authorization failed: %w", err)
 					return
 				}
 
 				holder = newTokenHolder(token)
-				startTokenRefresh(context.Background(), p.Logger, holder, cfg)
+				startTokenRefresh(context.Background(), p.Logger, holder, oauthCfg)
 				p.Logger.Info("authenticated via OAuth2")
 			})
 			if authErr != nil {
@@ -173,10 +177,14 @@ func methodRequiresAuth(method string) bool {
 // query parameter, or UPTIME_BEARER_TOKEN env var are forwarded to the Uptime
 // API without server-side verification. The API itself rejects invalid tokens.
 //
-// When -client-id is set, the server also serves RFC 9728 protected resource
-// metadata so OAuth2-capable MCP clients can discover the authorization server
-// and obtain tokens themselves.
+// When an OAuth issuer is configured, the server also serves RFC 9728
+// protected resource metadata so OAuth2-capable MCP clients can discover the
+// authorization server, register with it, and obtain tokens themselves.
 func runHTTP(p RunParams) {
+	if p.Config.ClientID != "" {
+		p.Logger.Warn("-client-id is deprecated and has no effect in HTTP mode")
+	}
+
 	p.Server.AddReceivingMiddleware(
 		loggingMiddleware(os.Stderr),
 		httpTokenMiddleware(),
