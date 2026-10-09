@@ -32,7 +32,8 @@ config:
   oauthUrl: ""
   # Public URL of this server for OAuth2 protected-resource metadata.
   resourceUrl: ""
-  # OAuth2 client ID.
+  # Deprecated and unused in HTTP mode: MCP clients register themselves with
+  # the authorization server.
   clientId: ""
   # Log level: debug, info, warn, error.
   logLevel: ""

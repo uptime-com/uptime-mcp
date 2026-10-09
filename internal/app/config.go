@@ -36,10 +36,11 @@ type Config struct {
 	// Defaults to http://localhost{ListenAddr} when not set.
 	ResourceURL string
 
-	// ClientID is the OAuth2 client ID.
+	// ClientID is a pre-registered OAuth2 client ID for the stdio flow, set
+	// by the deprecated -client-id; empty, the flow registers its own client.
 	ClientID string
 
-	// ClientSecret is the OAuth2 client secret (confidential clients).
+	// ClientSecret is the secret of the ClientID client (confidential clients).
 	ClientSecret string
 
 	// LogLevel for application logger (debug, info, warn, error)
@@ -81,8 +82,8 @@ func provideConfig() (Config, error) {
 	flag.StringVar(&cfg.APIURL, "api-url", "", "Full Uptime.com API base URL override (defaults to {uptime-url}/api/v1/)")
 	flag.StringVar(&cfg.OAuthURL, "oauth-url", "", "Full OAuth2 authorization server URL override (defaults to {uptime-url})")
 	flag.StringVar(&cfg.ResourceURL, "resource-url", "", "Public URL of this server (for OAuth2 resource metadata, defaults to http://localhost:{listen})")
-	flag.StringVar(&cfg.ClientID, "client-id", "", "OAuth2 client ID")
-	flag.StringVar(&cfg.ClientSecret, "client-secret", "", "OAuth2 client secret (confidential clients)")
+	flag.StringVar(&cfg.ClientID, "client-id", "", "Deprecated: pre-registered OAuth2 client ID (without it the stdio flow registers a client itself)")
+	flag.StringVar(&cfg.ClientSecret, "client-secret", "", "Deprecated: OAuth2 client secret of the -client-id client")
 	flag.TextVar(cfg.LogLevel, "log-level", cfg.LogLevel, "Log level: debug, info, warn, error")
 	flag.Parse()
 

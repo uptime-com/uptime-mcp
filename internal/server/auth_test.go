@@ -337,16 +337,63 @@ func TestTokenHolder(t *testing.T) {
 // stdioOAuthFlow
 // ---------------------------------------------------------------------------
 
-func TestStdioOAuthFlow(t *testing.T) {
-	// Mock authorization server
-	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// fakeAuthServer is an authorization server that approves every request. It
+// publishes RFC 8414 metadata naming the issuer with a trailing slash, as
+// uptime.com does, and offers registration only when registration is true.
+type fakeAuthServer struct {
+	*httptest.Server
+	registration bool
+	registered   oauthex.ClientRegistrationMetadata
+	tokenForm    map[string][]string
+}
+
+func newFakeAuthServer(t *testing.T, registration bool) *fakeAuthServer {
+	t.Helper()
+	as := &fakeAuthServer{registration: registration}
+	as.Server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case "/.well-known/oauth-authorization-server":
+			meta := map[string]any{
+				"issuer":                           as.URL + "/",
+				"authorization_endpoint":           as.URL + "/o/authorize/",
+				"token_endpoint":                   as.URL + "/o/token/",
+				"response_types_supported":         []string{"code"},
+				"code_challenge_methods_supported": []string{"S256"},
+			}
+			if as.registration {
+				meta["registration_endpoint"] = as.URL + "/o/register/"
+			}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(meta)
+
+		case "/o/register/":
+			if !as.registration {
+				http.NotFound(w, r)
+				return
+			}
+			if err := json.NewDecoder(r.Body).Decode(&as.registered); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(map[string]any{
+				"client_id":                  "registered-client-id",
+				"redirect_uris":              as.registered.RedirectURIs,
+				"token_endpoint_auth_method": "none",
+			})
+
 		case "/o/authorize/":
 			redirectURI := r.URL.Query().Get("redirect_uri")
 			state := r.URL.Query().Get("state")
 			http.Redirect(w, r, redirectURI+"?code=test-auth-code&state="+state, http.StatusFound)
 
 		case "/o/token/":
+			if err := r.ParseForm(); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			as.tokenForm = r.PostForm
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]any{
 				"access_token":  "test-access-token",
@@ -359,9 +406,15 @@ func TestStdioOAuthFlow(t *testing.T) {
 			http.NotFound(w, r)
 		}
 	}))
-	defer authServer.Close()
+	t.Cleanup(as.Close)
+	return as
+}
 
-	origOpenBrowser := openBrowserFunc
+// approveInBrowser stands in for the user's browser: it follows the
+// authorization server's redirect to the flow's callback.
+func approveInBrowser(t *testing.T) {
+	t.Helper()
+	orig := openBrowserFunc
 	openBrowserFunc = func(url string) error {
 		client := &http.Client{
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -375,8 +428,7 @@ func TestStdioOAuthFlow(t *testing.T) {
 		defer resp.Body.Close()
 
 		if resp.StatusCode == http.StatusFound {
-			loc := resp.Header.Get("Location")
-			resp2, err := client.Get(loc)
+			resp2, err := client.Get(resp.Header.Get("Location"))
 			if err != nil {
 				return err
 			}
@@ -384,19 +436,64 @@ func TestStdioOAuthFlow(t *testing.T) {
 		}
 		return nil
 	}
-	defer func() { openBrowserFunc = origOpenBrowser }()
+	t.Cleanup(func() { openBrowserFunc = orig })
+}
 
-	cfg := stdioOAuthConfig{
-		Issuer:   authServer.URL,
-		ClientID: "test-client-id",
-		Scopes:   []string{"api/v1"},
+func TestStdioOAuthFlow(t *testing.T) {
+	t.Run("pre-registered client", func(t *testing.T) {
+		as := newFakeAuthServer(t, false)
+		approveInBrowser(t)
+
+		token, oauthCfg, err := stdioOAuthFlow(context.Background(), noopLogger(), stdioOAuthConfig{
+			Issuer:   as.URL,
+			ClientID: "test-client-id",
+			Scopes:   []string{"api/v1"},
+		})
+		require.NoError(t, err)
+		assert.Equal(t, "test-access-token", token.AccessToken)
+		assert.Equal(t, "test-refresh-token", token.RefreshToken)
+		assert.Equal(t, "test-client-id", oauthCfg.ClientID)
+	})
+
+	t.Run("registers a public client for the callback", func(t *testing.T) {
+		as := newFakeAuthServer(t, true)
+		approveInBrowser(t)
+
+		token, oauthCfg, err := stdioOAuthFlow(context.Background(), noopLogger(), stdioOAuthConfig{
+			Issuer: as.URL,
+			Scopes: []string{"api/v1"},
+		})
+		require.NoError(t, err)
+		assert.Equal(t, "test-access-token", token.AccessToken)
+
+		assert.Equal(t, []string{oauthCfg.RedirectURL}, as.registered.RedirectURIs)
+		assert.Equal(t, "none", as.registered.TokenEndpointAuthMethod)
+		assert.Equal(t, []string{"authorization_code", "refresh_token"}, as.registered.GrantTypes)
+
+		assert.Equal(t, "registered-client-id", oauthCfg.ClientID)
+		assert.Equal(t, as.URL+"/o/token/", oauthCfg.Endpoint.TokenURL)
+		assert.Equal(t, []string{"registered-client-id"}, as.tokenForm["client_id"])
+	})
+
+	t.Run("no registration endpoint", func(t *testing.T) {
+		as := newFakeAuthServer(t, false)
+		approveInBrowser(t)
+
+		_, _, err := stdioOAuthFlow(context.Background(), noopLogger(), stdioOAuthConfig{
+			Issuer: as.URL,
+			Scopes: []string{"api/v1"},
+		})
+		assert.ErrorContains(t, err, "does not offer client registration")
+	})
+}
+
+func TestDiscoverAuthServerIssuerSlash(t *testing.T) {
+	as := newFakeAuthServer(t, true)
+	for _, issuer := range []string{as.URL, as.URL + "/"} {
+		meta, err := discoverAuthServer(context.Background(), issuer)
+		require.NoError(t, err, issuer)
+		assert.Equal(t, as.URL+"/o/register/", meta.RegistrationEndpoint)
 	}
-
-	token, err := stdioOAuthFlow(context.Background(), noopLogger(), cfg)
-	require.NoError(t, err)
-	require.NotNil(t, token)
-	assert.Equal(t, "test-access-token", token.AccessToken)
-	assert.Equal(t, "test-refresh-token", token.RefreshToken)
 }
 
 func noopLogger() *slog.Logger {
