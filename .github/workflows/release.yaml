@@ -1,0 +1,56 @@
+---
+name: release
+run-name: "🏷️ Release"
+
+# The changelog decides: a push to main whose newest entry names a version no
+# tag carries cuts that tag, and build.yaml publishes it. Every other push cuts
+# nothing, and the run summary says why.
+#
+# The tag is pushed as the Uptime Release Bot App rather than with GITHUB_TOKEN:
+# a tag pushed with GITHUB_TOKEN starts no workflow, and the tag ruleset admits
+# the App. The organisation variable UPTIME_RELEASE_BOT_APP_CLIENT_ID names the
+# App and the organisation secret UPTIME_RELEASE_BOT_APP_CERT authenticates it.
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release/${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yaml
+
+  cut:
+    needs: [ci]
+    runs-on: ubuntu-latest
+    steps:
+      - id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.UPTIME_RELEASE_BOT_APP_CLIENT_ID }}
+          private-key: ${{ secrets.UPTIME_RELEASE_BOT_APP_CERT }}
+          permission-contents: write
+
+      - uses: actions/checkout@v7
+        with: # zizmor: ignore[artipacked] the Cut step pushes with this token, and the job uploads no artifact
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - id: changelog
+        uses: mikluko/action-changelog@v1
+
+      - name: Cut
+        if: steps.changelog.outputs.due == 'true'
+        env:
+          VERSION: ${{ steps.changelog.outputs.version }}
+        run: |
+          git tag "v$VERSION"
+          git push origin "refs/tags/v$VERSION"
+          echo "Cut **v$VERSION**." >>"$GITHUB_STEP_SUMMARY"

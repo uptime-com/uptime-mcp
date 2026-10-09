@@ -171,7 +171,7 @@ uptime-mcp -version
 ### Container image
 
 Published to GitHub Container Registry. Tags: `:<version>` (immutable, e.g.
-`:0.16.0`), `:latest` (newest stable release), `:main` (rolling `main` HEAD).
+`:0.16.0`) and `:latest` (newest stable release).
 
 ```bash
 docker pull ghcr.io/uptime-com/uptime-mcp:latest
