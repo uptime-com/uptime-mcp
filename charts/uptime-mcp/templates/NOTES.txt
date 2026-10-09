@@ -28,9 +28,9 @@ Uptime.com MCP Server has been deployed.
 {{- if .Values.auth.existingSecret.name }}
    - Using a static bearer token from secret "{{ .Values.auth.existingSecret.name }}" (UPTIME_BEARER_TOKEN).
 {{- else }}
-   - No static bearer token configured. Clients must supply credentials per request,
+   - No static bearer token is configured. Clients supply a token with each request,
      or set auth.existingSecret.name to mount UPTIME_BEARER_TOKEN.
 {{- end }}
 {{- if not .Values.config.uptimeUrl }}
-   - WARNING: config.uptimeUrl is empty; OAuth2 metadata and the upstream URL are unset.
+   - WARNING: config.uptimeUrl is empty, so the server publishes no OAuth2 metadata and calls the API at https://uptime.com/api/v1/.
 {{- end }}
