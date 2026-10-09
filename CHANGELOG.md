@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- In stdio mode without `-client-id`, the browser login registers its own OAuth2 client with the authorization server.
+
+### Deprecated
+
+- `-client-id` (`UPTIME_OAUTH_CLIENT_ID`) and `-client-secret` (`UPTIME_OAUTH_CLIENT_SECRET`) are deprecated and will be removed in a later version.
+- The Helm chart's `config.clientId` value is deprecated.
+
 ### Fixed
 
 - `list_checks` with `is_paused: false` returns only checks that are not paused.

@@ -21,13 +21,6 @@ export KO_DOCKER_REPO VERSION COMMIT
 # Uptime.com instance URL. Override for self-hosted/regional instances.
 UPTIME_URL ?= https://uptime.com
 
-# OAuth2 client ID for the stdio browser login used by `run/claude`.
-# Register your own OAuth application in your Uptime.com account
-# (Settings -> API & Integrations) and pass it in, e.g.:
-#   make run/claude UPTIME_OAUTH_CLIENT_ID=xxxxxxxx
-# Alternatively export UPTIME_BEARER_TOKEN to skip OAuth entirely.
-UPTIME_OAUTH_CLIENT_ID ?=
-
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9/]+:.*##' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  %-14s %s\n", $$1, $$2}'
 
@@ -64,9 +57,6 @@ run/http: ## Start HTTP server on :8080
 		-uptime-url=$(UPTIME_URL) \
 		-log-level=debug
 
-run/claude: ## Launch Claude Code with stdio MCP (needs UPTIME_OAUTH_CLIENT_ID or UPTIME_BEARER_TOKEN)
-	@if [ -z "$(UPTIME_OAUTH_CLIENT_ID)" ] && [ -z "$$UPTIME_BEARER_TOKEN" ]; then \
-		echo "set UPTIME_OAUTH_CLIENT_ID=<your-client-id> or export UPTIME_BEARER_TOKEN=<token>"; exit 1; \
-	fi
-	@printf '{"mcpServers":{"uptime":{"type":"stdio","command":"go","args":["run",".","-transport=stdio","-uptime-url=$(UPTIME_URL)","-client-id=$(UPTIME_OAUTH_CLIENT_ID)","-log-level=debug"]}}}' >"$${TMPDIR:-/tmp}/claude-uptime-mcp.json"
+run/claude: ## Launch Claude Code with stdio MCP (browser login, or UPTIME_BEARER_TOKEN)
+	@printf '{"mcpServers":{"uptime":{"type":"stdio","command":"go","args":["run",".","-transport=stdio","-uptime-url=$(UPTIME_URL)","-log-level=debug"]}}}' >"$${TMPDIR:-/tmp}/claude-uptime-mcp.json"
 	claude --mcp-config "$${TMPDIR:-/tmp}/claude-uptime-mcp.json"
