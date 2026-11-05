@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/modelcontextprotocol/go-sdk v1.8.0
 	github.com/stretchr/testify v1.12.1
-	github.com/uptime-com/uptime-client-go/v2 v2.17.0
+	github.com/uptime-com/uptime-client-go/v2 v2.18.0
 	go.uber.org/fx v1.24.0
 	golang.org/x/oauth2 v0.37.0
 )
