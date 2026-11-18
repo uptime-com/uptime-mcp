@@ -14,7 +14,7 @@ import (
 func TestHandleGetCheckStats(t *testing.T) {
 	t.Run("returns formatted stats with uptime and response time", func(t *testing.T) {
 		uptime := 0.995
-		responseTime := 245.5
+		responseTime := 0.2455
 
 		svc := newChecksServiceMock(t)
 		svc.EXPECT().Stats(mock.Anything, upapi.PrimaryKey(123), upapi.CheckStatsOptions{}).Return(&upapi.ListResult[upapi.CheckStats]{

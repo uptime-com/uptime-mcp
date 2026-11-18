@@ -69,7 +69,7 @@ func (c *checksHandler) HandleGetCheckStats(ctx context.Context, _ *mcp.CallTool
 				parts = append(parts, fmt.Sprintf("%.2f%% uptime", *s.Uptime*100))
 			}
 			if s.ResponseTime != nil {
-				parts = append(parts, fmt.Sprintf("%.0fms response", *s.ResponseTime))
+				parts = append(parts, fmt.Sprintf("%.0fms response", *s.ResponseTime*1000))
 			}
 			if s.Outages > 0 {
 				parts = append(parts, fmt.Sprintf("%d outage(s), %ds down", s.Outages, s.DowntimeSecs))
