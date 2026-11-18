@@ -64,38 +64,32 @@ func (h *alertsHandler) loadAlert(ctx context.Context, client upapi.API, id int6
 	fmt.Fprintf(sb, "Type: %s\n", alert.CheckMonitoringServiceType)
 	fmt.Fprintf(sb, "Address: %s\n", alert.CheckAddress)
 
-	// Location info
-	fmt.Fprintf(sb, "Location: %s\n", alert.Location)
-	fmt.Fprintf(sb, "Server: %s\n", alert.MonitoringServerName)
-	if alert.MonitoringServerIPv4 != nil {
-		fmt.Fprintf(sb, "IPv4: %s\n", alert.MonitoringServerIPv4.String())
-	}
-	if alert.MonitoringServerIPv6 != nil {
-		fmt.Fprintf(sb, "IPv6: %s\n", alert.MonitoringServerIPv6.String())
-	}
-
-	// Status
 	if alert.StateIsUp {
 		fmt.Fprintf(sb, "Status: Resolved\n")
 	} else {
 		fmt.Fprintf(sb, "Status: Down\n")
+		fmt.Fprintf(sb, "Locations down: %d\n", alert.NumLocationsDown)
 	}
 	if alert.Ignored {
 		fmt.Fprintf(sb, "Ignored: yes\n")
 	}
-
-	// Timestamps
 	if alert.CreatedAt != nil {
 		fmt.Fprintf(sb, "Created: %s\n", alert.CreatedAt.Format("2006-01-02 15:04:05"))
 	}
-	if alert.ResolvedAt != nil {
-		fmt.Fprintf(sb, "Resolved: %s\n", alert.ResolvedAt.Format("2006-01-02 15:04:05"))
-	}
 
-	// Output
-	if alert.Output != "" {
-		fmt.Fprintf(sb, "\nOutput:\n%s\n", alert.Output)
-	}
+	writeLocationAlerts(sb, alert.AllAlerts)
 
 	return nil
+}
+
+// writeLocationAlerts writes one line per location reporting the check down,
+// and nothing when there are none.
+func writeLocationAlerts(sb *strings.Builder, alerts []upapi.Alert) {
+	if len(alerts) == 0 {
+		return
+	}
+	fmt.Fprintf(sb, "\nAlerts:\n")
+	for _, a := range alerts {
+		fmt.Fprintf(sb, "  - %s (%s): %s\n", a.MonitoringServerName, a.Location, a.Output)
+	}
 }

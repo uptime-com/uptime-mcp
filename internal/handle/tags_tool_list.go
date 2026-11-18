@@ -51,7 +51,7 @@ func (t *tagsHandler) HandleListTags(ctx context.Context, _ *mcp.CallToolRequest
 	var sb strings.Builder
 	sb.WriteString(formatPaginationHeader(result.TotalCount, page, pageSize, len(result.Items)))
 	for _, tag := range result.Items {
-		fmt.Fprintf(&sb, "- [%d] %s (color: #%s)\n", tag.PK, tag.Tag, tag.ColorHex)
+		fmt.Fprintf(&sb, "- [%d] %s (color: %s)\n", tag.PK, tag.Tag, formatTagColor(tag.ColorHex))
 	}
 
 	return textResult(sb.String()), nil, nil

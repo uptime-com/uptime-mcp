@@ -61,7 +61,7 @@ func (h *alertsHandler) HandleListAlerts(ctx context.Context, _ *mcp.CallToolReq
 	}
 
 	var sb strings.Builder
-	sb.WriteString(formatPaginationHeader(result.TotalCount, page, pageSize, len(result.Items)))
+	sb.WriteString(formatUncountedPaginationHeader(page, pageSize, len(result.Items)))
 	for _, alert := range result.Items {
 		status := "down"
 		if alert.StateIsUp {
@@ -71,12 +71,14 @@ func (h *alertsHandler) HandleListAlerts(ctx context.Context, _ *mcp.CallToolReq
 			status += " (ignored)"
 		}
 		fmt.Fprintf(&sb, "- [%d] %s (%s) - %s\n", alert.PK, alert.CheckName, alert.CheckMonitoringServiceType, status)
-		fmt.Fprintf(&sb, "  Location: %s (%s)\n", alert.Location, alert.MonitoringServerName)
+		if !alert.StateIsUp {
+			fmt.Fprintf(&sb, "  Locations down: %d\n", alert.NumLocationsDown)
+		}
+		for _, a := range alert.AllAlerts {
+			fmt.Fprintf(&sb, "  Location: %s (%s)\n", a.Location, a.MonitoringServerName)
+		}
 		if alert.CreatedAt != nil {
 			fmt.Fprintf(&sb, "  Created: %s\n", alert.CreatedAt.Format("2006-01-02 15:04:05"))
-		}
-		if alert.StateIsUp && alert.ResolvedAt != nil {
-			fmt.Fprintf(&sb, "  Resolved: %s\n", alert.ResolvedAt.Format("2006-01-02 15:04:05"))
 		}
 	}
 

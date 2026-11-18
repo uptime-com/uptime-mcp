@@ -14,31 +14,29 @@ import (
 
 func TestHandleListAlerts(t *testing.T) {
 	createdAt := time.Date(2024, 1, 15, 10, 30, 0, 0, time.UTC)
-	resolvedAt := time.Date(2024, 1, 15, 11, 0, 0, 0, time.UTC)
 
 	t.Run("returns formatted list of alerts", func(t *testing.T) {
 		svc := newAlertsServiceMock(t)
 		svc.EXPECT().List(mock.Anything, mock.Anything).Return(&upapi.ListResult[upapi.AlertItem]{
-			TotalCount: 2,
 			Items: []upapi.AlertItem{
 				{
 					PK:                         1,
 					CheckName:                  "Web Check",
 					CheckMonitoringServiceType: "HTTP",
 					StateIsUp:                  false,
-					Location:                   "New York",
-					MonitoringServerName:       "nyc-server-1",
-					CreatedAt:                  &createdAt,
+					NumLocationsDown:           2,
+					AllAlerts: []upapi.Alert{
+						{Location: "New York", MonitoringServerName: "nyc-server-1"},
+						{Location: "London", MonitoringServerName: "lon-server-1"},
+					},
+					CreatedAt: &createdAt,
 				},
 				{
 					PK:                         2,
 					CheckName:                  "API Check",
 					CheckMonitoringServiceType: "HTTP",
 					StateIsUp:                  true,
-					Location:                   "London",
-					MonitoringServerName:       "lon-server-1",
 					CreatedAt:                  &createdAt,
-					ResolvedAt:                 &resolvedAt,
 				},
 			},
 		}, nil)
@@ -53,11 +51,11 @@ func TestHandleListAlerts(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, result.Content, 1)
 		text := result.Content[0].(*mcp.TextContent).Text
-		assert.Contains(t, text, "Found 2 results")
+		assert.Contains(t, text, "Showing 2 results (page 1, final page)")
 		assert.Contains(t, text, "[1] Web Check (HTTP) - down")
 		assert.Contains(t, text, "[2] API Check (HTTP) - resolved")
-		assert.Contains(t, text, "Location: New York")
-		assert.Contains(t, text, "Location: London")
+		assert.Contains(t, text, "  Locations down: 2\n  Location: New York (nyc-server-1)\n  Location: London (lon-server-1)\n")
+		assert.NotContains(t, text, "Location:  ()")
 	})
 
 	t.Run("shows ignored status", func(t *testing.T) {
@@ -71,8 +69,6 @@ func TestHandleListAlerts(t *testing.T) {
 					CheckMonitoringServiceType: "HTTP",
 					StateIsUp:                  false,
 					Ignored:                    true,
-					Location:                   "Tokyo",
-					MonitoringServerName:       "tky-server-1",
 					CreatedAt:                  &createdAt,
 				},
 			},
@@ -149,7 +145,6 @@ func TestHandleListAlerts(t *testing.T) {
 
 func TestHandleGetAlert(t *testing.T) {
 	createdAt := time.Date(2024, 1, 15, 10, 30, 0, 0, time.UTC)
-	resolvedAt := time.Date(2024, 1, 15, 11, 0, 0, 0, time.UTC)
 
 	t.Run("returns formatted alert details", func(t *testing.T) {
 		svc := newAlertsServiceMock(t)
@@ -159,12 +154,12 @@ func TestHandleGetAlert(t *testing.T) {
 			CheckPK:                    456,
 			CheckMonitoringServiceType: "HTTP",
 			CheckAddress:               "https://example.com",
-			StateIsUp:                  true,
-			Location:                   "New York",
-			MonitoringServerName:       "nyc-server-1",
-			CreatedAt:                  &createdAt,
-			ResolvedAt:                 &resolvedAt,
-			Output:                     "Connection successful",
+			StateIsUp:                  false,
+			NumLocationsDown:           1,
+			AllAlerts: []upapi.Alert{
+				{Location: "New York", MonitoringServerName: "nyc-server-1", Output: "Connection refused"},
+			},
+			CreatedAt: &createdAt,
 		}, nil)
 
 		client := newClientMock(t)
@@ -180,13 +175,13 @@ func TestHandleGetAlert(t *testing.T) {
 		assert.Contains(t, text, "Check: Web Check (#456)")
 		assert.Contains(t, text, "Type: HTTP")
 		assert.Contains(t, text, "Address: https://example.com")
-		assert.Contains(t, text, "Location: New York")
-		assert.Contains(t, text, "Server: nyc-server-1")
-		assert.Contains(t, text, "Status: Resolved")
-		assert.Contains(t, text, "Connection successful")
+		assert.Contains(t, text, "Status: Down")
+		assert.Contains(t, text, "Locations down: 1")
+		assert.Contains(t, text, "\nAlerts:\n  - nyc-server-1 (New York): Connection refused\n")
+		assert.NotContains(t, text, "Location: \n")
 	})
 
-	t.Run("shows down status for unresolved alerts", func(t *testing.T) {
+	t.Run("shows resolved status without location alerts", func(t *testing.T) {
 		svc := newAlertsServiceMock(t)
 		svc.EXPECT().Get(mock.Anything, upapi.PrimaryKey(123)).Return(&upapi.AlertItem{
 			PK:                         123,
@@ -194,9 +189,7 @@ func TestHandleGetAlert(t *testing.T) {
 			CheckPK:                    456,
 			CheckMonitoringServiceType: "HTTP",
 			CheckAddress:               "https://example.com",
-			StateIsUp:                  false,
-			Location:                   "New York",
-			MonitoringServerName:       "nyc-server-1",
+			StateIsUp:                  true,
 			CreatedAt:                  &createdAt,
 		}, nil)
 
@@ -209,7 +202,9 @@ func TestHandleGetAlert(t *testing.T) {
 
 		require.NoError(t, err)
 		text := result.Content[0].(*mcp.TextContent).Text
-		assert.Contains(t, text, "Status: Down")
+		assert.Contains(t, text, "Status: Resolved")
+		assert.NotContains(t, text, "Locations down")
+		assert.NotContains(t, text, "Alerts:")
 	})
 
 	t.Run("shows ignored status", func(t *testing.T) {
@@ -222,8 +217,6 @@ func TestHandleGetAlert(t *testing.T) {
 			CheckAddress:               "https://example.com",
 			StateIsUp:                  false,
 			Ignored:                    true,
-			Location:                   "New York",
-			MonitoringServerName:       "nyc-server-1",
 			CreatedAt:                  &createdAt,
 		}, nil)
 
@@ -354,8 +347,6 @@ func TestHandleAlertResource(t *testing.T) {
 			CheckMonitoringServiceType: "HTTP",
 			CheckAddress:               "https://example.com",
 			StateIsUp:                  false,
-			Location:                   "New York",
-			MonitoringServerName:       "nyc-server-1",
 			CreatedAt:                  &createdAt,
 		}, nil)
 

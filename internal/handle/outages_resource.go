@@ -78,11 +78,8 @@ func (h *outagesHandler) loadOutage(ctx context.Context, client upapi.API, id in
 		fmt.Fprintf(sb, "Ignored: yes\n")
 	}
 
-	if outage.AllAlerts != nil && len(*outage.AllAlerts) > 0 {
-		fmt.Fprintf(sb, "\nAlerts:\n")
-		for _, a := range *outage.AllAlerts {
-			fmt.Fprintf(sb, "  - %s (%s): %s\n", a.MonitoringServerName, a.Location, a.Output)
-		}
+	if outage.AllAlerts != nil {
+		writeLocationAlerts(sb, *outage.AllAlerts)
 	}
 
 	return nil

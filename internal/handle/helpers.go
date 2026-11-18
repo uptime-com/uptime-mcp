@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
@@ -50,6 +51,32 @@ func formatPaginationHeader(totalCount int64, page, pageSize int64, resultCount 
 
 	return fmt.Sprintf("Showing %d of %d total (page %d of %d).\nUse page=%d to see next page.\n\n",
 		resultCount, totalCount, page, totalPages, page+1)
+}
+
+// formatUncountedPaginationHeader formats pagination info for endpoints whose
+// responses carry no total count, such as alerts and outages. A full page is
+// taken to mean more may follow.
+func formatUncountedPaginationHeader(page, pageSize int64, resultCount int) string {
+	switch {
+	case resultCount == 0 && page <= 1:
+		return "Found 0 results.\n\n"
+	case resultCount == 0:
+		return fmt.Sprintf("No results on page %d.\n\n", page)
+	case int64(resultCount) < pageSize:
+		return fmt.Sprintf("Showing %d results (page %d, final page).\n\n", resultCount, page)
+	default:
+		return fmt.Sprintf("Showing %d results (page %d).\nUse page=%d to see next page.\n\n",
+			resultCount, page, page+1)
+	}
+}
+
+// formatTagColor renders a tag's hex color with exactly one leading '#',
+// whether or not the stored value carries one.
+func formatTagColor(hex string) string {
+	if hex == "" {
+		return ""
+	}
+	return "#" + strings.TrimPrefix(hex, "#")
 }
 
 // clientFromContext retrieves the cached API client from session context.
