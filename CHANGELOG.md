@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.0] - 2026-11-18
 
+### Added
+
+- `search_issues` finds existing GitHub issues for this server, and `report_issue` drafts a bug report or feature request, or a comment on a matching issue, for the user to submit.
+- The server instructions ask agents to search for an existing issue before reporting a problem, and to comment there rather than open a duplicate.
+
 ### Changed
 
 - In stdio mode, `-client-id` (`UPTIME_OAUTH_CLIENT_ID`) defaults to `uptime-mcp`, so the browser login starts without one.

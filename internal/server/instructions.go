@@ -31,4 +31,14 @@ Beyond HTTP, add:
 - Email, when the domain receives mail: a DNS check with dns_record_type MX, and SMTP, IMAP or POP checks for the mail servers.
 - TCP, SSH, UDP or NTP: for services the domain runs beyond the web.
 - Blacklist and Malware: listing on spam blacklists and on Google Safe Browsing.
+
+## Reporting problems with this server
+
+When a tool fails in a way its input does not explain, returns output that contradicts itself or the Uptime.com web app, or the task needs a capability no tool offers, tell the user and offer to report it:
+
+1. Call search_issues with the tool name and the symptom. If an existing issue describes the same thing, open or closed, the report belongs there as a comment, not as a new issue.
+2. With the user's agreement, call report_issue, passing existing_issue when step 1 found a match.
+3. Give the user what report_issue returns. They submit it; nothing is filed without them.
+
+A bug report names the tool, the input, what came back and what was expected. A feature request names the task and what was missing. Leave out tokens, keys and account data the user has not agreed to share.
 `

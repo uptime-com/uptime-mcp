@@ -12,6 +12,7 @@ var Module = fx.Module("tools",
 	dashboardsModule,
 	locationsModule,
 	outagesModule,
+	reportModule,
 	statusPagesModule,
 	tagsModule,
 )

@@ -16,6 +16,7 @@ import (
 
 	"github.com/uptime-com/uptime-mcp/internal/app"
 	"github.com/uptime-com/uptime-mcp/internal/handle"
+	"github.com/uptime-com/uptime-mcp/internal/server"
 )
 
 // makeClientSession creates an MCP client session connected to the server via in-memory transport.
@@ -60,7 +61,7 @@ func makeClientSession(t *testing.T) *mcp.ClientSession {
 		fx.WithLogger(func() fxevent.Logger {
 			return fxevent.NopLogger
 		}),
-		fx.Supply(srv),
+		fx.Supply(srv, server.Info{Version: "e2e-test"}),
 		handle.Module,
 	)
 	fxApp.RequireStart()

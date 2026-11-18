@@ -7,6 +7,8 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/fx/fxtest"
+
+	"github.com/uptime-com/uptime-mcp/internal/server"
 )
 
 // TestToolRegistration validates that all tools can be registered without panic.
@@ -22,6 +24,7 @@ func TestToolRegistration(t *testing.T) {
 				Version: "test",
 			}, nil)
 		}),
+		fx.Supply(server.Info{Version: "test"}),
 		Module,
 	)
 
