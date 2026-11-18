@@ -40,7 +40,5 @@ When a tool fails in a way its input does not explain, returns output that contr
 2. With the user's agreement, call report_issue, passing existing_issue when step 1 found a match.
 3. Give the user what report_issue returns. They submit it; nothing is filed without them.
 
-A bug report names the tool, the input, what came back and what was expected. A feature request names the task and what was missing.
-
-Issues are public. Before calling report_issue, anonymize the draft: replace every sensitive value with a placeholder that keeps its shape, so the report still shows what went wrong. Sensitive values include tokens and keys, email addresses and phone numbers, the user's domains, URLs and IP addresses, and the names of their account, contacts, checks, tags, dashboards and status pages. For example, https://shop.acme.io/cart becomes https://<domain>/cart, and a check named "Acme checkout" becomes "<check name>". Numeric IDs, check types, location names and error messages from Uptime.com can stay. Show the user the anonymized draft before they submit it.
+A bug report names the tool, the input, what came back and what was expected. A feature request names the task and what was missing. Leave out tokens, keys and account data the user has not agreed to share.
 `
