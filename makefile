@@ -21,13 +21,6 @@ export KO_DOCKER_REPO VERSION COMMIT
 # Uptime.com instance URL. Override for self-hosted/regional instances.
 UPTIME_URL ?= https://uptime.com
 
-# OAuth2 client ID for the stdio browser login used by `run/claude`.
-# Register your own OAuth application in your Uptime.com account
-# (Settings -> API & Integrations) and pass it in, e.g.:
-#   make run/claude UPTIME_OAUTH_CLIENT_ID=xxxxxxxx
-# Alternatively export UPTIME_BEARER_TOKEN to skip OAuth entirely.
-UPTIME_OAUTH_CLIENT_ID ?=
-
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9/]+:.*##' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  %-14s %s\n", $$1, $$2}'
 
