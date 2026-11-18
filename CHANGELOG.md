@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `search_issues` finds existing GitHub issues for this server, and `report_issue` drafts a bug report or feature request, or a comment on a matching issue, for the user to submit.
-- The server instructions ask agents to search for an existing issue before reporting a problem, and to comment there rather than open a duplicate.
+- The server instructions ask agents to search for an existing issue before reporting a problem, to comment there rather than open a duplicate, and to replace sensitive data in the draft with placeholders.
 
 ### Changed
 

@@ -33,8 +33,8 @@ func registerReportIssueTool(srv *mcp.Server, h *reportHandler) {
 
 type reportIssueInput struct {
 	Kind          string `json:"kind" jsonschema:"bug or feature"`
-	Title         string `json:"title" jsonschema:"one-line summary naming the tool or capability"`
-	Body          string `json:"body" jsonschema:"for a bug: the tool, the input, what came back and what was expected; for a feature: the task and what was missing. No tokens, keys or account data the user has not agreed to share"`
+	Title         string `json:"title" jsonschema:"one-line summary naming the tool or capability, anonymized like the body"`
+	Body          string `json:"body" jsonschema:"for a bug: the tool, the input, what came back and what was expected; for a feature: the task and what was missing. Issues are public: replace tokens, keys, emails, phone numbers, the user's domains, URLs and IPs, and account, contact and check names with placeholders such as <domain> or <check name>"`
 	ExistingIssue int    `json:"existing_issue,omitempty" jsonschema:"number of a matching issue found by search_issues; drafts a comment on it instead of a new issue"`
 }
 
