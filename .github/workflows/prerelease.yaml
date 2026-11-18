@@ -49,7 +49,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - id: changelog
-        uses: mikluko/action-changelog/actions/validate@v2
+        uses: mikluko/changelog/actions/validate@v2
         with:
           # The release is not dated while its work is in flight.
           "off": undated-entry

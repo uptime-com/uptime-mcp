@@ -29,7 +29,7 @@ jobs:
           # The tag-dependent checks read the tag history.
           fetch-depth: 0
 
-      - uses: mikluko/action-changelog/actions/validate@v2
+      - uses: mikluko/changelog/actions/validate@v2
         with:
           # A change with no user-visible effect, a dependency bump among
           # them, carries no note.
