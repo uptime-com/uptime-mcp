@@ -132,8 +132,8 @@ or run the container image:
 ### Claude Desktop (OAuth2, no static token)
 
 Instead of a static token, let the server run a browser-based OAuth2 login on
-the first tool call. This needs an OAuth application registered in your
-Uptime.com account (a client ID). No token is stored in your config:
+the first tool call. The server signs in as the `uptime-mcp` client that
+Uptime.com registers for it. No token is stored in your config:
 
 ```json
 {
@@ -142,8 +142,7 @@ Uptime.com account (a client ID). No token is stored in your config:
       "command": "uptime-mcp",
       "args": [
         "-transport=stdio",
-        "-uptime-url=https://uptime.com",
-        "-client-id=<your-client-id>"
+        "-uptime-url=https://uptime.com"
       ]
     }
   }
@@ -217,7 +216,7 @@ sensitive values.
 | `-api-url`       | `UPTIME_API_URL`             | _(from `-uptime-url`)_    | Full API base URL override, used verbatim (e.g. `http://uptime.svc.cluster.local/api/v1/`). |
 | `-oauth-url`     | `UPTIME_OAUTH_URL`           | _(from `-uptime-url`)_    | Full OAuth2 authorization server URL override, used verbatim as the issuer. |
 | `-resource-url`  | `UPTIME_RESOURCE_URL`        | `http://localhost:<port>` | Public URL of this server, for OAuth2 protected-resource metadata.  |
-| `-client-id`     | `UPTIME_OAUTH_CLIENT_ID`     | _(empty)_                 | OAuth2 client ID.                                                   |
+| `-client-id`     | `UPTIME_OAUTH_CLIENT_ID`     | `uptime-mcp`              | OAuth2 client ID.                                                   |
 | `-client-secret` | `UPTIME_OAUTH_CLIENT_SECRET` | _(empty)_                 | OAuth2 client secret (confidential clients).                        |
 | `-log-level`     | —                            | `error`                   | Log level: `debug`, `info`, `warn`, `error`.                        |
 | `-version`       | —                            | —                         | Print version and commit, then exit.                               |
@@ -245,14 +244,12 @@ UPTIME_BEARER_TOKEN=<your-api-token> uptime-mcp -transport=stdio
 In stdio mode, when `UPTIME_BEARER_TOKEN` is not set, the server performs a
 browser-based OAuth2 **PKCE** flow lazily, on the first tool call rather than at
 startup. This keeps the MCP handshake (`initialize`, `tools/list`) fast. It
-needs `-uptime-url` and `-client-id`; scope `api/v1` is requested against
-`<uptime-url>/o/authorize/` and `<uptime-url>/o/token/`, and tokens are
-refreshed in the background.
+needs `-uptime-url`, and signs in as `-client-id`, `uptime-mcp` unless set;
+scope `api/v1` is requested against `<uptime-url>/o/authorize/` and
+`<uptime-url>/o/token/`, and tokens are refreshed in the background.
 
 ```bash
-uptime-mcp -transport=stdio \
-  -uptime-url=https://uptime.com \
-  -client-id=<your-client-id>
+uptime-mcp -transport=stdio -uptime-url=https://uptime.com
 ```
 
 ### HTTP (per-request bearer + RFC 9728 discovery)
@@ -280,13 +277,8 @@ authorization server and scopes (`api/v1`, `api/v1:read`) so OAuth2-capable MCP
 clients can obtain tokens themselves.
 
 ```bash
-uptime-mcp -transport=http -listen=:8080 \
-  -uptime-url=https://uptime.com \
-  -client-id=<your-client-id>
+uptime-mcp -transport=http -listen=:8080 -uptime-url=https://uptime.com
 ```
-
-> Dynamic Client Registration ([RFC 7591](https://www.rfc-editor.org/rfc/rfc7591))
-> is planned, so OAuth2 clients will not need a pre-registered client ID.
 
 ## HTTP mode and health endpoint
 

@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+// DefaultClientID is the public OAuth2 client Uptime.com registers for this server.
+const DefaultClientID = "uptime-mcp"
+
 // Config holds the application configuration from CLI flags.
 type Config struct {
 	// Transport mode: "http" or "stdio"
@@ -81,7 +84,7 @@ func provideConfig() (Config, error) {
 	flag.StringVar(&cfg.APIURL, "api-url", "", "Full Uptime.com API base URL override (defaults to {uptime-url}/api/v1/)")
 	flag.StringVar(&cfg.OAuthURL, "oauth-url", "", "Full OAuth2 authorization server URL override (defaults to {uptime-url})")
 	flag.StringVar(&cfg.ResourceURL, "resource-url", "", "Public URL of this server (for OAuth2 resource metadata, defaults to http://localhost:{listen})")
-	flag.StringVar(&cfg.ClientID, "client-id", "", "OAuth2 client ID")
+	flag.StringVar(&cfg.ClientID, "client-id", "", "OAuth2 client ID (defaults to "+DefaultClientID+")")
 	flag.StringVar(&cfg.ClientSecret, "client-secret", "", "OAuth2 client secret (confidential clients)")
 	flag.TextVar(cfg.LogLevel, "log-level", cfg.LogLevel, "Log level: debug, info, warn, error")
 	flag.Parse()
@@ -112,12 +115,22 @@ func provideConfig() (Config, error) {
 		}
 		cfg.ResourceURL = "http://" + host + ":" + port
 	}
-	if cfg.ClientID == "" {
-		cfg.ClientID = os.Getenv("UPTIME_OAUTH_CLIENT_ID")
-	}
+	cfg.ClientID = resolveClientID(cfg.ClientID)
 	if cfg.ClientSecret == "" {
 		cfg.ClientSecret = os.Getenv("UPTIME_OAUTH_CLIENT_SECRET")
 	}
 
 	return cfg, nil
+}
+
+// resolveClientID returns the -client-id flag value, else UPTIME_OAUTH_CLIENT_ID,
+// else DefaultClientID.
+func resolveClientID(flagValue string) string {
+	if flagValue != "" {
+		return flagValue
+	}
+	if env := os.Getenv("UPTIME_OAUTH_CLIENT_ID"); env != "" {
+		return env
+	}
+	return DefaultClientID
 }
