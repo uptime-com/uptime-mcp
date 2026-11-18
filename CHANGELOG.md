@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-18
+
+### Changed
+
+- In stdio mode, `-client-id` (`UPTIME_OAUTH_CLIENT_ID`) defaults to `uptime-mcp`, so the browser login starts without one.
+
 ### Fixed
 
 - `list_checks` with `is_paused: false` returns only checks that are not paused.
@@ -41,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release.
 
-[Unreleased]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.3...HEAD
+[Unreleased]: https://github.com/uptime-com/uptime-mcp/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.3...v0.18.0
 [0.17.3]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.2...v0.17.3
 [0.17.2]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/uptime-com/uptime-mcp/compare/v0.17.0...v0.17.1
