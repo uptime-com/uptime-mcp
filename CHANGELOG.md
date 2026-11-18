@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.0] - 2026-11-18
 
+### Added
+
+- `search_issues` and `report_issue` let agents find and draft GitHub issues for the user to submit.
+
 ### Changed
 
 - In stdio mode, `-client-id` (`UPTIME_OAUTH_CLIENT_ID`) defaults to `uptime-mcp`, so the browser login starts without one.

@@ -318,6 +318,15 @@ providers and services for `cloudstatus` checks.
 `get_account_usage` — account usage and plan limits.
 </details>
 
+<details>
+<summary><b>Reporting problems</b></summary>
+
+`search_issues` — search this repository's GitHub issues for an existing
+report. `report_issue` — draft a bug report or feature request: a prefilled
+new-issue link, or a comment for a matching issue, for the user to submit.
+Neither files anything on its own.
+</details>
+
 ## Development
 
 Requirements: Go 1.26+.
