@@ -51,7 +51,7 @@ func (o *outagesHandler) HandleListOutages(ctx context.Context, _ *mcp.CallToolR
 	}
 
 	var sb strings.Builder
-	sb.WriteString(formatPaginationHeader(result.TotalCount, page, pageSize, len(result.Items)))
+	sb.WriteString(formatUncountedPaginationHeader(page, pageSize, len(result.Items)))
 	for _, outage := range result.Items {
 		status := "ongoing"
 		if outage.StateIsUp {

@@ -61,7 +61,7 @@ func (h *alertsHandler) HandleListAlerts(ctx context.Context, _ *mcp.CallToolReq
 	}
 
 	var sb strings.Builder
-	sb.WriteString(formatPaginationHeader(result.TotalCount, page, pageSize, len(result.Items)))
+	sb.WriteString(formatUncountedPaginationHeader(page, pageSize, len(result.Items)))
 	for _, alert := range result.Items {
 		status := "down"
 		if alert.StateIsUp {

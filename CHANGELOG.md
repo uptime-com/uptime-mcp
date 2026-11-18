@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `list_alerts` and `list_outages` report how many results the page holds, rather than "Found 0 results".
+
 ## [0.18.0] - 2026-11-18
 
 ### Changed

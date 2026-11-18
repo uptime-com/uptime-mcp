@@ -52,6 +52,23 @@ func formatPaginationHeader(totalCount int64, page, pageSize int64, resultCount 
 		resultCount, totalCount, page, totalPages, page+1)
 }
 
+// formatUncountedPaginationHeader formats pagination info for endpoints whose
+// responses carry no total count, such as alerts and outages. A full page is
+// taken to mean more may follow.
+func formatUncountedPaginationHeader(page, pageSize int64, resultCount int) string {
+	switch {
+	case resultCount == 0 && page <= 1:
+		return "Found 0 results.\n\n"
+	case resultCount == 0:
+		return fmt.Sprintf("No results on page %d.\n\n", page)
+	case int64(resultCount) < pageSize:
+		return fmt.Sprintf("Showing %d results (page %d, final page).\n\n", resultCount, page)
+	default:
+		return fmt.Sprintf("Showing %d results (page %d).\nUse page=%d to see next page.\n\n",
+			resultCount, page, page+1)
+	}
+}
+
 // clientFromContext retrieves the cached API client from session context.
 func clientFromContext(ctx context.Context) (upapi.API, error) {
 	session := app.SessionFromContext(ctx)

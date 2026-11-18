@@ -19,7 +19,6 @@ func TestHandleListAlerts(t *testing.T) {
 	t.Run("returns formatted list of alerts", func(t *testing.T) {
 		svc := newAlertsServiceMock(t)
 		svc.EXPECT().List(mock.Anything, mock.Anything).Return(&upapi.ListResult[upapi.AlertItem]{
-			TotalCount: 2,
 			Items: []upapi.AlertItem{
 				{
 					PK:                         1,
@@ -53,7 +52,7 @@ func TestHandleListAlerts(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, result.Content, 1)
 		text := result.Content[0].(*mcp.TextContent).Text
-		assert.Contains(t, text, "Found 2 results")
+		assert.Contains(t, text, "Showing 2 results (page 1, final page)")
 		assert.Contains(t, text, "[1] Web Check (HTTP) - down")
 		assert.Contains(t, text, "[2] API Check (HTTP) - resolved")
 		assert.Contains(t, text, "Location: New York")
