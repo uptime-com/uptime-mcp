@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `list_alerts` and `list_outages` report how many results the page holds, rather than "Found 0 results".
+- `list_tags` and the tag resource print a tag's color with a single `#`.
 
 ## [0.18.0] - 2026-11-18
 

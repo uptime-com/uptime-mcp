@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/uptime-com/uptime-client-go/v2/pkg/upapi"
@@ -67,6 +68,15 @@ func formatUncountedPaginationHeader(page, pageSize int64, resultCount int) stri
 		return fmt.Sprintf("Showing %d results (page %d).\nUse page=%d to see next page.\n\n",
 			resultCount, page, page+1)
 	}
+}
+
+// formatTagColor renders a tag's hex color with exactly one leading '#',
+// whether or not the stored value carries one.
+func formatTagColor(hex string) string {
+	if hex == "" {
+		return ""
+	}
+	return "#" + strings.TrimPrefix(hex, "#")
 }
 
 // clientFromContext retrieves the cached API client from session context.

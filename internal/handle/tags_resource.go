@@ -61,7 +61,7 @@ func (h *tagsHandler) loadTag(ctx context.Context, client upapi.API, id int64, s
 
 	fmt.Fprintf(sb, "Tag #%d\n", tag.PK)
 	fmt.Fprintf(sb, "Name: %s\n", tag.Tag)
-	fmt.Fprintf(sb, "Color: #%s\n", tag.ColorHex)
+	fmt.Fprintf(sb, "Color: %s\n", formatTagColor(tag.ColorHex))
 
 	return nil
 }
