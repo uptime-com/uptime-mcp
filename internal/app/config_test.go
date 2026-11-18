@@ -2,6 +2,27 @@ package app
 
 import "testing"
 
+func TestResolveClientID(t *testing.T) {
+	tests := []struct {
+		name string
+		flag string
+		env  string
+		want string
+	}{
+		{name: "default", want: DefaultClientID},
+		{name: "env overrides default", env: "from-env", want: "from-env"},
+		{name: "flag overrides env", flag: "from-flag", env: "from-env", want: "from-flag"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Setenv("UPTIME_OAUTH_CLIENT_ID", tt.env)
+			if got := resolveClientID(tt.flag); got != tt.want {
+				t.Errorf("resolveClientID(%q) = %q, want %q", tt.flag, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestAPIBaseURL(t *testing.T) {
 	tests := []struct {
 		name string

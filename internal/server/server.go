@@ -47,7 +47,7 @@ func Run(p RunParams) {
 //
 // Token sources (checked in order on first request):
 //   - UPTIME_BEARER_TOKEN env var — static token, no browser, no refresh
-//   - OAuth2 PKCE browser flow — requires -uptime-url + -client-id
+//   - OAuth2 PKCE browser flow — requires -uptime-url
 func runStdio(p RunParams) {
 	apiBaseURL := p.Config.APIBaseURL()
 
@@ -98,8 +98,8 @@ func stdioLazyAuthMiddleware(p RunParams) mcp.Middleware {
 		ClientSecret: p.Config.ClientSecret,
 		Scopes:       []string{"api/v1"},
 	}
-	if cfg.Issuer == "" || cfg.ClientID == "" {
-		p.Logger.Error("-uptime-url (or -oauth-url) and -client-id are required for stdio mode without UPTIME_BEARER_TOKEN")
+	if cfg.Issuer == "" {
+		p.Logger.Error("-uptime-url (or -oauth-url) is required for stdio mode without UPTIME_BEARER_TOKEN")
 		os.Exit(1)
 	}
 
@@ -173,7 +173,7 @@ func methodRequiresAuth(method string) bool {
 // query parameter, or UPTIME_BEARER_TOKEN env var are forwarded to the Uptime
 // API without server-side verification. The API itself rejects invalid tokens.
 //
-// When -client-id is set, the server also serves RFC 9728 protected resource
+// When an OAuth issuer is configured, the server also serves RFC 9728 protected resource
 // metadata so OAuth2-capable MCP clients can discover the authorization server
 // and obtain tokens themselves.
 func runHTTP(p RunParams) {
