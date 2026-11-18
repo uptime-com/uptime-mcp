@@ -39,15 +39,6 @@ config:
   # Extra raw args appended verbatim to the container command.
   extraArgs: []
 
-# Optional static bearer token exposed as UPTIME_BEARER_TOKEN. References a
-# pre-existing secret; the chart never creates one.
-auth:
-  existingSecret:
-    # Name of an existing secret holding the bearer token. Empty disables it.
-    name: ""
-    # Key within the secret.
-    key: token
-
 # Extra environment variables passed to the container.
 extraEnv: []
 

@@ -13,7 +13,6 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/modelcontextprotocol/go-sdk/oauthex"
 	"go.uber.org/fx"
-	"golang.org/x/oauth2"
 
 	"github.com/uptime-com/uptime-mcp/internal/app"
 )
@@ -40,14 +39,8 @@ func Run(p RunParams) {
 
 // runStdio sets up the MCP server for stdio transport.
 //
-// Authentication is lazy — the OAuth2 browser flow (if needed) runs on the
-// first incoming MCP request, not at startup. This matches the behavior of
-// other MCP plugins (e.g. Atlassian) and avoids blocking startup with a
-// browser prompt.
-//
-// Token sources (checked in order on first request):
-//   - UPTIME_BEARER_TOKEN env var — static token, no browser, no refresh
-//   - OAuth2 PKCE browser flow — requires -uptime-url
+// Authentication is lazy: the OAuth2 PKCE browser flow, which requires
+// -uptime-url, runs on the first tool call, not at startup.
 func runStdio(p RunParams) {
 	apiBaseURL := p.Config.APIBaseURL()
 
@@ -74,24 +67,14 @@ func runStdio(p RunParams) {
 	})
 }
 
-// stdioLazyAuthMiddleware returns an MCP middleware that resolves the bearer
-// token lazily. If UPTIME_BEARER_TOKEN is set, it's used immediately (no
-// browser interaction). Otherwise, the OAuth2 browser flow is deferred until
-// the first tool call — protocol methods like "initialize" and "tools/list"
-// pass through without triggering auth.
+// stdioLazyAuthMiddleware returns an MCP middleware that runs the OAuth2
+// browser flow on the first tool call. Protocol methods like "initialize" and
+// "tools/list" pass through without it, so the MCP handshake never waits on a
+// browser.
 //
-// After the initial resolution, subsequent requests use the cached token
-// (which may be auto-refreshed in the background for OAuth2 tokens).
+// After the initial resolution, subsequent requests use the cached token,
+// refreshed in the background.
 func stdioLazyAuthMiddleware(p RunParams) mcp.Middleware {
-	// Static bearer token can be resolved eagerly — no browser interaction.
-	if bearerToken := os.Getenv("UPTIME_BEARER_TOKEN"); bearerToken != "" {
-		p.Logger.Info("using static bearer token from UPTIME_BEARER_TOKEN")
-		holder := newTokenHolder(&oauth2.Token{AccessToken: bearerToken})
-		return stdioTokenMiddleware(holder)
-	}
-
-	// OAuth2 browser flow — validate config now, defer actual flow to first
-	// tool call so the server can complete MCP handshake without blocking.
 	cfg := stdioOAuthConfig{
 		Issuer:       p.Config.OAuthIssuer(),
 		ClientID:     p.Config.ClientID,
@@ -99,7 +82,7 @@ func stdioLazyAuthMiddleware(p RunParams) mcp.Middleware {
 		Scopes:       []string{"api/v1"},
 	}
 	if cfg.Issuer == "" {
-		p.Logger.Error("-uptime-url (or -oauth-url) is required for stdio mode without UPTIME_BEARER_TOKEN")
+		p.Logger.Error("-uptime-url (or -oauth-url) is required for stdio mode")
 		os.Exit(1)
 	}
 
@@ -169,9 +152,9 @@ func methodRequiresAuth(method string) bool {
 
 // runHTTP sets up the MCP server for HTTP transport.
 //
-// Authentication is passthrough: bearer tokens from the Authorization header,
-// query parameter, or UPTIME_BEARER_TOKEN env var are forwarded to the Uptime
-// API without server-side verification. The API itself rejects invalid tokens.
+// Authentication is passthrough: the OAuth2 access token in each request's
+// Authorization header is forwarded to the Uptime API without server-side
+// verification. The API itself rejects invalid tokens.
 //
 // When an OAuth issuer is configured, the server also serves RFC 9728 protected resource
 // metadata so OAuth2-capable MCP clients can discover the authorization server
