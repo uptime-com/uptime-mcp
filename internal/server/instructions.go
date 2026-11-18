@@ -40,5 +40,7 @@ When a tool fails in a way its input does not explain, returns output that contr
 2. With the user's agreement, call report_issue, passing existing_issue when step 1 found a match.
 3. Give the user what report_issue returns. They submit it; nothing is filed without them.
 
-A bug report names the tool, the input, what came back and what was expected. A feature request names the task and what was missing. Leave out tokens, keys and account data the user has not agreed to share.
+A bug report names the tool, the input, what came back and what was expected. A feature request names the task and what was missing.
+
+Issues are public. Before the user submits, point out anything in the draft that looks sensitive or identifying, such as tokens or keys, email addresses, domains, URLs, IP addresses, or account, contact and check names. Whether to keep it is the user's call.
 `

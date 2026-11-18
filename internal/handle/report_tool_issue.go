@@ -34,7 +34,7 @@ func registerReportIssueTool(srv *mcp.Server, h *reportHandler) {
 type reportIssueInput struct {
 	Kind          string `json:"kind" jsonschema:"bug or feature"`
 	Title         string `json:"title" jsonschema:"one-line summary naming the tool or capability"`
-	Body          string `json:"body" jsonschema:"for a bug: the tool, the input, what came back and what was expected; for a feature: the task and what was missing. No tokens, keys or account data the user has not agreed to share"`
+	Body          string `json:"body" jsonschema:"for a bug: the tool, the input, what came back and what was expected; for a feature: the task and what was missing. Issues are public: tell the user about anything here that looks sensitive or identifying, and let them decide what stays"`
 	ExistingIssue int    `json:"existing_issue,omitempty" jsonschema:"number of a matching issue found by search_issues; drafts a comment on it instead of a new issue"`
 }
 
@@ -52,14 +52,19 @@ func (h *reportHandler) HandleReportIssue(_ context.Context, _ *mcp.CallToolRequ
 	if in.ExistingIssue > 0 {
 		issue := fmt.Sprintf("%s/issues/%d", repoURL, in.ExistingIssue)
 		return textResult(fmt.Sprintf(
-			"Give the user this issue and the comment below; they post it there. Nothing has been filed.\n\n%s\n\n%s%s\n",
-			issue, in.Body, footer)), nil, nil
+			"Give the user this issue and the comment below; they post it there. Nothing has been filed.\n%s\n\n%s\n\n%s%s\n",
+			publicNotice, issue, in.Body, footer)), nil, nil
 	}
 
 	link := newIssueLink(prefix+in.Title, in.Body, footer)
 	return textResult(fmt.Sprintf(
-		"Give the user this link; opening it lets them review and submit the issue. Nothing has been filed.\n\n%s\n", link)), nil, nil
+		"Give the user this link; opening it lets them review and submit the issue. Nothing has been filed.\n%s\n\n%s\n",
+		publicNotice, link)), nil, nil
 }
+
+const publicNotice = "GitHub issues are public. Before the user submits, point out anything in the draft that looks " +
+	"sensitive or identifying: tokens or keys, email addresses, domains, URLs, IP addresses, account, contact or check names. " +
+	"Whether to keep it is their call."
 
 // newIssueLink builds a prefilled new-issue URL no longer than maxIssueURLLen,
 // cutting body as needed while keeping footer whole.

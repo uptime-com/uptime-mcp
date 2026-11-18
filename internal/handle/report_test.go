@@ -54,6 +54,7 @@ func TestHandleReportIssue(t *testing.T) {
 		assert.Contains(t, q.Get("body"), "uptime-mcp 0.18.0 (abc1234)")
 		assert.Empty(t, q.Get("labels"))
 		assert.Contains(t, text, "Nothing has been filed")
+		assert.Contains(t, text, "sensitive or identifying")
 	})
 
 	t.Run("feature request carries its own prefix", func(t *testing.T) {
@@ -80,6 +81,7 @@ func TestHandleReportIssue(t *testing.T) {
 		assert.NotContains(t, text, "/issues/new")
 		assert.Contains(t, text, "Also needed: per-location percentiles.")
 		assert.Contains(t, text, "uptime-mcp 0.18.0 (abc1234)")
+		assert.Contains(t, text, "sensitive or identifying")
 	})
 
 	t.Run("long body is cut to fit a URL", func(t *testing.T) {
