@@ -7,12 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- `list_alerts` and `list_outages` report how many results the page holds, rather than "Found 0 results".
-- `list_tags` and the tag resource print a tag's color with a single `#`.
-- `get_alert`, `list_alerts` and the alert resource show each location reporting the check down, with its server and output.
-
 ## [0.18.0] - 2026-11-18
 
 ### Changed
@@ -29,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `list_checks` with `is_paused: false` returns only checks that are not paused.
+- `list_alerts` and `list_outages` report how many results the page holds, rather than "Found 0 results".
+- `list_tags` and the tag resource print a tag's color with a single `#`.
+- `get_alert`, `list_alerts` and the alert resource show each location reporting the check down, with its server and output.
 
 ## [0.17.3] - 2026-08-31
 
