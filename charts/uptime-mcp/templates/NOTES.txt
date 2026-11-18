@@ -25,12 +25,7 @@ Uptime.com MCP Server has been deployed.
 2. The server runs in {{ .Values.config.transport }} transport mode and exposes /healthz for probes.
 
 3. Authentication:
-{{- if .Values.auth.existingSecret.name }}
-   - Using a static bearer token from secret "{{ .Values.auth.existingSecret.name }}" (UPTIME_BEARER_TOKEN).
-{{- else }}
-   - No static bearer token is configured. Clients supply a token with each request,
-     or set auth.existingSecret.name to mount UPTIME_BEARER_TOKEN.
-{{- end }}
+   - Clients send an Uptime.com OAuth2 access token with each request.
 {{- if not .Values.config.uptimeUrl }}
    - WARNING: config.uptimeUrl is empty, so the server publishes no OAuth2 metadata and calls the API at https://uptime.com/api/v1/.
 {{- end }}

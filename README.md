@@ -16,8 +16,8 @@ inspect account usage on your behalf.
 
 The server speaks two transports: **stdio** (for local MCP clients like Claude
 Desktop, Claude Code, and Cursor) and **streamable HTTP** (for hosted
-deployments). It authenticates with a static API bearer token or a
-browser-based OAuth2 PKCE flow.
+deployments). It authenticates with OAuth2 only: a browser login in stdio mode,
+and the MCP client's own access token in HTTP mode.
 
 ## Get started
 
@@ -62,84 +62,29 @@ client at:
 https://mcp.uptime.com/mcp
 ```
 
-To authenticate with an Uptime.com API token, generate one under
-**Settings > API & Integrations** and send it as a bearer token:
-
-```json
-{
-  "mcpServers": {
-    "uptime": {
-      "type": "http",
-      "url": "https://mcp.uptime.com/mcp",
-      "headers": {
-        "Authorization": "Bearer <your-api-token>"
-      }
-    }
-  }
-}
-```
-
-An MCP client that supports OAuth2 needs no token in its configuration. The
-endpoint publishes [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728)
-protected-resource metadata naming the authorization server,
-`https://uptime.com`, and the client signs in there itself.
+The client must support OAuth2: the endpoint publishes
+[RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) protected-resource metadata
+naming the authorization server, `https://uptime.com`, and the client signs in
+there itself. The server accepts no API token.
 
 ## Run locally
 
-To run the server locally with Go 1.26 or later and an Uptime.com API token
-from **Settings > API & Integrations**:
+To run the server locally with Go 1.26 or later:
 
 ```bash
-export UPTIME_BEARER_TOKEN=<your-api-token>
-go run github.com/uptime-com/uptime-mcp@latest -transport=stdio
+go run github.com/uptime-com/uptime-mcp@latest -transport=stdio -uptime-url=https://uptime.com
 ```
 
-### Claude Desktop, Claude Code or Cursor with an API token
+On the first tool call the server signs you in through the browser. It signs in
+as `uptime-mcp`, the OAuth2 client Uptime.com registers for it, so nothing needs
+setting up in your account first.
+
+### Claude Desktop, Claude Code or Cursor
 
 Add the server to your MCP client configuration, for example
-`claude_desktop_config.json`, Cursor's `mcp.json`, or `claude mcp add-json`:
-
-```json
-{
-  "mcpServers": {
-    "uptime": {
-      "command": "uptime-mcp",
-      "args": ["-transport=stdio"],
-      "env": {
-        "UPTIME_BEARER_TOKEN": "<your-api-token>"
-      }
-    }
-  }
-}
-```
-
+`claude_desktop_config.json`, Cursor's `mcp.json`, or `claude mcp add-json`.
 Where `uptime-mcp` is not on the client's `PATH`, set `command` to the binary's
-absolute path, or run the container image:
-
-```json
-{
-  "mcpServers": {
-    "uptime": {
-      "command": "docker",
-      "args": [
-        "run", "-i", "--rm",
-        "-e", "UPTIME_BEARER_TOKEN",
-        "ghcr.io/uptime-com/uptime-mcp:latest",
-        "-transport=stdio"
-      ],
-      "env": {
-        "UPTIME_BEARER_TOKEN": "<your-api-token>"
-      }
-    }
-  }
-}
-```
-
-### Claude Desktop with a browser login
-
-Without a token in the configuration, the server signs you in through the
-browser on the first tool call. It signs in as `uptime-mcp`, the OAuth2 client
-Uptime.com registers for it, so nothing needs setting up in your account first:
+absolute path:
 
 ```json
 {
@@ -179,9 +124,12 @@ The image is published to GitHub Container Registry with two tags:
 `:<version>`, which is immutable (for example, `:0.16.0`), and `:latest`, which
 follows the newest release.
 
+It runs the server in HTTP mode; the stdio browser login needs a browser on the
+same host as the server:
+
 ```bash
-docker pull ghcr.io/uptime-com/uptime-mcp:latest
-docker run -i --rm -e UPTIME_BEARER_TOKEN ghcr.io/uptime-com/uptime-mcp:latest -transport=stdio
+docker run --rm -p 8080:8080 ghcr.io/uptime-com/uptime-mcp:latest \
+  -transport=http -uptime-url=https://uptime.com
 ```
 
 ### Helm chart (HTTP mode on Kubernetes)
@@ -228,28 +176,15 @@ set, the environment variable beside it is read instead.
 | `-log-level`     | None                         | `error`                   | Log level: `debug`, `info`, `warn`, `error`.                        |
 | `-version`       | None                         | None                      | Print version and commit, then exit.                               |
 
-One variable has no flag:
-
-| Variable              | Description                                                               |
-|-----------------------|---------------------------------------------------------------------------|
-| `UPTIME_BEARER_TOKEN` | Static Uptime.com API token. Forwarded as-is, without verification or refresh. |
-
 ## Authentication
 
-### Bearer token
-
-Set `UPTIME_BEARER_TOKEN` to an Uptime.com API token. It works in both stdio and
-HTTP modes. The server forwards the token to the Uptime.com API as it is, with
-no OAuth2 configuration, verification or refresh.
-
-```bash
-UPTIME_BEARER_TOKEN=<your-api-token> uptime-mcp -transport=stdio
-```
+The server authenticates to the Uptime.com API with OAuth2 access tokens only.
+It accepts no account API key, in either mode.
 
 ### Browser login (stdio)
 
-In stdio mode without `UPTIME_BEARER_TOKEN`, the server runs an OAuth2
-authorization code flow with PKCE in the browser. The flow starts on the first
+In stdio mode the server runs an OAuth2 authorization code flow with PKCE in
+the browser. The flow starts on the first
 tool call, not at startup, so the MCP handshake (`initialize`, `tools/list`)
 never waits on a browser. It needs `-uptime-url`.
 
@@ -263,20 +198,9 @@ uptime-mcp -transport=stdio -uptime-url=https://uptime.com
 
 ### HTTP mode
 
-In HTTP mode the server passes each request's token through to the Uptime.com
-API. It takes the token from the first of these sources that has one:
-
-| Priority | Source                          |
-|----------|---------------------------------|
-| 1        | `Authorization: Bearer <token>` |
-| 2        | `?token=<token>` query parameter |
-| 3        | `UPTIME_BEARER_TOKEN` env var    |
-
-Each source accepts an OAuth2 access token or an account API key. The Uptime.com
-API expects the first as `Authorization: Bearer` and the second as
-`Authorization: Token`, and rejects either under the other scheme. The server
-sends the scheme the source implies and switches once if the API refuses it, so
-there is nothing to configure.
+In HTTP mode the server passes the OAuth2 access token in each request's
+`Authorization: Bearer` header through to the Uptime.com API. A request without
+one is answered `401 Unauthorized`.
 
 When `-uptime-url` is set, the server also serves
 [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) protected-resource metadata at

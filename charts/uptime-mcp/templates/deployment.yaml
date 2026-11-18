@@ -40,18 +40,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             {{- include "uptime-mcp.args" . | nindent 12 }}
-          {{- if or .Values.auth.existingSecret.name .Values.extraEnv }}
+          {{- with .Values.extraEnv }}
           env:
-            {{- if .Values.auth.existingSecret.name }}
-            - name: UPTIME_BEARER_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.auth.existingSecret.name }}
-                  key: {{ .Values.auth.existingSecret.key }}
-            {{- end }}
-            {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
-            {{- end }}
           {{- end }}
           ports:
             - name: http
