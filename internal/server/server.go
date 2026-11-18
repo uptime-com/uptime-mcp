@@ -15,6 +15,7 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/uptime-com/uptime-mcp/internal/app"
+	"github.com/uptime-com/uptime-mcp/internal/landing"
 )
 
 type RunParams struct {
@@ -220,7 +221,7 @@ func newHTTPMux(server *mcp.Server, cfg app.Config) http.Handler {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	mux.Handle("/", bearerPassthrough(mcpHandler))
+	mux.Handle("/", landing.Handler(bearerPassthrough(mcpHandler)))
 
 	return mux
 }

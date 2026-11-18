@@ -221,6 +221,7 @@ endpoints:
 | Endpoint                                     | Purpose                                                              |
 |----------------------------------------------|----------------------------------------------------------------------|
 | `POST /`                                     | The streamable-HTTP MCP endpoint.                                    |
+| `GET /` with `Accept: text/html`             | A landing page for browsers, linking to AI assistants.               |
 | `GET /healthz`                               | Liveness and readiness probe. Returns `204 No Content`.              |
 | `GET /.well-known/oauth-protected-resource`  | RFC 9728 metadata. Served only when `-uptime-url` is set.            |
 
