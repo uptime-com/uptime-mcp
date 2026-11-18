@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 0
 
       - id: changelog
-        uses: mikluko/action-changelog@v1
+        uses: mikluko/action-changelog/actions/validate@v2
         with:
           # A prerelease is cut before its entry is dated.
           "off": undated-entry

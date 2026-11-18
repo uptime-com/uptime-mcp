@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help build image package test e2e lint clean run/http run/claude
+.PHONY: help build image package test e2e lint changelog changelog/release clean run/http run/claude
 
 # Version derived from git tags (e.g. v0.16.0 -> 0.16.0). Without a tag, fall
 # back to a SemVer-valid pre-release (0.0.0-<sha>) so `helm package --version`
@@ -52,6 +52,14 @@ e2e: ## Run e2e tests, requires UPTIME_BEARER_TOKEN
 
 lint: ## Run linters
 	golangci-lint run ./...
+
+CHANGELOG := go run sarak.sh/mikluko/changelog/v2/cmd/changelog@v2.2.0
+
+changelog: ## Check CHANGELOG.md and .changelog/ as CI does
+	$(CHANGELOG) -base main -warn missing-fragment
+
+changelog/release: ## Fold .changelog/ into CHANGELOG.md under the next version
+	$(CHANGELOG) release
 
 clean: ## Remove build artifacts
 	rm -f uptime-mcp

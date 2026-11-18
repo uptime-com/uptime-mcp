@@ -412,6 +412,21 @@ before sending a pull request, keep changes focused, and run `make test` before
 submitting. By contributing you agree that your contributions are licensed under
 the project's MIT license.
 
+A pull request with a user-visible change adds its
+[changelog](CHANGELOG.md) note as a fragment in `.changelog/`, a Markdown file
+named for the change, holding the note under its
+[Keep a Changelog](https://keepachangelog.com/en/2.0.0/) type:
+
+```markdown
+### Fixed
+
+- `list_checks` with `is_paused: false` returns only checks that are not paused.
+```
+
+`make changelog` checks it the way CI does. A release folds the fragments into
+`CHANGELOG.md` with `make changelog/release`, and merging that to `main` cuts
+the tag.
+
 ## License
 
 Licensed under the [MIT License](LICENSE). `SPDX-License-Identifier: MIT`.

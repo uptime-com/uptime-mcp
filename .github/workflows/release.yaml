@@ -44,7 +44,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - id: changelog
-        uses: mikluko/action-changelog@v1
+        uses: mikluko/action-changelog/actions/validate@v2
 
       - name: Cut
         if: steps.changelog.outputs.due == 'true'
